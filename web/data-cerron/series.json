@@ -1,0 +1,519 @@
+{
+ "bbox": [
+  -89.27,
+  13.93,
+  -88.93,
+  14.13
+ ],
+ "step": 0.00018,
+ "hh_range": [
+  -30.0,
+  5.0
+ ],
+ "thresholds": {
+  "water_hh": -17.0,
+  "water_hv": -24.0,
+  "floodveg_hh": -3.0
+ },
+ "dates": [
+  {
+   "id": "2025-12-13_A134",
+   "date": "2025-12-13",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": 8,
+   "scene": "NISAR_L2_PR_GCOV_007_134_A_008_4005_DHDH_A_20251213T113058_20251213T113116_X05010_N_P_J_001",
+   "coverage_pct": 26.5,
+   "rgb": "data/2025-12-13_A134_rgb.png",
+   "hh": "data/2025-12-13_A134_hh.png",
+   "cls": "data/2025-12-13_A134_cls.png",
+   "valid_km2": 216.98,
+   "water_km2": 28.185,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 0.511,
+   "hh_mean_db": -9.6,
+   "hv_mean_db": -15.82,
+   "floatveg_km2": 0.579,
+   "thr": {
+    "hh": -15.57,
+    "hv": -20.85
+   },
+   "calib": {
+    "water_hh": -19.67,
+    "water_hv": -24.47,
+    "veg_hh": -7.95,
+    "veg_hv": -14.12,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2025-12-25_A134",
+   "date": "2025-12-25",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": 9,
+   "scene": "NISAR_L2_PR_GCOV_008_134_A_009_4005_DHDH_A_20251225T113116_20251225T113151_X05009_N_F_J_001",
+   "coverage_pct": 100.0,
+   "rgb": "data/2025-12-25_A134_rgb.png",
+   "hh": "data/2025-12-25_A134_hh.png",
+   "cls": "data/2025-12-25_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 100.385,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 1.946,
+   "hh_mean_db": -9.84,
+   "hv_mean_db": -16.07,
+   "floatveg_km2": 2.212,
+   "thr": {
+    "hh": -15.48,
+    "hv": -21.01
+   },
+   "calib": {
+    "water_hh": -19.39,
+    "water_hv": -24.56,
+    "veg_hh": -8.23,
+    "veg_hv": -14.4,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-01-06_A134",
+   "date": "2026-01-06",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": [
+    9,
+    8
+   ],
+   "scene": [
+    "NISAR_L2_PR_GCOV_009_134_A_009_4005_DHDH_A_20260106T113117_20260106T113151_X05010_N_F_J_001",
+    "NISAR_L2_PR_GCOV_009_134_A_008_4005_DHDH_A_20260106T113100_20260106T113118_X05010_N_P_J_001"
+   ],
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-01-06_A134_rgb.png",
+   "hh": "data/2026-01-06_A134_hh.png",
+   "cls": "data/2026-01-06_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 100.71,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 1.881,
+   "hh_mean_db": -9.98,
+   "hv_mean_db": -16.02,
+   "floatveg_km2": 2.165,
+   "thr": {
+    "hh": -15.44,
+    "hv": -20.58
+   },
+   "calib": {
+    "water_hh": -19.25,
+    "water_hv": -23.91,
+    "veg_hh": -8.37,
+    "veg_hv": -14.4,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-01-18_A134",
+   "date": "2026-01-18",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": 9,
+   "scene": "NISAR_L2_PR_GCOV_010_134_A_009_4005_DHDH_A_20260118T113117_20260118T113152_X05010_N_F_J_001",
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-01-18_A134_rgb.png",
+   "hh": "data/2026-01-18_A134_hh.png",
+   "cls": "data/2026-01-18_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 98.206,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 1.846,
+   "hh_mean_db": -10.09,
+   "hv_mean_db": -16.18,
+   "floatveg_km2": 2.321,
+   "thr": {
+    "hh": -15.53,
+    "hv": -21.01
+   },
+   "calib": {
+    "water_hh": -19.39,
+    "water_hv": -24.56,
+    "veg_hh": -8.37,
+    "veg_hv": -14.4,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-06-23_A134",
+   "date": "2026-06-23",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": 8,
+   "scene": "NISAR_L2_PR_GCOV_023_134_A_008_4005_DHDH_A_20260623T113058_20260623T113118_P05023_N_P_J_001",
+   "coverage_pct": 84.0,
+   "rgb": "data/2026-06-23_A134_rgb.png",
+   "hh": "data/2026-06-23_A134_hh.png",
+   "cls": "data/2026-06-23_A134_cls.png",
+   "valid_km2": 686.45,
+   "water_km2": 0.06,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 10.572,
+   "hh_mean_db": -5.83,
+   "hv_mean_db": -11.58,
+   "floatveg_km2": 93.537,
+   "thr": {
+    "hh": -17.0,
+    "hv": -24.0
+   },
+   "calib": {
+    "water_hv": -12.24,
+    "veg_hv": -11.39,
+    "qc": false
+   },
+   "qc": false
+  },
+  {
+   "id": "2026-07-05_A134",
+   "date": "2026-07-05",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": 8,
+   "scene": "NISAR_L2_PR_GCOV_024_134_A_008_4005_DHDH_A_20260705T113058_20260705T113117_P05023_N_P_J_001",
+   "coverage_pct": 74.5,
+   "rgb": "data/2026-07-05_A134_rgb.png",
+   "hh": "data/2026-07-05_A134_hh.png",
+   "cls": "data/2026-07-05_A134_cls.png",
+   "valid_km2": 608.88,
+   "water_km2": 81.661,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 2.163,
+   "hh_mean_db": -8.99,
+   "hv_mean_db": -14.88,
+   "floatveg_km2": 5.122,
+   "thr": {
+    "hh": -14.57,
+    "hv": -19.81
+   },
+   "calib": {
+    "water_hh": -18.43,
+    "water_hv": -23.44,
+    "veg_hh": -7.4,
+    "veg_hv": -13.08,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-07-17_A134",
+   "date": "2026-07-17",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": [
+    9,
+    8
+   ],
+   "scene": [
+    "NISAR_L2_PR_GCOV_025_134_A_009_4005_DHDH_A_20260717T113115_20260717T113150_P05023_N_F_J_001",
+    "NISAR_L2_PR_GCOV_025_134_A_008_4005_DHDH_A_20260717T113057_20260717T113116_P05023_N_P_J_001"
+   ],
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-07-17_A134_rgb.png",
+   "hh": "data/2026-07-17_A134_hh.png",
+   "cls": "data/2026-07-17_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 85.065,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 4.061,
+   "hh_mean_db": -8.19,
+   "hv_mean_db": -14.16,
+   "floatveg_km2": 5.483,
+   "thr": {
+    "hh": -14.46,
+    "hv": -19.56
+   },
+   "calib": {
+    "water_hh": -18.56,
+    "water_hv": -23.25,
+    "veg_hh": -6.85,
+    "veg_hv": -12.71,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-08-10_A134",
+   "date": "2026-08-10",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": [
+    9,
+    8
+   ],
+   "scene": [
+    "NISAR_L2_PR_GCOV_027_134_A_009_4005_DHDH_A_20260810T113114_20260810T113148_P05023_N_F_J_001",
+    "NISAR_L2_PR_GCOV_027_134_A_008_4005_DHDH_A_20260810T113056_20260810T113115_P05023_N_P_J_001"
+   ],
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-08-10_A134_rgb.png",
+   "hh": "data/2026-08-10_A134_hh.png",
+   "cls": "data/2026-08-10_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 85.69,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 3.489,
+   "hh_mean_db": -8.45,
+   "hv_mean_db": -14.4,
+   "floatveg_km2": 5.513,
+   "thr": {
+    "hh": -14.38,
+    "hv": -19.56
+   },
+   "calib": {
+    "water_hh": -18.29,
+    "water_hv": -23.15,
+    "veg_hh": -7.13,
+    "veg_hv": -12.89,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-08-22_A134",
+   "date": "2026-08-22",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": 9,
+   "scene": "NISAR_L2_PR_GCOV_028_134_A_009_4005_DHDH_A_20260822T113113_20260822T113148_P05023_N_F_J_001",
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-08-22_A134_rgb.png",
+   "hh": "data/2026-08-22_A134_hh.png",
+   "cls": "data/2026-08-22_A134_cls.png",
+   "valid_km2": 817.19,
+   "water_km2": 84.057,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 2.734,
+   "hh_mean_db": -8.94,
+   "hv_mean_db": -14.74,
+   "floatveg_km2": 6.051,
+   "thr": {
+    "hh": -14.7,
+    "hv": -19.76
+   },
+   "calib": {
+    "water_hh": -18.56,
+    "water_hv": -23.25,
+    "veg_hh": -7.54,
+    "veg_hv": -13.27,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-09-03_A134",
+   "date": "2026-09-03",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": [
+    9,
+    8
+   ],
+   "scene": [
+    "NISAR_L2_PR_GCOV_029_134_A_009_4005_DHDH_A_20260903T113113_20260903T113148_P05023_N_F_J_001",
+    "NISAR_L2_PR_GCOV_029_134_A_008_4005_DHDH_A_20260903T113055_20260903T113114_P05023_N_P_J_001"
+   ],
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-09-03_A134_rgb.png",
+   "hh": "data/2026-09-03_A134_hh.png",
+   "cls": "data/2026-09-03_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 86.929,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 6.985,
+   "hh_mean_db": -7.36,
+   "hv_mean_db": -13.52,
+   "floatveg_km2": 5.165,
+   "thr": {
+    "hh": -13.55,
+    "hv": -19.02
+   },
+   "calib": {
+    "water_hh": -17.6,
+    "water_hv": -22.78,
+    "veg_hh": -6.02,
+    "veg_hv": -12.05,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-09-15_A134",
+   "date": "2026-09-15",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": [
+    9,
+    8
+   ],
+   "scene": [
+    "NISAR_L2_PR_GCOV_030_134_A_009_4005_DHDH_A_20260915T113113_20260915T113147_P05023_N_F_J_001",
+    "NISAR_L2_PR_GCOV_030_134_A_008_4005_DHDH_A_20260915T113055_20260915T113114_P05023_N_P_J_001"
+   ],
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-09-15_A134_rgb.png",
+   "hh": "data/2026-09-15_A134_hh.png",
+   "cls": "data/2026-09-15_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 88.973,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 4.068,
+   "hh_mean_db": -8.18,
+   "hv_mean_db": -14.16,
+   "floatveg_km2": 4.191,
+   "thr": {
+    "hh": -14.28,
+    "hv": -19.4
+   },
+   "calib": {
+    "water_hh": -18.29,
+    "water_hv": -23.06,
+    "veg_hh": -6.85,
+    "veg_hv": -12.61,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-09-27_A134",
+   "date": "2026-09-27",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": [
+    9,
+    8
+   ],
+   "scene": [
+    "NISAR_L2_PR_GCOV_031_134_A_009_4005_DHDH_A_20260927T113113_20260927T113148_P05023_N_F_J_001",
+    "NISAR_L2_PR_GCOV_031_134_A_008_4005_DHDH_A_20260927T113055_20260927T113114_P05023_N_P_J_001"
+   ],
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-09-27_A134_rgb.png",
+   "hh": "data/2026-09-27_A134_hh.png",
+   "cls": "data/2026-09-27_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 91.161,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 4.044,
+   "hh_mean_db": -8.18,
+   "hv_mean_db": -14.14,
+   "floatveg_km2": 3.313,
+   "thr": {
+    "hh": -14.19,
+    "hv": -19.4
+   },
+   "calib": {
+    "water_hh": -18.15,
+    "water_hv": -23.06,
+    "veg_hh": -6.85,
+    "veg_hv": -12.61,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-10-09_A134",
+   "date": "2026-10-09",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": 9,
+   "scene": "NISAR_L2_PR_GCOV_032_134_A_009_4005_DHDH_A_20261009T113113_20261009T113148_P05023_N_F_J_001",
+   "coverage_pct": 99.7,
+   "rgb": "data/2026-10-09_A134_rgb.png",
+   "hh": "data/2026-10-09_A134_hh.png",
+   "cls": "data/2026-10-09_A134_cls.png",
+   "valid_km2": 815.14,
+   "water_km2": 93.211,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 5.106,
+   "hh_mean_db": -7.69,
+   "hv_mean_db": -13.7,
+   "floatveg_km2": 2.755,
+   "thr": {
+    "hh": -13.51,
+    "hv": -19.09
+   },
+   "calib": {
+    "water_hh": -17.32,
+    "water_hv": -22.78,
+    "veg_hh": -6.44,
+    "veg_hv": -12.24,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-10-21_A134",
+   "date": "2026-10-21",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": 9,
+   "scene": "NISAR_L2_PR_GCOV_033_134_A_009_4005_DHDH_A_20261021T113113_20261021T113148_P05023_N_F_J_001",
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-10-21_A134_rgb.png",
+   "hh": "data/2026-10-21_A134_hh.png",
+   "cls": "data/2026-10-21_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 97.342,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 5.705,
+   "hh_mean_db": -7.58,
+   "hv_mean_db": -13.54,
+   "floatveg_km2": 2.26,
+   "thr": {
+    "hh": -13.38,
+    "hv": -18.99
+   },
+   "calib": {
+    "water_hh": -17.19,
+    "water_hv": -22.78,
+    "veg_hh": -6.3,
+    "veg_hv": -11.95,
+    "qc": true
+   },
+   "qc": true
+  },
+  {
+   "id": "2026-11-02_A134",
+   "date": "2026-11-02",
+   "direction": "ASCENDING",
+   "track": 134,
+   "frame": 9,
+   "scene": "NISAR_L2_PR_GCOV_034_134_A_009_4005_DHDH_A_20261102T113113_20261102T113148_P05036_N_F_J_001",
+   "coverage_pct": 100.0,
+   "rgb": "data/2026-11-02_A134_rgb.png",
+   "hh": "data/2026-11-02_A134_hh.png",
+   "cls": "data/2026-11-02_A134_cls.png",
+   "valid_km2": 817.49,
+   "water_km2": 98.218,
+   "ocean_km2": 0.0,
+   "floodveg_km2": 2.257,
+   "hh_mean_db": -9.22,
+   "hv_mean_db": -14.51,
+   "floatveg_km2": 2.28,
+   "thr": {
+    "hh": -15.02,
+    "hv": -19.62
+   },
+   "calib": {
+    "water_hh": -18.98,
+    "water_hv": -23.25,
+    "veg_hh": -7.68,
+    "veg_hv": -12.89,
+    "qc": true
+   },
+   "qc": true
+  }
+ ]
+}

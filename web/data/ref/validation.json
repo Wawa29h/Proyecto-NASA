@@ -1,0 +1,258 @@
+{
+ "classes": [
+  "Manglar",
+  "Bosque",
+  "Cultivo",
+  "Pasto",
+  "Agua"
+ ],
+ "dates": [
+  {
+   "date": "2025-12-13",
+   "hh": {
+    "Manglar": -8.5,
+    "Bosque": -6.57,
+    "Cultivo": -8.09,
+    "Pasto": -9.19,
+    "Agua": -19.25
+   },
+   "hv": {
+    "Manglar": -15.81,
+    "Bosque": -13.74,
+    "Cultivo": -15.72,
+    "Pasto": -17.13,
+    "Agua": -24.94
+   },
+   "estero_en_mapa_pct": 74.5,
+   "agua_mapa_detectada_pct": 84.5
+  },
+  {
+   "date": "2025-12-25",
+   "hh": {
+    "Manglar": -8.78,
+    "Bosque": -6.85,
+    "Cultivo": -8.78,
+    "Pasto": -9.74,
+    "Agua": -20.63
+   },
+   "hv": {
+    "Manglar": -16.09,
+    "Bosque": -13.93,
+    "Cultivo": -16.38,
+    "Pasto": -17.51,
+    "Agua": -25.22
+   },
+   "estero_en_mapa_pct": 74.7,
+   "agua_mapa_detectada_pct": 89.0
+  },
+  {
+   "date": "2026-01-06",
+   "hh": {
+    "Manglar": -8.5,
+    "Bosque": -6.71,
+    "Cultivo": -9.19,
+    "Pasto": -9.74,
+    "Agua": -20.35
+   },
+   "hv": {
+    "Manglar": -15.91,
+    "Bosque": -13.84,
+    "Cultivo": -16.85,
+    "Pasto": -17.6,
+    "Agua": -25.32
+   },
+   "estero_en_mapa_pct": 71.2,
+   "agua_mapa_detectada_pct": 88.8
+  },
+  {
+   "date": "2026-01-18",
+   "hh": {
+    "Manglar": -8.92,
+    "Bosque": -6.85,
+    "Cultivo": -9.61,
+    "Pasto": -9.88,
+    "Agua": -19.67
+   },
+   "hv": {
+    "Manglar": -16.19,
+    "Bosque": -13.84,
+    "Cultivo": -17.51,
+    "Pasto": -17.6,
+    "Agua": -24.75
+   },
+   "estero_en_mapa_pct": 60.2,
+   "agua_mapa_detectada_pct": 89.3
+  },
+  {
+   "date": "2026-07-05",
+   "hh": {
+    "Manglar": -8.09,
+    "Bosque": -6.85,
+    "Cultivo": -10.43,
+    "Pasto": -10.02,
+    "Agua": -18.56
+   },
+   "hv": {
+    "Manglar": -14.49,
+    "Bosque": -12.89,
+    "Cultivo": -17.51,
+    "Pasto": -16.85,
+    "Agua": -23.81
+   },
+   "estero_en_mapa_pct": 62.5,
+   "agua_mapa_detectada_pct": 90.5
+  },
+  {
+   "date": "2026-07-17",
+   "hh": {
+    "Manglar": -7.54,
+    "Bosque": -6.16,
+    "Cultivo": -8.37,
+    "Pasto": -8.78,
+    "Agua": -19.11
+   },
+   "hv": {
+    "Manglar": -14.12,
+    "Bosque": -12.42,
+    "Cultivo": -15.15,
+    "Pasto": -15.81,
+    "Agua": -23.72
+   },
+   "estero_en_mapa_pct": 84.7,
+   "agua_mapa_detectada_pct": 90.1
+  },
+  {
+   "date": "2026-08-10",
+   "hh": {
+    "Manglar": -7.68,
+    "Bosque": -6.16,
+    "Cultivo": -8.09,
+    "Pasto": -8.64,
+    "Agua": -19.11
+   },
+   "hv": {
+    "Manglar": -14.02,
+    "Bosque": -12.24,
+    "Cultivo": -14.96,
+    "Pasto": -15.44,
+    "Agua": -23.44
+   },
+   "estero_en_mapa_pct": 81.5,
+   "agua_mapa_detectada_pct": 86.6
+  },
+  {
+   "date": "2026-08-22",
+   "hh": {
+    "Manglar": -7.81,
+    "Bosque": -6.3,
+    "Cultivo": -8.37,
+    "Pasto": -8.92,
+    "Agua": -18.98
+   },
+   "hv": {
+    "Manglar": -14.21,
+    "Bosque": -12.42,
+    "Cultivo": -15.34,
+    "Pasto": -15.72,
+    "Agua": -23.62
+   },
+   "estero_en_mapa_pct": 79.4,
+   "agua_mapa_detectada_pct": 89.1
+  },
+  {
+   "date": "2026-09-03",
+   "hh": {
+    "Manglar": -7.13,
+    "Bosque": -5.61,
+    "Cultivo": -7.4,
+    "Pasto": -7.68,
+    "Agua": -16.5
+   },
+   "hv": {
+    "Manglar": -13.55,
+    "Bosque": -11.76,
+    "Cultivo": -13.93,
+    "Pasto": -14.59,
+    "Agua": -23.06
+   },
+   "estero_en_mapa_pct": 82.3,
+   "agua_mapa_detectada_pct": 91.6
+  },
+  {
+   "date": "2026-09-15",
+   "hh": {
+    "Manglar": -7.4,
+    "Bosque": -6.02,
+    "Cultivo": -7.81,
+    "Pasto": -8.5,
+    "Agua": -18.7
+   },
+   "hv": {
+    "Manglar": -14.02,
+    "Bosque": -12.14,
+    "Cultivo": -14.4,
+    "Pasto": -15.25,
+    "Agua": -23.53
+   },
+   "estero_en_mapa_pct": 85.3,
+   "agua_mapa_detectada_pct": 90.8
+  },
+  {
+   "date": "2026-09-27",
+   "hh": {
+    "Manglar": -7.26,
+    "Bosque": -6.02,
+    "Cultivo": -7.81,
+    "Pasto": -8.37,
+    "Agua": -18.56
+   },
+   "hv": {
+    "Manglar": -13.84,
+    "Bosque": -12.05,
+    "Cultivo": -14.4,
+    "Pasto": -15.15,
+    "Agua": -23.44
+   },
+   "estero_en_mapa_pct": 89.3,
+   "agua_mapa_detectada_pct": 89.5
+  },
+  {
+   "date": "2026-10-09",
+   "hh": {
+    "Manglar": -7.26,
+    "Bosque": -5.75,
+    "Cultivo": -7.95,
+    "Pasto": -8.09,
+    "Agua": -17.19
+   },
+   "hv": {
+    "Manglar": -13.84,
+    "Bosque": -11.95,
+    "Cultivo": -14.31,
+    "Pasto": -14.78,
+    "Agua": -22.96
+   },
+   "estero_en_mapa_pct": 85.4,
+   "agua_mapa_detectada_pct": 90.0
+  },
+  {
+   "date": "2026-10-21",
+   "hh": {
+    "Manglar": -7.4,
+    "Bosque": -5.75,
+    "Cultivo": -7.68,
+    "Pasto": -7.95,
+    "Agua": -19.11
+   },
+   "hv": {
+    "Manglar": -13.65,
+    "Bosque": -11.86,
+    "Cultivo": -14.31,
+    "Pasto": -14.59,
+    "Agua": -23.44
+   },
+   "estero_en_mapa_pct": 93.4,
+   "agua_mapa_detectada_pct": 89.9
+  }
+ ]
+}

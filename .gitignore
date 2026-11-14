@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.netrc
+_netrc
+*.zip
+.env

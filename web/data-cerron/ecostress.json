@@ -1,0 +1,471 @@
+{
+ "source": "NASA ECOSTRESS L2T LSTE v002 (70 m)",
+ "bbox": [
+  -89.27,
+  13.93,
+  -88.93,
+  14.13
+ ],
+ "observations": [
+  {
+   "granule": "ECOv002_L2T_LSTE_41997_015_16PBA_20251202T012049_0713_01",
+   "local_time": "2025-12-01T19:20",
+   "date": "2025-12-01",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 27.65,
+   "land_c": 23.69
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42067_001_16PBA_20251206T130600_0713_01",
+   "local_time": "2025-12-06T07:06",
+   "date": "2025-12-06",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 26.45,
+   "land_c": 22.43
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42128_001_16PBA_20251210T113136_0713_01",
+   "local_time": "2025-12-10T05:31",
+   "date": "2025-12-10",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 25.21,
+   "land_c": 21.31
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42189_001_16PBA_20251214T095610_0713_01",
+   "local_time": "2025-12-14T03:56",
+   "date": "2025-12-14",
+   "day": false,
+   "water_px": 191149,
+   "water_total_px": 191215,
+   "water_c": 23.79,
+   "land_c": 21.19
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42480_002_16PBA_20260102T024806_0713_01",
+   "local_time": "2026-01-01T20:48",
+   "date": "2026-01-01",
+   "day": false,
+   "water_px": 188419,
+   "water_total_px": 191215,
+   "water_c": 24.21,
+   "land_c": 18.99
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42532_015_16PBA_20260105T115606_0713_02",
+   "local_time": "2026-01-05T05:56",
+   "date": "2026-01-05",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 25.73,
+   "land_c": 17.11
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42541_001_16PBA_20260106T011430_0713_01",
+   "local_time": "2026-01-05T19:14",
+   "date": "2026-01-05",
+   "day": false,
+   "water_px": 170392,
+   "water_total_px": 191215,
+   "water_c": 22.67,
+   "land_c": 22.25
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42602_001_16PBA_20260109T234118_0713_01",
+   "local_time": "2026-01-09T17:41",
+   "date": "2026-01-09",
+   "day": false,
+   "water_px": 141211,
+   "water_total_px": 191215,
+   "water_c": 27.77,
+   "land_c": 26.15
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42664_001_16PBA_20260113T220700_0713_01",
+   "local_time": "2026-01-13T16:07",
+   "date": "2026-01-13",
+   "day": false,
+   "water_px": 102434,
+   "water_total_px": 191215,
+   "water_c": 25.99,
+   "land_c": 29.23
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42725_001_16PBA_20260117T203251_0713_01",
+   "local_time": "2026-01-17T14:32",
+   "date": "2026-01-17",
+   "day": true,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 31.03,
+   "land_c": 39.51
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42777_014_16PBA_20260121T053920_0713_01",
+   "local_time": "2026-01-20T23:39",
+   "date": "2026-01-20",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 26.13,
+   "land_c": 20.43
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42786_001_16PBA_20260121T185807_0713_01",
+   "local_time": "2026-01-21T12:58",
+   "date": "2026-01-21",
+   "day": true,
+   "water_px": 174016,
+   "water_total_px": 191215,
+   "water_c": 27.13,
+   "land_c": 36.75
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42847_001_16PBA_20260125T172547_0713_01",
+   "local_time": "2026-01-25T11:25",
+   "date": "2026-01-25",
+   "day": true,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 29.91,
+   "land_c": 38.13
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_42908_003_16PBA_20260129T155550_0713_01",
+   "local_time": "2026-01-29T09:55",
+   "date": "2026-01-29",
+   "day": true,
+   "water_px": 172327,
+   "water_total_px": 191215,
+   "water_c": 26.93,
+   "land_c": 32.75
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43045_001_16PBA_20260207T120803_0713_01",
+   "local_time": "2026-02-07T06:08",
+   "date": "2026-02-07",
+   "day": false,
+   "water_px": 180026,
+   "water_total_px": 191215,
+   "water_c": 23.11,
+   "land_c": 15.79
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43106_001_16PBA_20260211T103704_0713_01",
+   "local_time": "2026-02-11T04:37",
+   "date": "2026-02-11",
+   "day": false,
+   "water_px": 182651,
+   "water_total_px": 191215,
+   "water_c": 23.89,
+   "land_c": 18.59
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43167_001_16PBA_20260215T090530_0713_02",
+   "local_time": "2026-02-15T03:05",
+   "date": "2026-02-15",
+   "day": false,
+   "water_px": 183520,
+   "water_total_px": 191215,
+   "water_c": 24.95,
+   "land_c": 18.71
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43228_002_16PBA_20260219T073408_0713_02",
+   "local_time": "2026-02-19T01:34",
+   "date": "2026-02-19",
+   "day": false,
+   "water_px": 181325,
+   "water_total_px": 191215,
+   "water_c": 25.53,
+   "land_c": 20.27
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43289_001_16PBA_20260223T060343_0713_01",
+   "local_time": "2026-02-23T00:03",
+   "date": "2026-02-23",
+   "day": false,
+   "water_px": 71384,
+   "water_total_px": 191215,
+   "water_c": 24.73,
+   "land_c": 21.41
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43289_002_16PBA_20260223T060435_0713_01",
+   "local_time": "2026-02-23T00:04",
+   "date": "2026-02-23",
+   "day": false,
+   "water_px": 153954,
+   "water_total_px": 191215,
+   "water_c": 25.09,
+   "land_c": 22.55
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43351_001_16PBA_20260227T043332_0713_01",
+   "local_time": "2026-02-26T22:33",
+   "date": "2026-02-26",
+   "day": false,
+   "water_px": 183603,
+   "water_total_px": 191215,
+   "water_c": 25.57,
+   "land_c": 21.97
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43413_001_16PBA_20260303T030303_0713_01",
+   "local_time": "2026-03-02T21:03",
+   "date": "2026-03-02",
+   "day": false,
+   "water_px": 163265,
+   "water_total_px": 191215,
+   "water_c": 27.55,
+   "land_c": 26.11
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43734_001_16PBA_20260323T184158_0713_01",
+   "local_time": "2026-03-23T12:41",
+   "date": "2026-03-23",
+   "day": true,
+   "water_px": 164635,
+   "water_total_px": 191215,
+   "water_c": 33.45,
+   "land_c": 46.53
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43796_002_16PBA_20260327T171119_0713_02",
+   "local_time": "2026-03-27T11:11",
+   "date": "2026-03-27",
+   "day": true,
+   "water_px": 111061,
+   "water_total_px": 191215,
+   "water_c": 32.65,
+   "land_c": 44.75
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43858_001_16PBA_20260331T153851_0713_02",
+   "local_time": "2026-03-31T09:38",
+   "date": "2026-03-31",
+   "day": true,
+   "water_px": 66739,
+   "water_total_px": 191215,
+   "water_c": 32.51,
+   "land_c": 42.87
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43858_002_16PBA_20260331T153943_0713_02",
+   "local_time": "2026-03-31T09:39",
+   "date": "2026-03-31",
+   "day": true,
+   "water_px": 165121,
+   "water_total_px": 191215,
+   "water_c": 32.07,
+   "land_c": 40.19
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_43919_001_16PBA_20260404T140715_0713_01",
+   "local_time": "2026-04-04T08:07",
+   "date": "2026-04-04",
+   "day": false,
+   "water_px": 190899,
+   "water_total_px": 191215,
+   "water_c": 30.63,
+   "land_c": 30.69
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_44041_001_16PBA_20260412T110228_0713_01",
+   "local_time": "2026-04-12T05:02",
+   "date": "2026-04-12",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 28.11,
+   "land_c": 22.35
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_44225_001_16PBA_20260424T062508_0713_01",
+   "local_time": "2026-04-24T00:25",
+   "date": "2026-04-24",
+   "day": false,
+   "water_px": 124769,
+   "water_total_px": 191215,
+   "water_c": 23.85,
+   "land_c": 23.23
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_44287_001_16PBA_20260428T045221_0713_01",
+   "local_time": "2026-04-27T22:52",
+   "date": "2026-04-27",
+   "day": false,
+   "water_px": 110635,
+   "water_total_px": 191215,
+   "water_c": 23.39,
+   "land_c": 24.17
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_44348_001_16PBA_20260502T031912_0713_01",
+   "local_time": "2026-05-01T21:19",
+   "date": "2026-05-01",
+   "day": false,
+   "water_px": 147816,
+   "water_total_px": 191215,
+   "water_c": 27.61,
+   "land_c": 25.19
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_44409_001_16PBA_20260506T014558_0713_01",
+   "local_time": "2026-05-05T19:45",
+   "date": "2026-05-05",
+   "day": false,
+   "water_px": 142871,
+   "water_total_px": 191215,
+   "water_c": 24.91,
+   "land_c": 25.41
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_44532_001_16PBA_20260513T223833_0713_01",
+   "local_time": "2026-05-13T16:38",
+   "date": "2026-05-13",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 31.93,
+   "land_c": 32.21
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_44655_001_16PBA_20260521T193052_0713_01",
+   "local_time": "2026-05-21T13:30",
+   "date": "2026-05-21",
+   "day": true,
+   "water_px": 178120,
+   "water_total_px": 191215,
+   "water_c": 36.07,
+   "land_c": 38.47
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_45206_001_16PBA_20260626T052009_0713_01",
+   "local_time": "2026-06-25T23:20",
+   "date": "2026-06-25",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 33.61,
+   "land_c": 28.11
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_45267_001_16PBA_20260630T034532_0713_01",
+   "local_time": "2026-06-29T21:45",
+   "date": "2026-06-29",
+   "day": false,
+   "water_px": 65070,
+   "water_total_px": 191215,
+   "water_c": 22.83,
+   "land_c": 23.55
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_45380_015_16PBA_20260707T112001_0713_01",
+   "local_time": "2026-07-07T05:20",
+   "date": "2026-07-07",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 28.47,
+   "land_c": 23.09
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_45634_001_16PBA_20260723T182707_0713_01",
+   "local_time": "2026-07-23T12:27",
+   "date": "2026-07-23",
+   "day": true,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 32.25,
+   "land_c": 33.09
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_45695_001_16PBA_20260727T165332_0713_02",
+   "local_time": "2026-07-27T10:53",
+   "date": "2026-07-27",
+   "day": true,
+   "water_px": 134155,
+   "water_total_px": 191215,
+   "water_c": 30.25,
+   "land_c": 33.61
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_45756_001_16PBA_20260731T151939_0713_02",
+   "local_time": "2026-07-31T09:19",
+   "date": "2026-07-31",
+   "day": true,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 35.31,
+   "land_c": 37.57
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_45939_001_16PBA_20260812T103634_0713_01",
+   "local_time": "2026-08-12T04:36",
+   "date": "2026-08-12",
+   "day": false,
+   "water_px": 191215,
+   "water_total_px": 191215,
+   "water_c": 32.59,
+   "land_c": 28.01
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_46000_001_16PBA_20260816T090148_0713_02",
+   "local_time": "2026-08-16T03:01",
+   "date": "2026-08-16",
+   "day": false,
+   "water_px": 191201,
+   "water_total_px": 191215,
+   "water_c": 28.63,
+   "land_c": 22.71
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_46799_001_16PBA_20261006T124758_0713_02",
+   "local_time": "2026-10-06T06:47",
+   "date": "2026-10-06",
+   "day": false,
+   "water_px": 164867,
+   "water_total_px": 191215,
+   "water_c": 29.01,
+   "land_c": 24.75
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_47104_001_16PBA_20261026T050506_0713_01",
+   "local_time": "2026-10-25T23:05",
+   "date": "2026-10-25",
+   "day": false,
+   "water_px": 183591,
+   "water_total_px": 191215,
+   "water_c": 24.17,
+   "land_c": 18.51
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_47166_002_16PBA_20261030T033156_0713_01",
+   "local_time": "2026-10-29T21:31",
+   "date": "2026-10-29",
+   "day": false,
+   "water_px": 188513,
+   "water_total_px": 191215,
+   "water_c": 30.27,
+   "land_c": 25.25
+  },
+  {
+   "granule": "ECOv002_L2T_LSTE_47280_012_16PBA_20261106T110516_0713_02",
+   "local_time": "2026-11-06T05:05",
+   "date": "2026-11-06",
+   "day": false,
+   "water_px": 163845,
+   "water_total_px": 191215,
+   "water_c": 30.93,
+   "land_c": 25.31
+  }
+ ]
+}

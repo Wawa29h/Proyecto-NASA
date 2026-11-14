@@ -1,0 +1,191 @@
+{
+ "bbox": [
+  -89.27,
+  13.93,
+  -88.93,
+  14.13
+ ],
+ "worldcover": {
+  "img": "ref/worldcover.png",
+  "codes": "ref/worldcover_codes.png",
+  "legend": {
+   "10": {
+    "name": "Bosque",
+    "color": "#006400"
+   },
+   "20": {
+    "name": "Matorral",
+    "color": "#ffbb22"
+   },
+   "30": {
+    "name": "Pasto",
+    "color": "#ffff4c"
+   },
+   "40": {
+    "name": "Cultivo",
+    "color": "#f096ff"
+   },
+   "50": {
+    "name": "Construido",
+    "color": "#fa0000"
+   },
+   "60": {
+    "name": "Suelo desnudo",
+    "color": "#b4b4b4"
+   },
+   "80": {
+    "name": "Agua",
+    "color": "#0064c8"
+   },
+   "90": {
+    "name": "Humedal herbaceo",
+    "color": "#0096a0"
+   }
+  },
+  "areas_km2": {
+   "Bosque": 253.06,
+   "Matorral": 42.22,
+   "Pasto": 329.78,
+   "Cultivo": 82.82,
+   "Construido": 13.32,
+   "Suelo desnudo": 0.26,
+   "Agua": 93.92,
+   "Humedal herbaceo": 2.13
+  }
+ },
+ "sentinel2": [
+  {
+   "date": "2025-12-29",
+   "img": "ref/s2_2025-12-29.jpg",
+   "scene": "S2C_16PBA_20251229_0_L2A",
+   "cloud_water_pct": 0.0,
+   "floatveg_km2": 2.494,
+   "floatveg_pct": 2.7,
+   "ndci": 0.106,
+   "ndti": -0.356,
+   "veg_img": "ref/s2veg_2025-12-29.png"
+  },
+  {
+   "date": "2026-01-08",
+   "img": "ref/s2_2026-01-08.jpg",
+   "scene": "S2C_16PBA_20260108_1_L2A",
+   "cloud_water_pct": 0.0,
+   "floatveg_km2": 2.893,
+   "floatveg_pct": 3.1,
+   "ndci": 0.144,
+   "ndti": -0.319,
+   "veg_img": "ref/s2veg_2026-01-08.png"
+  },
+  {
+   "date": "2026-02-12",
+   "img": "ref/s2_2026-02-12.jpg",
+   "scene": "S2B_16PBA_20260212_0_L2A",
+   "cloud_water_pct": 0.0,
+   "floatveg_km2": 14.806,
+   "floatveg_pct": 15.8,
+   "ndci": 0.257,
+   "ndti": -0.412,
+   "veg_img": "ref/s2veg_2026-02-12.png"
+  },
+  {
+   "date": "2026-03-24",
+   "img": "ref/s2_2026-03-24.jpg",
+   "scene": "S2B_16PBA_20260324_0_L2A",
+   "cloud_water_pct": 2.8,
+   "floatveg_km2": 22.617,
+   "floatveg_pct": 24.8,
+   "ndci": 0.099,
+   "ndti": -0.116,
+   "veg_img": "ref/s2veg_2026-03-24.png"
+  },
+  {
+   "date": "2026-04-10",
+   "img": "ref/s2_2026-04-10.jpg",
+   "scene": "S2B_16PBA_20260410_0_L2A",
+   "cloud_water_pct": 5.0,
+   "floatveg_km2": 17.248,
+   "floatveg_pct": 19.3,
+   "ndci": 0.21,
+   "ndti": -0.415,
+   "veg_img": "ref/s2veg_2026-04-10.png"
+  },
+  {
+   "date": "2026-05-13",
+   "img": "ref/s2_2026-05-13.jpg",
+   "scene": "S2B_16PBA_20260513_0_L2A",
+   "cloud_water_pct": 0.3,
+   "floatveg_km2": 37.929,
+   "floatveg_pct": 40.5,
+   "ndci": 0.186,
+   "ndti": -0.317,
+   "veg_img": "ref/s2veg_2026-05-13.png"
+  },
+  {
+   "date": "2026-06-14",
+   "img": "ref/s2_2026-06-14.jpg",
+   "scene": "S2C_16PBA_20260614_0_L2A",
+   "cloud_water_pct": 5.7,
+   "floatveg_km2": 30.234,
+   "floatveg_pct": 34.2,
+   "ndci": 0.288,
+   "ndti": -0.29,
+   "veg_img": "ref/s2veg_2026-06-14.png"
+  },
+  {
+   "date": "2026-07-07",
+   "img": "ref/s2_2026-07-07.jpg",
+   "scene": "S2C_16PBA_20260707_0_L2A",
+   "cloud_water_pct": 0.1,
+   "floatveg_km2": 11.246,
+   "floatveg_pct": 12.0,
+   "ndci": 0.204,
+   "ndti": -0.216,
+   "veg_img": "ref/s2veg_2026-07-07.png"
+  },
+  {
+   "date": "2026-08-13",
+   "img": "ref/s2_2026-08-13.jpg",
+   "scene": "S2C_16PBA_20260813_0_L2A",
+   "cloud_water_pct": 7.0,
+   "floatveg_km2": 10.802,
+   "floatveg_pct": 12.4,
+   "ndci": 0.243,
+   "ndti": -0.346,
+   "veg_img": "ref/s2veg_2026-08-13.png"
+  },
+  {
+   "date": "2026-09-10",
+   "img": "ref/s2_2026-09-10.jpg",
+   "scene": "S2B_16PBA_20260910_0_L2A",
+   "cloud_water_pct": 6.9,
+   "floatveg_km2": 17.939,
+   "floatveg_pct": 20.5,
+   "ndci": 0.244,
+   "ndti": -0.285,
+   "veg_img": "ref/s2veg_2026-09-10.png"
+  },
+  {
+   "date": "2026-10-27",
+   "img": "ref/s2_2026-10-27.jpg",
+   "scene": "S2A_16PBA_20261027_1_L2A",
+   "cloud_water_pct": 0.0,
+   "floatveg_km2": 11.055,
+   "floatveg_pct": 11.8,
+   "ndci": 0.173,
+   "ndti": -0.215,
+   "veg_img": "ref/s2veg_2026-10-27.png"
+  },
+  {
+   "date": "2026-11-09",
+   "img": "ref/s2_2026-11-09.jpg",
+   "scene": "S2B_16PBA_20261109_0_L2A",
+   "cloud_water_pct": 0.0,
+   "floatveg_km2": 13.643,
+   "floatveg_pct": 14.5,
+   "ndci": 0.307,
+   "ndti": -0.325,
+   "veg_img": "ref/s2veg_2026-11-09.png"
+  }
+ ],
+ "lake": true
+}
