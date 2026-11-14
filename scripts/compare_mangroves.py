@@ -35,7 +35,7 @@ def main():
         codes = np.array(Image.open(os.path.join(base, "ref", "worldcover_codes.png")))
         mang = codes == 95
         px = S["step"] * 111.32 * S["step"] * 111.32 * np.cos(np.radians((S["bbox"][1] + S["bbox"][3]) / 2))
-        dates = [d for d in S["dates"] if d.get("qc", True) and (d.get("coverage_pct") or 100) >= 70]
+        dates = [d for d in S["dates"] if d.get("qc", True) and (d.get("coverage_pct") or 100) >= 50]
         rows, hvs = [], []
         for d in dates:
             hh, hv = load(base, d, S["hh_range"])

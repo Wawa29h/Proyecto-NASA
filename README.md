@@ -42,6 +42,14 @@ python scripts/fetch_swot.py --site cerron
 python scripts/fetch_ecostress.py --site cerron
 python scripts/fetch_rain.py --site cerron
 python scripts/train_radar_from_photo.py --site cerron  # IA: el radar aprende de la foto (~1 min)
+python scripts/lirio_alert.py                          # alerta de lirio por 4 zonas + mensaje para compartir
+python scripts/cloud_stats.py                          # el problema de las nubes, medido SOBRE el embalse
+
+# Bahia de Jiquilisco (manglar de comparacion; borde con ruido + relleno con otras orbitas)
+python scripts/search_granules.py --point "POINT(-88.50 13.25)" --out data/granules_jiquilisco.json
+python scripts/fetch_reference.py --bbox -88.70 13.17 -88.30 13.33 --out web/data-jiquilisco --months
+python scripts/fetch_gcov.py --granules data/granules_jiquilisco.json --frames 8 --bbox -88.70 13.17 -88.30 13.33 --out web/data-jiquilisco --edge-trim --fill-tracks
+python scripts/compare_mangroves.py
 
 python -m http.server 5560 --directory web             # abrir http://localhost:5560  (?site=cerron)
 ```
@@ -56,6 +64,14 @@ sin eso, `fetch_rain.py` usa NASA POWER y lo indica en la app.
 1. **Lectura remota**: de cada GCOV (~7 GB) solo se leen los bloques del recuadro; se remuestrea a una malla
    lat/lon de ~20 m, igual para todas las misiones.
 2. **Frames unidos**: si una pasada corta el recuadro, se rellena con el frame vecino de la misma pasada.
+   - **Borde con ruido** (`--edge-trim`): se usa la máscara oficial de NISAR (255 = fuera del escaneo; 0 =
+     parcialmente enfocado, que solo se descarta si su señal es de verdad ruido, porque algunas versiones del
+     producto marcan todo el frame con 0). Además se mide la señal HV sobre tierra según la distancia al borde
+     de la franja y se recorta la zona donde está bajo el piso de ruido (~−24 dB).
+   - **Otra órbita** (`--fill-tracks`): lo que siga faltando se rellena con la pasada más cercana (≤ 7 días)
+     de otro track (p. ej. descendente 26 o ascendente 33). Antes se iguala el brillo con la diferencia
+     mediana en la zona que ven las dos órbitas. Cada píxel rellenado queda marcado (`<fecha>_src.png`:
+     rayas celestes = otra órbita, rayas grises = sin escaneo) y la app lo indica bajo la fecha.
 3. **Umbral calibrado por fecha**: en cada fecha se mide la señal de agua y de vegetación *conocidas*
    (WorldCover) y el corte se pone al 35 % entre ambas. Así la regla se adapta a la época
    (agua rugosa en lluvias, suelo mojado).
@@ -84,6 +100,26 @@ sin eso, `fetch_rain.py` usa NASA POWER y lo indica en la app.
 - **Manglar inundado**: doble rebote agua → tronco → radar → muy brillante en HH.
 - **Plantas flotantes / vegetación**: dispersión de volumen → HV alta.
 - La banda L (24 cm) atraviesa el dosel y ve con nubes, de día y de noche.
+
+## El problema que resuelve: las nubes
+
+Medido píxel a píxel sobre el agua del embalse (capa de nubes SCL de Sentinel-2), dic-2025 a oct-2026:
+
+| Época | Fotos con el embalse tapado (< 50 % visible) | Racha más larga sin foto despejada |
+|---|---|---|
+| Lluvias (may–oct) | **45 %** | **15 días** (7–22 jul; NISAR pasó el 17 jul) |
+| Seca (dic–abr) | 6 % | 6 días |
+
+El 15-sep-2026 la foto salió 100 % tapada sobre el embalse; NISAR + IA vieron 14,7 km² de plantas ese día.
+Nota: el "% de nubes" que trae cada escena es de todo el recuadro de 100 km y exagera el problema; aquí se usa
+solo el embalse.
+
+## Alerta de lirio por zonas
+
+`scripts/lirio_alert.py` divide el embalse en 4 zonas (entrada del Lempa, norte, centro, brazo sur) y para cada
+pasada calcula km² con lirio, % del agua, cambio contra la pasada anterior y nivel (bajo/medio/alto respecto al
+año en esa zona), más un mensaje corto para compartir. La entrada del Lempa pasa de ~2,3 km² en verano a ~6,5 km²
+en lluvias (hasta ~50 % de su agua).
 
 ## Hallazgos (preliminares)
 

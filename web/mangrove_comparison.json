@@ -97,98 +97,98 @@
  },
  "Bahia de Jiquilisco": {
   "mangrove_km2": 176.7,
-  "mangrove_seen_km2": 136.7,
+  "mangrove_seen_km2": 90.4,
   "dates": [
    {
     "date": "2025-12-13",
-    "hv_mangrove": -17.69,
+    "hv_mangrove": -16.09,
     "flooded_mangrove_pct": 0.0,
-    "water_km2": 75.049
+    "water_km2": 17.221
    },
    {
     "date": "2025-12-25",
-    "hv_mangrove": -17.51,
+    "hv_mangrove": -15.91,
     "flooded_mangrove_pct": 0.0,
-    "water_km2": 75.365
+    "water_km2": 18.108
    },
    {
     "date": "2026-01-06",
-    "hv_mangrove": -17.41,
+    "hv_mangrove": -15.72,
     "flooded_mangrove_pct": 0.0,
-    "water_km2": 75.571
+    "water_km2": 19.7
    },
    {
     "date": "2026-01-18",
-    "hv_mangrove": -17.41,
+    "hv_mangrove": -15.72,
     "flooded_mangrove_pct": 0.0,
-    "water_km2": 75.782
+    "water_km2": 19.113
    },
    {
     "date": "2026-07-05",
-    "hv_mangrove": -14.02,
+    "hv_mangrove": -14.31,
     "flooded_mangrove_pct": 0.2,
-    "water_km2": 59.0
+    "water_km2": 37.803
    },
    {
     "date": "2026-07-17",
-    "hv_mangrove": -14.02,
-    "flooded_mangrove_pct": 0.4,
-    "water_km2": 59.632
+    "hv_mangrove": -14.21,
+    "flooded_mangrove_pct": 0.5,
+    "water_km2": 38.558
    },
    {
     "date": "2026-08-10",
-    "hv_mangrove": -13.74,
-    "flooded_mangrove_pct": 0.2,
-    "water_km2": 60.951
+    "hv_mangrove": -14.02,
+    "flooded_mangrove_pct": 0.3,
+    "water_km2": 39.311
    },
    {
     "date": "2026-08-22",
-    "hv_mangrove": -13.84,
+    "hv_mangrove": -14.21,
     "flooded_mangrove_pct": 0.2,
-    "water_km2": 60.074
+    "water_km2": 38.999
    },
    {
     "date": "2026-09-03",
-    "hv_mangrove": -13.36,
-    "flooded_mangrove_pct": 0.7,
-    "water_km2": 57.491
+    "hv_mangrove": -13.65,
+    "flooded_mangrove_pct": 0.8,
+    "water_km2": 36.371
    },
    {
     "date": "2026-09-15",
-    "hv_mangrove": -13.55,
-    "flooded_mangrove_pct": 1.2,
-    "water_km2": 57.117
+    "hv_mangrove": -13.93,
+    "flooded_mangrove_pct": 1.1,
+    "water_km2": 35.639
    },
    {
     "date": "2026-09-27",
-    "hv_mangrove": -13.27,
-    "flooded_mangrove_pct": 0.9,
-    "water_km2": 57.639
+    "hv_mangrove": -13.55,
+    "flooded_mangrove_pct": 1.0,
+    "water_km2": 35.007
    },
    {
     "date": "2026-10-09",
-    "hv_mangrove": -13.55,
-    "flooded_mangrove_pct": 0.3,
-    "water_km2": 58.732
+    "hv_mangrove": -13.93,
+    "flooded_mangrove_pct": 0.4,
+    "water_km2": 36.435
    },
    {
     "date": "2026-10-21",
-    "hv_mangrove": -13.65,
-    "flooded_mangrove_pct": 0.2,
-    "water_km2": 57.552
+    "hv_mangrove": -14.02,
+    "flooded_mangrove_pct": 0.3,
+    "water_km2": 34.64
    }
   ],
-  "hv_range_db": 4.42,
+  "hv_range_db": 2.54,
   "flooded_range_pct": [
    0.0,
-   1.2
+   1.1
   ],
   "water_range_km2": [
-   57.117,
-   75.782
+   17.221,
+   39.311
   ],
   "loss_km2": 0.03,
-  "loss_pct": 0.02,
-  "gain_km2": 82.97
+  "loss_pct": 0.03,
+  "gain_km2": 48.27
  }
 }

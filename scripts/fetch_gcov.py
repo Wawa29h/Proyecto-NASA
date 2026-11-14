@@ -15,6 +15,7 @@ La primera vez earthaccess te pide usuario y contrasena de Earthdata (los escrib
 y los guarda en ~/.netrc.
 """
 import argparse
+import datetime as dt
 import json
 import os
 import re
@@ -113,10 +114,30 @@ def read_crop(fobj):
         print(f"    recorte filas {r0}:{r1} cols {c0}:{c1} (EPSG {epsg})", flush=True)
         hh = g["HHHH"][r0:r1, c0:c1].astype(np.float32)
         hv = g["HVHV"][r0:r1, c0:c1].astype(np.float32) if "HVHV" in g else np.full_like(hh, np.nan)
+        # mascara oficial NISAR: 0 = muestra parcialmente enfocada/invalida, 255 = fuera del escaneo
+        mk = g["mask"][r0:r1, c0:c1] if "mask" in g else None
         sx, sy = xs[c0:c1], ys[r0:r1]
 
     for a in (hh, hv):
         a[(a <= 0) | ~np.isfinite(a)] = np.nan
+    if mk is not None:
+        # 255 = fuera del escaneo (siempre se descarta).
+        # 0 = "parcialmente enfocado": en algunas versiones del producto marca TODO el frame aunque la senal es
+        # normal, asi que solo se descarta si de verdad es ruido (mucho mas debil que lo valido, o bajo el piso de ruido).
+        z, ok1 = mk == 0, (mk >= 1) & (mk < 255)
+        drop0 = False
+        if z.any():
+            with np.errstate(divide="ignore", invalid="ignore"):
+                h0 = 10 * np.log10(np.nanmedian(hh[z]))
+                v0 = 10 * np.log10(np.nanmedian(hv[z]))
+                h1 = 10 * np.log10(np.nanmedian(hh[ok1])) if ok1.sum() > 1000 else None
+            drop0 = (h1 is not None and h0 < h1 - 6) or v0 < NOISE_HV - 2
+            print(f"    mascara NISAR: {100 * z.mean():.0f}% marcado 0 (HH {h0:.1f} dB vs {h1 if h1 is None else round(h1, 1)} dB) -> "
+                  + ("descartado (ruido)" if drop0 else "se conserva (senal normal)"), flush=True)
+        for a in (hh, hv):
+            a[mk == 255] = np.nan
+            if drop0:
+                a[z] = np.nan
     hh = box_mean(hh, 1)
     hv = box_mean(hv, 1)
 
@@ -311,18 +332,39 @@ def reclassify(series):
     save_series(series)
 
 
-def save_entry(HH, HV, meta, scenes, frames):
+def src_png(HH, filled, ident):
+    """Capa de transparencia: rayas grises = sin escaneo / senal debil; rayas celestes = dato de otra orbita."""
+    ny, nx = HH.shape
+    yy, xx = np.mgrid[0:ny, 0:nx]
+    stripe = ((xx + yy) % 14) < 3
+    rgba = np.zeros((ny, nx, 4), np.uint8)
+    nodata = ~np.isfinite(HH)
+    rgba[nodata & stripe] = (150, 160, 165, 170)
+    rgba[nodata & ~stripe] = (40, 48, 52, 70)
+    if filled is not None:
+        rgba[filled & stripe] = (79, 195, 247, 200)
+    Image.fromarray(rgba, "RGBA").save(os.path.join(OUT, f"{ident}_src.png"), optimize=True)
+
+
+def save_entry(HH, HV, meta, scenes, frames, fill=None, filled=None, edge_km=None):
     ident = f"{meta['date']}_{meta['direction'][0]}{meta['track']}"
     stats = make_products(HH, HV, ident)
+    src_png(HH, filled, ident)
     entry = {"id": ident, "date": meta["date"], "direction": meta["direction"], "track": meta["track"],
              "frame": frames[0] if len(frames) == 1 else frames, "scene": scenes[0] if len(scenes) == 1 else scenes,
              "coverage_pct": round(100 * float(np.isfinite(HH).mean()), 1),
-             "rgb": f"data/{ident}_rgb.png", "hh": f"data/{ident}_hh.png", "cls": f"data/{ident}_cls.png", **stats}
+             "filled_pct": round(100 * float(filled.mean()), 1) if filled is not None else 0.0,
+             "fill_from": fill or [], "edge_trim_km": edge_km,
+             "rgb": f"data/{ident}_rgb.png", "hh": f"data/{ident}_hh.png", "cls": f"data/{ident}_cls.png",
+             "src": f"data/{ident}_src.png", **stats}
+    if entry["filled_pct"] > 50:  # ya no representa esa fecha: es casi entera otra pasada de otro dia
+        entry["qc"] = False
+        entry["qc_reason"] = "mas de la mitad viene de otra orbita"
     series = load_series()  # releer: puede haber otros procesos escribiendo en paralelo
     series["dates"] = [d for d in series["dates"] if d["id"] != ident] + [entry]
     save_series(series)
-    print(f"  {ident}: cobertura {entry['coverage_pct']}% (frames {frames}) | agua {stats['water_km2']} km2 | "
-          f"veg. inundada {stats['floodveg_km2']} km2", flush=True)
+    print(f"  {ident}: cobertura {entry['coverage_pct']}% (frames {frames}, rellenado {entry['filled_pct']}% de otra orbita, "
+          f"borde recortado {edge_km} km) | agua {stats['water_km2']} km2 | veg. inundada {stats['floodveg_km2']} km2", flush=True)
 
 
 def process(fobj, meta, series):
@@ -336,6 +378,58 @@ def merge(acc, new):
     if acc is None:
         return new
     return tuple(np.where(np.isfinite(a), a, b) for a, b in zip(acc, new))
+
+
+NOISE_HV = -24.0  # dB: por debajo de esto, sobre tierra, HV es casi solo ruido del instrumento
+
+
+def edge_trim(crop):
+    """Quita el borde de la franja donde la senal es tan debil que solo queda ruido.
+    Mide la mediana de HV sobre tierra (mapa ESA) segun la distancia al borde del escaneo y descarta
+    la zona mas cercana al borde hasta que la senal supera NOISE_HV. Devuelve (crop, km_recortados)."""
+    from scipy import ndimage
+    HH, HV = crop
+    codes = wc_codes(HH.shape)
+    valid = np.isfinite(HH)
+    if codes is None or valid.mean() > 0.999:
+        return crop, 0.0
+    land = np.isin(codes, [10, 20, 30, 40, 95]) & valid & np.isfinite(HV)
+    km_px = STEP * 111.32
+    dist = ndimage.distance_transform_edt(valid) * km_px
+    with np.errstate(divide="ignore", invalid="ignore"):
+        hv_db = 10 * np.log10(HV)
+    cut = 0.0
+    for a in np.arange(0, 20, 0.5):
+        m = land & (dist >= a) & (dist < a + 0.5)
+        if m.sum() < 300:
+            continue
+        if np.nanmedian(hv_db[m]) >= NOISE_HV:
+            cut = a
+            break
+    else:
+        return crop, 0.0
+    if cut > 0:
+        bad = valid & (dist < cut)
+        HH = np.where(bad, np.nan, HH)
+        HV = np.where(bad, np.nan, HV)
+    return (HH, HV), float(cut)
+
+
+def fill_from(acc, new):
+    """Rellena huecos de acc con otra orbita. Antes iguala el brillo: en la zona donde las dos ven,
+    calcula la diferencia mediana (dB) de HH y HV y se la aplica a la otra orbita.
+    Devuelve (acc_nuevo, mascara_rellenada, info)."""
+    HHa, HVa = acc
+    HHn, HVn = new
+    both = np.isfinite(HHa) & np.isfinite(HHn) & np.isfinite(HVa) & np.isfinite(HVn)
+    off = {"hh_db": 0.0, "hv_db": 0.0, "overlap_px": int(both.sum())}
+    if both.sum() > 2000:
+        for k, A, Bn in (("hh_db", HHa, HHn), ("hv_db", HVa, HVn)):
+            off[k] = round(float(np.median(10 * np.log10(A[both])) - np.median(10 * np.log10(Bn[both]))), 2)
+    HHn = HHn * 10 ** (off["hh_db"] / 10)
+    HVn = HVn * 10 ** (off["hv_db"] / 10)
+    hole = ~np.isfinite(HHa) & np.isfinite(HHn)
+    return (np.where(hole, HHn, HHa), np.where(hole, HVn, HVa)), hole, off
 
 
 def meta_from_name(path):
@@ -362,6 +456,9 @@ def main():
     ap.add_argument("--granules", default="data/granules.json", help="lista de granulos (search_granules.py --out)")
     ap.add_argument("--reclassify", action="store_true", help="recalcular clases desde las capas guardadas")
     ap.add_argument("--redo-partial", action="store_true", help="volver a procesar fechas con cobertura < 99%%")
+    ap.add_argument("--edge-trim", action="store_true", help="quitar el borde de la franja con senal debil (ruido)")
+    ap.add_argument("--fill-tracks", action="store_true", help="rellenar huecos con pasadas de otras orbitas")
+    ap.add_argument("--fill-days", type=int, default=7, help="dias maximos entre la fecha y la pasada de relleno")
     a = ap.parse_args()
     global BBOX, OUT, OCEAN_R
     if a.bbox:
@@ -384,7 +481,8 @@ def main():
         return
 
     with open(os.path.join(ROOT, a.granules), encoding="utf-8") as fh:
-        grans = [g for g in json.load(fh) if g["track"] == a.track and g["frame"] in a.frames]
+        all_grans = json.load(fh)
+    grans = [g for g in all_grans if g["track"] == a.track and g["frame"] in a.frames]
     if a.dates:
         grans = [g for g in grans if g["date"] in a.dates]
     by_date = {}
@@ -412,29 +510,60 @@ def main():
         sys.exit("No se pudo iniciar sesion en Earthdata (revisa usuario/contrasena en ~/.netrc)")
     print("Sesion Earthdata OK", flush=True)
     fs = earthaccess.get_fsspec_https_session()
+    def read(g, label):
+        for attempt in range(3):  # la lectura remota a veces falla por la red: reintentar
+            try:
+                print(f"  {g['date']}: leyendo {label}..." + (f" (intento {attempt + 1})" if attempt else ""), flush=True)
+                with fs.open(g["url"], "rb", block_size=4 * 1024 * 1024, cache_type="blockcache") as fobj:
+                    return read_crop(fobj)
+            except Exception as e:
+                msg = str(e) or type(e).__name__
+                if "no cae dentro" in msg:
+                    print(f"    {label} no cubre la zona", flush=True)
+                    return None
+                print(f"    {label} fallo: {msg[:120]}", flush=True)
+        return None
+
+    d0 = lambda s: dt.date.fromisoformat(s)
     for date in todo:
+        # 1) frames vecinos de la misma pasada
         acc, scenes, frames = None, [], []
         for g in by_date[date]:
             if acc is not None and np.isfinite(acc[0]).mean() > 0.995:
                 break  # ya esta completo, no hace falta el siguiente frame
-            for attempt in range(3):  # la lectura remota a veces falla por la red: reintentar
-                try:
-                    print(f"  {date}: leyendo frame {g['frame']}..." + (f" (intento {attempt + 1})" if attempt else ""), flush=True)
-                    with fs.open(g["url"], "rb", block_size=4 * 1024 * 1024, cache_type="blockcache") as fobj:
-                        acc = merge(acc, read_crop(fobj))
-                    scenes.append(g["scene"])
-                    frames.append(g["frame"])
-                    break
-                except Exception as e:
-                    msg = str(e) or type(e).__name__
-                    if "no cae dentro" in msg:
-                        print(f"    frame {g['frame']} no cubre la zona", flush=True)
-                        break
-                    print(f"    frame {g['frame']} fallo: {msg[:120]}", flush=True)
+            crop = read(g, f"frame {g['frame']}")
+            if crop is not None:
+                acc = merge(acc, crop)
+                scenes.append(g["scene"])
+                frames.append(g["frame"])
         if acc is None:
             print(f"    ERROR {date}: ningun frame cubre la zona", flush=True)
             continue
-        save_entry(acc[0], acc[1], by_date[date][0], scenes, frames)
+        # 2) quitar el borde con ruido
+        edge_km = None
+        if a.edge_trim:
+            acc, edge_km = edge_trim(acc)
+        # 3) rellenar lo que falte con otras orbitas (la mas cercana en fecha primero)
+        fill, filled = [], np.zeros(acc[0].shape, bool)
+        if a.fill_tracks and np.isfinite(acc[0]).mean() < 0.995:
+            cands = [g for g in all_grans if g["track"] != a.track and abs((d0(g["date"]) - d0(date)).days) <= a.fill_days]
+            cands.sort(key=lambda g: (abs((d0(g["date"]) - d0(date)).days), g["track"], g["frame"]))
+            for g in cands:
+                if np.isfinite(acc[0]).mean() > 0.995:
+                    break
+                crop = read(g, f"track {g['track']} {g['direction'][:4]} frame {g['frame']} ({g['date']})")
+                if crop is None:
+                    continue
+                if a.edge_trim:
+                    crop, _ = edge_trim(crop)
+                acc, hole, off = fill_from(acc, crop)
+                if hole.any():
+                    filled |= hole
+                    fill.append({"track": g["track"], "direction": g["direction"], "frame": g["frame"], "date": g["date"],
+                                 "gap_days": abs((d0(g["date"]) - d0(date)).days), "pct": round(100 * float(hole.mean()), 1), **off})
+                    print(f"    relleno {round(100 * float(hole.mean()), 1)}% con track {g['track']} ({g['date']}), "
+                          f"ajuste HH {off['hh_db']} dB, HV {off['hv_db']} dB", flush=True)
+        save_entry(acc[0], acc[1], by_date[date][0], scenes, frames, fill, filled if a.fill_tracks else None, edge_km)
 
 
 if __name__ == "__main__":

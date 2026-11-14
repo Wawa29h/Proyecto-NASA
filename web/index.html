@@ -43,15 +43,15 @@
     <div class="hero-sites">
       <button class="site-card" data-site="cerron">
         <span class="sc-ico">💧</span><b>Embalse Cerrón Grande</b>
-        <span>Nivel del agua, plantas flotantes, temperatura e inteligencia artificial · 5 misiones</span>
+        <span><b style="color:var(--accent)">El problema:</b> lirio acuático que crece en lluvias, cuando las nubes no dejan verlo · alerta por zonas</span>
       </button>
       <button class="site-card" data-site="barra">
         <span class="sc-ico">🌿</span><b>Barra de Santiago</b>
-        <span>Manglar y estero junto al mar · comprobado con el mapa oficial de la ESA</span>
+        <span><b style="color:#9fd0ff">Control:</b> manglar estable, comprobado con el mapa oficial de la ESA</span>
       </button>
       <button class="site-card" data-site="jiquilisco">
         <span class="sc-ico">🌳</span><b>Bahía de Jiquilisco</b>
-        <span>El manglar más grande del país · comparado con Barra de Santiago</span>
+        <span><b style="color:#9fd0ff">Control:</b> el manglar más grande del país, igual de estable</span>
       </button>
     </div>
     <div class="hero-cta">
@@ -86,6 +86,28 @@
   </section>
 
   <aside class="panel">
+    <div class="card wow" id="wowCard" hidden>
+      <p class="eyebrow">Ese día llovía</p>
+      <h3 class="wow-h" id="wowTitle"></h3>
+      <p class="wow-lead" id="wowLead"></p>
+      <div class="wowcmp" id="wowCmp">
+        <img id="wowRadar" alt="Radar NISAR con el lirio marcado en amarillo">
+        <img id="wowPhoto" alt="Foto satelital del mismo día, tapada por nubes">
+        <span class="wl l">📷 Foto normal</span><span class="wl r">📡 Radar NISAR</span>
+        <input type="range" id="wowRange" min="0" max="100" value="55" aria-label="Comparar foto y radar">
+      </div>
+      <div class="kpis" id="wowKpis"></div>
+      <button class="btn primary" id="wowMap">Verlo en el mapa →</button>
+    </div>
+
+    <div class="card" id="alertCard" hidden>
+      <h3>Alerta de lirio por zonas</h3>
+      <div class="azones" id="alertZones"></div>
+      <pre class="alertmsg" id="alertMsg"></pre>
+      <div class="row"><button class="btn primary" id="alertCopy">📋 Copiar mensaje</button><span class="hint" id="alertCopied"></span></div>
+      <p class="hint">Mensaje corto para compartir con pescadores, cooperativas o la alcaldía. Zonas aproximadas; el nivel se compara con el resto del año en la misma zona. Dato experimental: confirmar en el lugar.</p>
+    </div>
+
     <div class="card" id="semaCard" hidden>
       <h3>¿Cómo está en esta fecha?</h3>
       <div class="sema" id="sema"></div>
@@ -98,6 +120,7 @@
         <button id="play" class="btn" aria-label="Reproducir">▶ Animar</button>
       </div>
       <div class="datebig" id="dateLabel">—</div>
+      <div class="fillnote" id="fillNote" hidden></div>
       <input type="range" id="dateSlider" min="0" max="0" value="0">
       <div class="ticks" id="ticks"></div>
       <div class="seasons" id="seasons"></div>
@@ -110,6 +133,7 @@
         <button data-ref="s2" class="on">Foto Sentinel-2</button>
         <button data-ref="wc">Mapa ESA WorldCover</button>
         <button data-ref="veg" id="refVegBtn" hidden>Plantas (Sentinel-2)</button>
+        <button data-ref="cloud" id="refCloudBtn" hidden>☁ Día nublado</button>
       </div>
       <div id="truthInfo" class="probe"></div>
       <div class="legend" id="legendWc" hidden></div>

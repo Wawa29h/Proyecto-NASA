@@ -5,7 +5,7 @@ let SITE = null, BASE = "data";
 // rutas guardadas como "data/x.png" o "ref/x.png" -> carpeta del sitio
 const P = (p) => (p ? BASE + "/" + p.replace(/^data\//, "") : p);
 const getJSON = async (p) => { try { const r = await fetch(p, { cache: "no-store" }); return r.ok ? await r.json() : null; } catch { return null; } };
-let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null;
+let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null, CLOUDS = null, ALERTS = null;
 const mlFor = (d) => ML?.dates.find((m) => m.id === d.id);
 const fmtDate = (s) => new Date(s + "T12:00:00").toLocaleDateString("es-SV", { day: "numeric", month: "short", year: "numeric" });
 
@@ -30,21 +30,21 @@ map.createPane("paneA"); map.createPane("paneB"); map.createPane("paneChange");
 ["paneA", "paneB", "paneChange"].forEach((p) => (map.getPane(p).style.zIndex = 410));
 map.getPane("paneB").style.zIndex = 411;
 
-let ovA = null, ovB = null, ovChange = null, probeMarker = null;
+let ovA = null, ovB = null, ovChange = null, ovSrc = null, probeMarker = null;
 
 function overlay(url, pane) {
   return L.imageOverlay(url, bounds, { pane, opacity: state.opacity, interactive: false }).addTo(map);
 }
 function clearOverlays() {
-  [ovA, ovB, ovChange].forEach((o) => o && map.removeLayer(o));
-  ovA = ovB = ovChange = null;
+  [ovA, ovB, ovChange, ovSrc].forEach((o) => o && map.removeLayer(o));
+  ovA = ovB = ovChange = ovSrc = null;
 }
 const urlFor = (d) => P(state.layer === "cls" ? d.cls : d.rgb);
 // capa IA: falso color atenuado debajo + plantas detectadas por el modelo encima
-function mlOverlay(d) {
+function mlOverlay(d, pane = "paneChange") {
   const m = mlFor(d);
   if (state.layer !== "ml" || !m) return null;
-  return L.imageOverlay(P(m.img), bounds, { pane: "paneChange", opacity: 1, interactive: false }).addTo(map);
+  return L.imageOverlay(P(m.img), bounds, { pane, opacity: 1, interactive: false }).addTo(map);
 }
 
 // ---------- recorte del comparador ----------
@@ -99,7 +99,7 @@ function render() {
   if (single) {
     const d = S.dates[state.idx];
     ovA = overlay(urlFor(d), "paneA");
-    if (state.layer === "ml") { ovA.setOpacity(Math.min(state.opacity, 0.5)); if (state.mode === "single") ovChange = mlOverlay(d); }
+    if (state.layer === "ml") { ovA.setOpacity(Math.min(state.opacity, 0.5)); if (state.mode === "single") ovChange = mlOverlay(d); else if (state.mode === "truth" && state.ref === "cloud") ovChange = mlOverlay(d, "paneA"); }
     if (prevA) {
       const target = ovA.options.opacity, cur = ovA;
       cur.setOpacity(0);
@@ -108,9 +108,25 @@ function render() {
     }
     $("dateLabel").textContent = fmtDate(d.date);
     $("dateSlider").value = state.idx;
+    // de dónde viene cada pedazo: rayas grises = sin escaneo; celestes = rellenado con otra órbita
+    if (d.src) ovSrc = L.imageOverlay(P(d.src), bounds, { pane: "paneChange", opacity: 1, interactive: false }).addTo(map);
+    const fills = d.fill_from || [];
+    const note = $("fillNote");
+    if (d.coverage_pct != null && (d.coverage_pct < 99.5 || fills.length || d.edge_trim_km)) {
+      note.hidden = false;
+      note.innerHTML = `Cobertura <b>${Math.round(d.coverage_pct)} %</b>` +
+        (fills.length ? ` · <span class="c-fill">▨ ${fills.map((f) => `${f.pct} % de la órbita ${f.track} ${f.direction === "DESCENDING" ? "descendente" : "ascendente"} (${f.gap_days} días)`).join(", ")}</span>` : "") +
+        (d.coverage_pct < 99.5 ? ` · <span class="c-gap">▨ sin escaneo${fills.length ? "" : ": no había otra órbita cerca"}</span>` : "") +
+        (d.edge_trim_km ? ` · borde con ruido recortado (${d.edge_trim_km} km)` : "");
+    } else note.hidden = true;
     if (state.mode === "truth" && REF) {
       $("tagA").textContent = "NISAR · " + fmtDate(d.date);
-      if (state.ref === "s2" || state.ref === "veg") {
+      if (state.ref === "cloud" && CLOUDS?.wow) {
+        const w = CLOUDS.wow;
+        ovB = L.imageOverlay(P(w.photo), bounds, { pane: "paneB", opacity: 1, interactive: false }).addTo(map);
+        $("tagB").textContent = `Foto del ${fmtDate(w.photo_date)} · ${w.cloud_pct} % nubes`;
+        $("truthInfo").innerHTML = `Ese día la foto normal salió tapada: <b>${w.cloud_pct} %</b> del embalse con nubes. El radar del ${fmtDate(w.nisar_date)} lo ve completo y la IA encontró <b>${w.ml_km2.toFixed(1)} km²</b> de plantas (amarillo).`;
+      } else if (state.ref === "s2" || state.ref === "veg") {
         const s = nearestS2(d.date);
         ovB = L.imageOverlay(P(s.img), bounds, { pane: "paneB", opacity: 1, interactive: false }).addTo(map);
         if (state.ref === "veg" && s.veg_img) ovChange = L.imageOverlay(P(s.veg_img), bounds, { pane: "paneB", opacity: 1, interactive: false }).addTo(map);
@@ -323,11 +339,15 @@ function buildMlCard() {
   const v = ML.validation;
   const gain = Math.round((100 * (v.mean_f1 - v.mean_f1_rule)) / Math.max(v.mean_f1_rule, 1e-6));
   const wins = v.folds.filter((f) => f.f1 > f.f1_rule).length;
+  // la foto y el radar no son del mismo día: las plantas flotantes se mueven. Con ≤ 4 días la comparación es justa.
+  const close = v.folds.filter((f) => f.gap_days <= 4), far = v.folds.filter((f) => f.gap_days > 4);
+  const avgF = (a, k = "f1") => a.reduce((s, f) => s + f[k], 0) / Math.max(1, a.length);
   $("mlKpis").innerHTML =
-    kpi(v.mean_f1.toFixed(2), "acierto F1 del modelo (0 a 1)") +
-    kpi(v.mean_f1_rule.toFixed(2), "acierto F1 de la regla fija") +
-    kpi((gain >= 0 ? "+" : "") + gain + " %", "mejora del modelo") +
+    kpi(avgF(close).toFixed(2), `acierto cuando foto y radar están a ≤ 4 días (${close.length} pruebas)`) +
+    kpi(avgF(far).toFixed(2), `acierto con 5–7 días: las plantas ya se movieron (${far.length} pruebas)`) +
+    kpi((gain >= 0 ? "+" : "") + gain + " %", `mejora sobre la regla fija (${v.mean_f1.toFixed(2)} vs ${v.mean_f1_rule.toFixed(2)})`) +
     kpi(`${wins} de ${v.folds.length}`, "fechas de prueba donde gana");
+  ML.close_f1 = avgF(close);
   new Chart($("mlChart"), {
     type: "bar",
     data: {
@@ -345,7 +365,8 @@ function buildMlCard() {
   });
   const top = ML.importance.slice(0, 3).map((i) => i.feature).join(", ");
   $("mlHint").innerHTML = `Validación honesta: en cada barra el modelo se probó en una fecha que <b>nunca vio</b> al entrenar (${ML.trained_on.length} parejas foto-radar con ≤ 8 días de diferencia). ` +
-    `Lo que más usa: ${top}. Es una prueba de concepto con un año de datos; las plantas se mueven con el viento entre la foto y el radar, y eso limita el acierto.`;
+    `El acierto baja cuando pasan más días entre la foto y el radar: eso indica que las plantas son <b>flotantes y se mueven</b> con el viento y la corriente. ` +
+    `Lo que más usa el modelo: ${top}. Prueba de concepto con un año de datos.`;
   $("layerMlBtn").hidden = false;
   $("mlCard").hidden = false;
 }
@@ -511,6 +532,11 @@ $("play").onclick = () => {
   ECO = await getJSON(BASE + "/ecostress.json");
   ML = await getJSON(BASE + "/ml.json");
   if (ML) buildMlCard();
+  if (SITE.lake) {
+    CLOUDS = await getJSON(BASE + "/clouds.json");
+    ALERTS = await getJSON(BASE + "/alerts.json");
+    if (CLOUDS?.wow) $("refCloudBtn").hidden = false;
+  }
   if (REF && !(REF.sentinel2 || []).length) {
     // sitio sin fotos Sentinel-2 descargadas: solo se compara con el mapa ESA
     document.querySelectorAll('#truthSeg [data-ref="s2"], #truthSeg [data-ref="veg"]').forEach((b) => (b.hidden = true));

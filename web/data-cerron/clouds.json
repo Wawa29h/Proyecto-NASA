@@ -1,0 +1,750 @@
+{
+ "bbox": [
+  -89.27,
+  13.93,
+  -88.93,
+  14.13
+ ],
+ "seasons": {
+  "lluvias": {
+   "from": "2026-05-15",
+   "to": "2026-10-31",
+   "photos": 77,
+   "covered_pct": 45,
+   "useful_pct": 40,
+   "useful_photos": 31,
+   "days_per_useful_photo": 5,
+   "longest_gap_days": 15,
+   "longest_gap": [
+    "2026-07-07",
+    "2026-07-22"
+   ]
+  },
+  "seca": {
+   "from": "2025-12-01",
+   "to": "2026-04-30",
+   "photos": 63,
+   "covered_pct": 6,
+   "useful_pct": 89,
+   "useful_photos": 56,
+   "days_per_useful_photo": 3,
+   "longest_gap_days": 6,
+   "longest_gap": [
+    "2026-04-17",
+    "2026-04-23"
+   ]
+  }
+ },
+ "method": "nubes medidas SOLO sobre el agua del embalse (capa SCL de Sentinel-2, pixel a pixel)",
+ "photos": [
+  {
+   "date": "2026-05-15",
+   "clear_pct": 100.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-05-18",
+   "clear_pct": 99.3,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-05-20",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-05-23",
+   "clear_pct": 98.9,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-05-25",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-05-27",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-05-28",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-05-30",
+   "clear_pct": 99.8,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-02",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-04",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-07",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-09",
+   "clear_pct": 95.5,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-12",
+   "clear_pct": 48.9,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-14",
+   "clear_pct": 100.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-16",
+   "clear_pct": 24.3,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-17",
+   "clear_pct": 4.2,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-19",
+   "clear_pct": 96.8,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-22",
+   "clear_pct": 34.2,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-24",
+   "clear_pct": 40.8,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-27",
+   "clear_pct": 54.5,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-06-29",
+   "clear_pct": 76.1,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-02",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-04",
+   "clear_pct": 91.6,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-06",
+   "clear_pct": 94.6,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-07",
+   "clear_pct": 99.9,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-09",
+   "clear_pct": 26.7,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-12",
+   "clear_pct": 5.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-14",
+   "clear_pct": 70.4,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-16",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-17",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-19",
+   "clear_pct": 32.9,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-22",
+   "clear_pct": 99.5,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-24",
+   "clear_pct": 100.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-27",
+   "clear_pct": 51.2,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-07-29",
+   "clear_pct": 64.7,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-01",
+   "clear_pct": 30.9,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-03",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-05",
+   "clear_pct": 87.2,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-06",
+   "clear_pct": 20.2,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-08",
+   "clear_pct": 68.7,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-11",
+   "clear_pct": 92.9,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-13",
+   "clear_pct": 100.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-16",
+   "clear_pct": 10.5,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-18",
+   "clear_pct": 100.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-21",
+   "clear_pct": 93.1,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-23",
+   "clear_pct": 79.1,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-25",
+   "clear_pct": 93.1,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-26",
+   "clear_pct": 72.7,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-28",
+   "clear_pct": 100.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-08-31",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-02",
+   "clear_pct": 55.9,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-05",
+   "clear_pct": 82.9,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-07",
+   "clear_pct": 71.8,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-10",
+   "clear_pct": 93.1,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-12",
+   "clear_pct": 100.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-14",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-15",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-17",
+   "clear_pct": 98.7,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-20",
+   "clear_pct": 3.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-22",
+   "clear_pct": 71.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-25",
+   "clear_pct": 94.7,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-27",
+   "clear_pct": 0.7,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-09-30",
+   "clear_pct": 99.7,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-02",
+   "clear_pct": 1.1,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-04",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-05",
+   "clear_pct": 94.9,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-07",
+   "clear_pct": 2.1,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-10",
+   "clear_pct": 92.3,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-12",
+   "clear_pct": 96.7,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-15",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-17",
+   "clear_pct": 1.6,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-20",
+   "clear_pct": 2.2,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-22",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-24",
+   "clear_pct": 99.5,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-25",
+   "clear_pct": 0.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-27",
+   "clear_pct": 100.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2026-10-30",
+   "clear_pct": 100.0,
+   "season": "lluvias"
+  },
+  {
+   "date": "2025-12-01",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-04",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-06",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-08",
+   "clear_pct": 87.3,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-09",
+   "clear_pct": 97.2,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-11",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-14",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-16",
+   "clear_pct": 94.5,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-19",
+   "clear_pct": 99.9,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-21",
+   "clear_pct": 63.4,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-24",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-26",
+   "clear_pct": 84.7,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-28",
+   "clear_pct": 97.9,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-29",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2025-12-31",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-03",
+   "clear_pct": 96.8,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-05",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-08",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-10",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-13",
+   "clear_pct": 98.7,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-15",
+   "clear_pct": 90.8,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-18",
+   "clear_pct": 99.9,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-20",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-23",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-25",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-28",
+   "clear_pct": 99.9,
+   "season": "seca"
+  },
+  {
+   "date": "2026-01-30",
+   "clear_pct": 84.6,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-02",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-04",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-07",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-09",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-12",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-14",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-17",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-19",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-22",
+   "clear_pct": 99.7,
+   "season": "seca"
+  },
+  {
+   "date": "2026-02-24",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-01",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-04",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-06",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-09",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-11",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-14",
+   "clear_pct": 99.8,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-16",
+   "clear_pct": 97.4,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-19",
+   "clear_pct": 0.2,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-21",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-24",
+   "clear_pct": 97.2,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-26",
+   "clear_pct": 95.4,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-28",
+   "clear_pct": 98.9,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-29",
+   "clear_pct": 62.3,
+   "season": "seca"
+  },
+  {
+   "date": "2026-03-31",
+   "clear_pct": 99.9,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-03",
+   "clear_pct": 96.1,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-05",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-08",
+   "clear_pct": 91.7,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-10",
+   "clear_pct": 100.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-13",
+   "clear_pct": 31.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-15",
+   "clear_pct": 99.8,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-17",
+   "clear_pct": 94.0,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-18",
+   "clear_pct": 77.4,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-20",
+   "clear_pct": 19.9,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-23",
+   "clear_pct": 96.1,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-25",
+   "clear_pct": 12.9,
+   "season": "seca"
+  },
+  {
+   "date": "2026-04-28",
+   "clear_pct": 97.3,
+   "season": "seca"
+  }
+ ],
+ "wow": {
+  "nisar_date": "2026-09-15",
+  "photo_date": "2026-09-15",
+  "cloud_pct": 100,
+  "photo": "ref/s2cloud_2026-09-15.jpg",
+  "radar": "wow_radar_2026-09-15.jpg",
+  "ml_km2": 14.66,
+  "scene": "S2C_16PBA_20260915_0_L2A"
+ }
+}

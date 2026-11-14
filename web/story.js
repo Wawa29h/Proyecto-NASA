@@ -68,10 +68,19 @@
   const hero = $("hero");
   function heroStats() {
     const f = siteFacts();
+    const rain = CLOUDS?.seasons?.lluvias;
+    if (SITE.lake) {
+      // un solo problema, dicho en simple
+      document.querySelector(".hero h1").textContent = "El lirio crece cuando más llueve… justo cuando las nubes no dejan verlo.";
+      document.querySelector(".hero .lead").innerHTML =
+        `En la época de lluvias, ${rain ? `<b>casi la mitad (${rain.covered_pct} %)</b>` : "muchas"} de las fotos satelitales del embalse Cerrón Grande salen tapadas por nubes` +
+        (rain ? `, con rachas de hasta <b>${rain.longest_gap_days} días</b> sin una sola foto despejada` : "") + ". " +
+        `El nuevo radar <b>NISAR</b> (NASA e ISRO) ve a través de las nubes. Lo juntamos con inteligencia artificial para <b>vigilar el lirio acuático y avisar</b> a quienes viven del embalse.`;
+    }
     const st = SITE.lake
-      ? [[f.level ? f.level.drop.toFixed(0) + " m" : "—", "baja el nivel del embalse en la época seca (SWOT)"],
-         [f.plants ? "×" + f.plants.ratio.toFixed(1) : "—", "más plantas sobre el agua en lluvias que en verano (NISAR + IA)"],
-         ["5", "misiones de NASA y ESA combinadas: NISAR, SWOT, ECOSTRESS, lluvia y Sentinel-2"]]
+      ? [[rain ? rain.covered_pct + " %" : "—", "de las fotos de época de lluvias salen con el embalse tapado por nubes (en verano: " + (CLOUDS?.seasons?.seca?.covered_pct ?? "—") + " %)"],
+         [rain ? rain.longest_gap_days + " días" : "—", "seguidos sin una foto despejada en lluvias. El radar pasa igual, llueva o no"],
+         [f.plants ? "×" + f.plants.ratio.toFixed(1) : "—", "más lirio en lluvias que en verano (radar + inteligencia artificial)"]]
       : SITE.id === "jiquilisco"
       ? [[f.mangrove ? f.mangrove.toFixed(0) + " km²" : "—", "de manglar: el más grande de El Salvador (mapa ESA)"],
          [f.loss != null ? f.loss.toFixed(2) + " %" : "—", "del manglar perdió señal en el año: está estable"],
@@ -127,10 +136,11 @@
         : "El satélite SWOT mide la altura del agua del embalse.";
       return [
         { t: "Este es el embalse Cerrón Grande", x: "Es el lago artificial más grande de El Salvador: guarda agua del río Lempa, genera electricidad y da de comer a muchas familias pescadoras. Así lo ve el radar NISAR: <b>lo oscuro es agua</b>, lo verde es vegetación.", go: { date: "2026-01-18" } },
-        { t: "Un radar que ve a través de las nubes", x: "En época de lluvias las nubes tapan las fotos normales. NISAR manda su propia señal de microondas y ve igual <b>de día, de noche y con nubes</b>. Arrastra la barra blanca: a la izquierda el radar, a la derecha la foto.", go: { mode: "truth", ref: "s2", date: "2026-07-05" } },
+        { t: "Ese día llovía", x: (CLOUDS?.wow ? `El <b>${shortDate(CLOUDS.wow.photo_date)}</b> la foto normal salió con el <b>${CLOUDS.wow.cloud_pct} %</b> del embalse tapado por nubes. ` : "En época de lluvias las fotos salen tapadas por nubes. ") + "NISAR manda su propia señal de microondas y ve <b>de día, de noche y con nubes</b>. Arrastra la barra blanca: a la izquierda el radar con el lirio en amarillo, a la derecha la foto nublada.", go: CLOUDS?.wow ? { mode: "truth", ref: "cloud", layer: "ml", date: CLOUDS.wow.nisar_date, card: "wowCard" } : { mode: "truth", ref: "s2", date: "2026-07-05" } },
         { t: `El embalse respira: baja ${f.level ? f.level.drop.toFixed(0) : "varios"} metros`, x: lvTxt + " En la época seca llueve poco y la represa usa el agua para generar electricidad; con las lluvias se vuelve a llenar.", go: { date: "2026-07-17", card: "lakeCard" } },
         { t: "Aparecen plantas sobre el agua", x: `En <b style="color:#ffd600">amarillo</b> está lo que la inteligencia artificial detecta como plantas flotantes (posible lirio acuático).` + (f.plants ? ` En lluvias cubren unos <b>${f.plants.wet.toFixed(0)} km²</b>, contra ${f.plants.dry.toFixed(0)} km² en verano.` : "") + " Se juntan donde entra el río Lempa, que trae nutrientes.", go: { layer: "ml", date: "2026-09-15", fly: [[14.07, -89.13], 12] } },
-        { t: "La IA aprendió de las fotos", x: "Entrenamos un modelo con las fechas en que había foto y radar casi al mismo tiempo. Probado en fechas que <b>nunca vio</b>, acierta mejor que la regla anterior en <b>7 de 7</b> casos. Así se pueden vigilar las plantas aunque esté nublado.", go: { layer: "ml", date: "2026-08-10", card: "mlCard" } },
+        { t: "Una alerta por zonas", x: "El embalse se divide en 4 zonas. Para cada pasada del radar se calcula cuánto lirio hay en cada una, si <b>subió o bajó</b>, y se arma un <b>mensaje corto listo para compartir</b> con pescadores, cooperativas o la alcaldía.", go: { layer: "ml", date: "2026-09-15", card: "alertCard" } },
+        { t: "La computadora aprendió de las fotos", x: "Usamos las fotos de días despejados para enseñarle al radar cómo se ven las plantas. Probado en fechas que <b>nunca vio</b>, gana a la regla anterior en <b>7 de 7</b> casos" + (ML ? `, y cuando la foto y el radar están a 4 días o menos acierta con <b>${(ML.close_f1 ?? 0.68).toFixed(2)}</b> de 1` : "") + ".", go: { layer: "ml", date: "2026-08-10", card: "mlCard" } },
         { t: "¿Naturaleza o ser humano?", x: "<b>Natural:</b> la lluvia llena el embalse y el calor ayuda a crecer a las plantas. <b>Humano:</b> la represa decide cuánta agua se suelta, y las aguas negras y fertilizantes que bajan por los ríos alimentan el lirio. El satélite muestra el patrón; las causas hay que confirmarlas en el campo.", go: { date: "2026-09-03", card: "semaCard" } },
         { t: "Y funciona en otros lugares", x: "Con el mismo método revisamos el manglar de <b>Barra de Santiago</b>: coincidió en un ~90 % con el mapa oficial de la ESA. Se puede llevar a cualquier humedal del mundo.", go: {}, next: { label: "Ver Barra de Santiago →", site: "barra" } },
       ];
@@ -267,9 +277,63 @@
     if (d) el.style.left = seasons.pos(dt(d.date)) + "%";
   }
 
+  // ---------- momento wow: foto nublada vs radar el mismo día ----------
+  function buildWow() {
+    const w = CLOUDS?.wow, rain = CLOUDS?.seasons?.lluvias;
+    if (!w) return;
+    $("wowTitle").textContent = `El ${shortDate(w.photo_date)} la foto no vio nada. El radar vio ${w.ml_km2.toFixed(0)} km² de lirio.`;
+    $("wowLead").innerHTML = `Arrastra sobre la imagen: a la izquierda la <b>foto normal</b> de ese día (${w.cloud_pct} % del embalse tapado por nubes); a la derecha el <b>radar NISAR</b>, con las plantas que encontró la inteligencia artificial en amarillo.`;
+    $("wowPhoto").src = P(w.photo);
+    $("wowRadar").src = P(w.radar);
+    const cmp = $("wowCmp"), rng = $("wowRange");
+    const upd = () => { const v = +rng.value; $("wowPhoto").style.clipPath = `inset(0 ${100 - v}% 0 0)`; cmp.style.setProperty("--x", v + "%"); };
+    rng.oninput = upd; upd();
+    if (rain) $("wowKpis").innerHTML =
+      kpi(rain.covered_pct + " %", "de las fotos de lluvias salen con el embalse tapado (en verano: " + (CLOUDS.seasons.seca?.covered_pct ?? "—") + " %)") +
+      kpi(rain.longest_gap_days + " días", `seguidos sin una foto despejada (${shortDate(rain.longest_gap[0])} – ${shortDate(rain.longest_gap[1])}). El radar no se detiene`);
+    $("wowMap").onclick = () => go({ mode: "truth", ref: "cloud", layer: "ml", date: w.nisar_date });
+    $("wowCard").hidden = false;
+  }
+
+  // ---------- alerta de lirio por zonas ----------
+  let zoneLayers = {};
+  const levelColor = { alto: "#ff6b5b", medio: "#ffc542", bajo: "#2fd6a3" };
+  function drawZones() {
+    if (!ALERTS) return;
+    ALERTS.zones.forEach((z) => {
+      const [w, s, e, n] = z.box;
+      const rect = L.rectangle([[s, w], [n, e]], { color: "#ffffff", weight: 1, dashArray: "3 5", fill: false, interactive: false }).addTo(map);
+      const lab = L.marker(z.label, { interactive: false, icon: L.divIcon({ className: "", html: `<span class="zone-label">${z.short}</span>`, iconSize: null }) }).addTo(map);
+      zoneLayers[z.id] = { rect, lab };
+    });
+  }
+  function updateAlert() {
+    if (!ALERTS || !S) return;
+    const d = S.dates[state.mode === "single" || state.mode === "truth" ? state.idx : state.b];
+    const r = d && ALERTS.dates.find((x) => x.id === d.id);
+    const card = $("alertCard");
+    card.hidden = false;
+    if (!r) { $("alertZones").innerHTML = `<p class="hint">Sin alerta para ${d ? shortDate(d.date) : "esta fecha"}: el radar no cubrió todo el embalse.</p>`; $("alertMsg").textContent = ""; return; }
+    $("alertZones").innerHTML = ALERTS.zones.map((z) => {
+      const v = r.zones[z.id];
+      const tr = v.delta_km2 == null ? `<span class="eq">—</span>` : v.delta_km2 > 0.3 ? `<span class="up">▲ +${v.delta_km2.toFixed(1)}</span>` : v.delta_km2 < -0.3 ? `<span class="down">▼ ${v.delta_km2.toFixed(1)}</span>` : `<span class="eq">= igual</span>`;
+      return `<div class="az"><span class="bulb" style="color:${levelColor[v.level]};background:${levelColor[v.level]}"></span>` +
+        `<div><b>${z.name}</b><small>${v.km2.toFixed(1)} km² con lirio · ${v.pct.toFixed(0)} % del agua · nivel ${v.level}</small></div><div class="tr">${tr}</div></div>`;
+    }).join("");
+    $("alertMsg").textContent = r.message;
+    Object.entries(zoneLayers).forEach(([id, l]) => l.rect.setStyle({ color: levelColor[r.zones[id].level], weight: r.zones[id].level === "alto" ? 2.5 : 1 }));
+  }
+  $("alertCopy").onclick = async () => {
+    const t = $("alertMsg").textContent;
+    try { await navigator.clipboard.writeText(t); $("alertCopied").textContent = "¡Copiado!"; }
+    catch { const s = getSelection(), rg = document.createRange(); rg.selectNodeContents($("alertMsg")); s.removeAllRanges(); s.addRange(rg); $("alertCopied").textContent = "Selecciona y copia (Ctrl+C)"; }
+    setTimeout(() => ($("alertCopied").textContent = ""), 2500);
+  };
+
   // ---------- ganchos de app.js ----------
-  window.onRender = () => { updateSema(); moveNow(); };
+  window.onRender = () => { updateSema(); moveNow(); updateAlert(); };
   window.onDataReady = () => {
+    if (SITE.lake) { buildWow(); drawZones(); updateAlert(); }
     heroStats();
     seasons();
     updateSema();
