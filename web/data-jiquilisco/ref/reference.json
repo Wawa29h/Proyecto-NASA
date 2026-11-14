@@ -1,0 +1,63 @@
+{
+ "bbox": [
+  -88.7,
+  13.17,
+  -88.3,
+  13.33
+ ],
+ "worldcover": {
+  "img": "ref/worldcover.png",
+  "codes": "ref/worldcover_codes.png",
+  "legend": {
+   "10": {
+    "name": "Bosque",
+    "color": "#006400"
+   },
+   "20": {
+    "name": "Matorral",
+    "color": "#ffbb22"
+   },
+   "30": {
+    "name": "Pasto",
+    "color": "#ffff4c"
+   },
+   "40": {
+    "name": "Cultivo",
+    "color": "#f096ff"
+   },
+   "50": {
+    "name": "Construido",
+    "color": "#fa0000"
+   },
+   "60": {
+    "name": "Suelo desnudo",
+    "color": "#b4b4b4"
+   },
+   "80": {
+    "name": "Agua",
+    "color": "#0064c8"
+   },
+   "90": {
+    "name": "Humedal herbaceo",
+    "color": "#0096a0"
+   },
+   "95": {
+    "name": "Manglar",
+    "color": "#00cf75"
+   }
+  },
+  "areas_km2": {
+   "Bosque": 154.93,
+   "Matorral": 0.21,
+   "Pasto": 151.26,
+   "Cultivo": 76.48,
+   "Construido": 4.93,
+   "Suelo desnudo": 1.75,
+   "Agua": 201.23,
+   "Humedal herbaceo": 4.54,
+   "Manglar": 176.68
+  }
+ },
+ "sentinel2": [],
+ "lake": false
+}

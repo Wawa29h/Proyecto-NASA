@@ -83,6 +83,9 @@ function nearestS2(date) {
 }
 function render() {
   if (!S || !S.dates.length) return;
+  // fundido: en "Una fecha" la imagen anterior se queda debajo mientras aparece la nueva
+  const prevA = state.mode === "single" && ovA ? ovA : null;
+  if (prevA) ovA = null;
   clearOverlays();
   const single = state.mode === "single" || state.mode === "truth";
   $("ctlSingle").hidden = !single;
@@ -97,6 +100,12 @@ function render() {
     const d = S.dates[state.idx];
     ovA = overlay(urlFor(d), "paneA");
     if (state.layer === "ml") { ovA.setOpacity(Math.min(state.opacity, 0.5)); if (state.mode === "single") ovChange = mlOverlay(d); }
+    if (prevA) {
+      const target = ovA.options.opacity, cur = ovA;
+      cur.setOpacity(0);
+      requestAnimationFrame(() => requestAnimationFrame(() => cur.setOpacity(target)));
+      setTimeout(() => map.hasLayer(prevA) && map.removeLayer(prevA), 650);
+    }
     $("dateLabel").textContent = fmtDate(d.date);
     $("dateSlider").value = state.idx;
     if (state.mode === "truth" && REF) {
@@ -133,6 +142,8 @@ function render() {
   $("legendCls").hidden = state.layer !== "cls";
   $("legendMl").hidden = state.layer !== "ml";
   highlightChart();
+  if (prevA && !ovA) map.removeLayer(prevA);
+  window.onRender && window.onRender();
 }
 
 // ---------- decodificar HH ----------
@@ -497,4 +508,5 @@ $("play").onclick = () => {
   await loadRain();
   buildChart();
   highlightChart();
+  window.onDataReady && window.onDataReady();
 })();

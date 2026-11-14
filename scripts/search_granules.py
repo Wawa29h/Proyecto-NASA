@@ -3,6 +3,7 @@
 No necesita login. Guarda la lista en data/granules.json.
 Uso:  python scripts/search_granules.py
 """
+import argparse
 import json
 import os
 import urllib.parse
@@ -13,11 +14,11 @@ POINT = "POINT(-90.05 13.72)"  # Barra de Santiago, Ahuachapán, El Salvador
 API = "https://api.daac.asf.alaska.edu/services/search/param"
 
 
-def search(level: str):
+def search(level: str, point=POINT):
     q = urllib.parse.urlencode({
         "dataset": "NISAR",
         "processingLevel": level,
-        "intersectsWith": POINT,
+        "intersectsWith": point,
         "output": "geojson",
         "maxResults": 1000,
     })
@@ -27,8 +28,12 @@ def search(level: str):
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--point", default=POINT, help='WKT, p. ej. "POINT(-88.5 13.25)"')
+    ap.add_argument("--out", default="data/granules.json")
+    a = ap.parse_args()
     out = []
-    for f in search("GCOV"):
+    for f in search("GCOV", a.point):
         p = f["properties"]
         out.append({
             "scene": p["sceneName"],
@@ -44,7 +49,7 @@ def main():
         })
     out.sort(key=lambda g: g["start"])
     os.makedirs(os.path.join(ROOT, "data"), exist_ok=True)
-    path = os.path.join(ROOT, "data", "granules.json")
+    path = os.path.join(ROOT, a.out)
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=1)
     print(f"{len(out)} granulos GCOV -> {path}")

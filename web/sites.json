@@ -1,22 +1,34 @@
 [
   {
-    "id": "barra",
-    "name": "Barra de Santiago",
-    "title": "Latido del Manglar",
-    "subtitle": "Manglar y estero · Ahuachapán, El Salvador · radar NISAR banda L",
-    "base": "data",
-    "center": [13.715, -90.04],
-    "lake": false,
-    "labels": { "water": "Agua del estero km²", "veg": "Manglar inundado km²" }
-  },
-  {
     "id": "cerron",
     "name": "Embalse Cerrón Grande",
     "title": "Pulso del Embalse",
     "subtitle": "Cerrón Grande · Chalatenango/Cabañas, El Salvador · NISAR + SWOT + ECOSTRESS + GPM + Sentinel-2",
     "base": "data-cerron",
-    "center": [14.03, -89.08],
+    "center": [
+      14.03,
+      -89.08
+    ],
     "lake": true,
-    "labels": { "water": "Agua abierta del embalse km²", "veg": "Superficie con plantas (NISAR) km²" }
+    "labels": {
+      "water": "Agua abierta del embalse km²",
+      "veg": "Superficie con plantas (NISAR) km²"
+    }
+  },
+  {
+    "id": "barra",
+    "name": "Barra de Santiago",
+    "title": "Latido del Manglar",
+    "subtitle": "Manglar y estero · Ahuachapán, El Salvador · radar NISAR banda L",
+    "base": "data",
+    "center": [
+      13.715,
+      -90.04
+    ],
+    "lake": false,
+    "labels": {
+      "water": "Agua del estero km²",
+      "veg": "Manglar inundado km²"
+    }
   }
 ]

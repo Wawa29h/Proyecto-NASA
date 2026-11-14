@@ -359,6 +359,7 @@ def main():
     ap.add_argument("--out", help="carpeta de salida (por defecto web/data)")
     ap.add_argument("--ocean-r", type=int, help="radio para separar mar; 0 = zona sin mar (embalse, lago)")
     ap.add_argument("--dates", nargs="*", help="solo estas fechas AAAA-MM-DD")
+    ap.add_argument("--granules", default="data/granules.json", help="lista de granulos (search_granules.py --out)")
     ap.add_argument("--reclassify", action="store_true", help="recalcular clases desde las capas guardadas")
     ap.add_argument("--redo-partial", action="store_true", help="volver a procesar fechas con cobertura < 99%%")
     a = ap.parse_args()
@@ -382,7 +383,7 @@ def main():
             process(p, meta_from_name(p), series)
         return
 
-    with open(os.path.join(ROOT, "data", "granules.json"), encoding="utf-8") as fh:
+    with open(os.path.join(ROOT, a.granules), encoding="utf-8") as fh:
         grans = [g for g in json.load(fh) if g["track"] == a.track and g["frame"] in a.frames]
     if a.dates:
         grans = [g for g in grans if g["date"] in a.dates]

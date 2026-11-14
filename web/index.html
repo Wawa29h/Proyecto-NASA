@@ -26,7 +26,36 @@
     <button data-mode="change">Cambios</button>
     <button data-mode="truth">Radar vs foto</button>
   </nav>
+  <div class="hdr-actions">
+    <button id="tourBtn" class="btn primary">▶ Recorrido</button>
+    <label class="switch" title="Muestra los datos técnicos (dB, F1, índices)">
+      <input type="checkbox" id="expertSw"><span class="track"><span class="knob"></span></span><span class="sw-label">Modo experto</span>
+    </label>
+  </div>
 </header>
+
+<div id="hero" class="hero" hidden>
+  <div class="hero-in">
+    <p class="eyebrow">NASA Space Apps 2026 · Reto NISAR · El Salvador</p>
+    <h1>El agua de El Salvador, vista por un radar que atraviesa las nubes</h1>
+    <p class="lead">NISAR, el nuevo satélite de NASA e ISRO, mira la Tierra cada 12 días aunque esté nublado o sea de noche. Lo juntamos con otras misiones para ver cómo cambian un embalse y un manglar durante un año, y qué parte es la naturaleza y qué parte somos nosotros.</p>
+    <div class="hero-stats" id="heroStats"></div>
+    <div class="hero-sites">
+      <button class="site-card" data-site="cerron">
+        <span class="sc-ico">💧</span><b>Embalse Cerrón Grande</b>
+        <span>Nivel del agua, plantas flotantes, temperatura e inteligencia artificial · 5 misiones</span>
+      </button>
+      <button class="site-card" data-site="barra">
+        <span class="sc-ico">🌿</span><b>Barra de Santiago</b>
+        <span>Manglar y estero junto al mar · comprobado con el mapa oficial de la ESA</span>
+      </button>
+    </div>
+    <div class="hero-cta">
+      <button id="heroTour" class="btn primary big">▶ Ver el recorrido guiado</button>
+      <button id="heroSkip" class="btn ghost big">Explorar por mi cuenta</button>
+    </div>
+  </div>
+</div>
 
 <main class="layout">
   <section class="mapwrap">
@@ -34,6 +63,16 @@
     <div id="divider" hidden><span></span></div>
     <div class="maptag left" id="tagA" hidden></div>
     <div class="maptag right" id="tagB" hidden></div>
+    <div id="story" class="story" hidden>
+      <div class="story-top"><span id="storyStep"></span><button id="storyClose" aria-label="Cerrar recorrido">✕</button></div>
+      <h2 id="storyTitle"></h2>
+      <p id="storyText"></p>
+      <div class="story-nav">
+        <button id="storyPrev" class="btn">← Atrás</button>
+        <div class="dots" id="storyDots"></div>
+        <button id="storyNext" class="btn primary">Siguiente →</button>
+      </div>
+    </div>
     <div id="empty" class="empty" hidden>
       <h2>Aún no hay capas NISAR procesadas</h2>
       <p>Corre en la terminal, dentro de la carpeta del proyecto:</p>
@@ -43,6 +82,12 @@
   </section>
 
   <aside class="panel">
+    <div class="card" id="semaCard" hidden>
+      <h3>¿Cómo está en esta fecha?</h3>
+      <div class="sema" id="sema"></div>
+      <p class="hint">Comparado con el resto del año medido. Mueve la fecha y el semáforo cambia.</p>
+    </div>
+
     <div class="card" id="ctlSingle">
       <div class="row between">
         <h3>Fecha</h3>
@@ -51,6 +96,7 @@
       <div class="datebig" id="dateLabel">—</div>
       <input type="range" id="dateSlider" min="0" max="0" value="0">
       <div class="ticks" id="ticks"></div>
+      <div class="seasons" id="seasons"></div>
     </div>
 
     <div class="card" id="ctlTruth" hidden>
@@ -89,8 +135,14 @@
         <button data-layer="cls">Agua / manglar inundado</button>
         <button data-layer="ml" id="layerMlBtn" hidden>IA: plantas</button>
       </div>
-      <label class="inline">Opacidad <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.85"></label>
-      <div class="legend" id="legendRgb">
+      <label class="inline tech">Opacidad <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.85"></label>
+      <div class="legend simple-only" id="legendRgbSimple">
+        <span><i style="background:#1b2430"></i>Oscuro = agua lisa</span>
+        <span><i style="background:#b6e25a"></i>Verde-amarillo = árboles, manglar, plantas</span>
+        <span><i style="background:#c58be8"></i>Morado = suelo descubierto o cultivo cosechado</span>
+        <span><i style="background:#ffc2e2"></i>Rosado claro = casas o manglar con agua debajo</span>
+      </div>
+      <div class="legend tech" id="legendRgb">
         <span><i style="background:#ff3b30"></i>R = HH (rugosidad, doble rebote)</span>
         <span><i style="background:#34c759"></i>G = HV (volumen: hojas y ramas)</span>
         <span><i style="background:#0a84ff"></i>B = HH/HV (superficie lisa)</span>
@@ -126,17 +178,17 @@
       <h3>IA: el radar aprende de la foto</h3>
       <p class="hint" style="margin-top:0">Los días despejados, Sentinel-2 marca dónde hay plantas sobre el agua. Con esas "respuestas" entrenamos un modelo (Random Forest) que aprende cómo se ven esas plantas en el radar NISAR. Así se detectan también en días nublados.</p>
       <div class="kpis" id="mlKpis"></div>
-      <canvas id="mlChart" height="150"></canvas>
-      <p class="hint" id="mlHint"></p>
+      <canvas id="mlChart" class="tech" height="150"></canvas>
+      <p class="hint tech" id="mlHint"></p>
     </div>
 
-    <div class="card" id="wqCard" hidden>
+    <div class="card tech" id="wqCard" hidden>
       <h3>Color del agua (Sentinel-2)</h3>
       <canvas id="wqChart" height="160"></canvas>
       <p class="hint">NDCI ≈ clorofila/algas · NDTI ≈ turbidez/sedimento. Mediana sobre el agua abierta sin nubes. Son índices relativos: sirven para comparar fechas, no son mg/L.</p>
     </div>
 
-    <div class="card" id="valCard" hidden>
+    <div class="card tech" id="valCard" hidden>
       <h3>Firma de radar por cobertura</h3>
       <canvas id="valChart" height="200"></canvas>
       <p class="hint">HV mediana (dB) de cada tipo de cobertura según el mapa ESA WorldCover 2021. El manglar debe mantenerse alto todo el año; el cultivo baja cuando se cosecha.</p>
@@ -167,5 +219,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="app.js"></script>
+<script src="story.js"></script>
 </body>
 </html>
