@@ -59,6 +59,8 @@
     if (dry.length && wet.length) f.plants = { dry: avg(dry), wet: avg(wet), ratio: avg(wet) / avg(dry) };
     if (VAL?.dates?.length) f.valid = VAL.dates.reduce((s, d) => s + (d.agua_mapa_detectada_pct || 0), 0) / VAL.dates.length;
     f.mangrove = REF?.worldcover?.areas_km2?.Manglar;
+    const mk = typeof MANG !== "undefined" && MANG ? Object.keys(MANG).find((k) => k.toLowerCase().includes(SITE.id === "jiquilisco" ? "jiquilisco" : "barra")) : null;
+    if (mk) { f.loss = MANG[mk].loss_pct; f.hvRise = MANG[mk].hv_range_db; }
     return f;
   }
 
@@ -70,6 +72,10 @@
       ? [[f.level ? f.level.drop.toFixed(0) + " m" : "—", "baja el nivel del embalse en la época seca (SWOT)"],
          [f.plants ? "×" + f.plants.ratio.toFixed(1) : "—", "más plantas sobre el agua en lluvias que en verano (NISAR + IA)"],
          ["5", "misiones de NASA y ESA combinadas: NISAR, SWOT, ECOSTRESS, lluvia y Sentinel-2"]]
+      : SITE.id === "jiquilisco"
+      ? [[f.mangrove ? f.mangrove.toFixed(0) + " km²" : "—", "de manglar: el más grande de El Salvador (mapa ESA)"],
+         [f.loss != null ? f.loss.toFixed(2) + " %" : "—", "del manglar perdió señal en el año: está estable"],
+         [String(S.dates.length), "pasadas del radar en un año, con nubes o sin ellas"]]
       : [[f.valid ? f.valid.toFixed(0) + " %" : "—", "del agua del estero que marca el mapa oficial la detecta NISAR"],
          [f.mangrove ? f.mangrove.toFixed(0) + " km²" : "—", "de manglar protegido en la zona (Ramsar)"],
          [String(S.dates.length), "pasadas del radar en un año, con nubes o sin ellas"]];
@@ -129,12 +135,19 @@
         { t: "Y funciona en otros lugares", x: "Con el mismo método revisamos el manglar de <b>Barra de Santiago</b>: coincidió en un ~90 % con el mapa oficial de la ESA. Se puede llevar a cualquier humedal del mundo.", go: {}, next: { label: "Ver Barra de Santiago →", site: "barra" } },
       ];
     }
+    if (SITE.id === "jiquilisco") return [
+      { t: "Bahía de Jiquilisco: el manglar más grande", x: `Una bahía de Usulután con <b>${f.mangrove ? f.mangrove.toFixed(0) : "~177"} km²</b> de manglar (siete veces Barra de Santiago). Lo oscuro es agua de la bahía; lo verde, el manglar. NISAR cubre unas tres cuartas partes del recuadro.`, go: { date: "2026-01-18" } },
+      { t: "¿Dónde está el manglar?", x: "El mapa oficial de la ESA marca el manglar en verde menta. Arrastra la barra blanca para comparar con lo que ve el radar.", go: { mode: "truth", ref: "wc", date: "2026-01-18" } },
+      { t: "En lluvias el manglar 'brilla' más", x: `La señal HV del manglar sube unos <b>${f.hvRise ? f.hvRise.toFixed(1) : "4"} dB</b> de verano a lluvias, igual que en Barra de Santiago. Son hojas y suelo mojados: un ritmo <b>natural</b>, no un cambio del bosque.`, go: { date: "2026-09-27", card: "mangCard" } },
+      { t: "Sin pérdida de manglar este año", x: `Solo el <b>${f.loss != null ? f.loss.toFixed(2) : "0.02"} %</b> del manglar perdió señal de forma persistente: está estable. Es la línea base para detectar talas o camaroneras nuevas en los próximos años.`, go: { mode: "change", card: "mangCard" } },
+      { t: "Mira el embalse", x: "Donde sí hay cambios grandes es en el embalse Cerrón Grande: el nivel baja metros y aparecen plantas flotantes.", go: {}, next: { label: "Ver Cerrón Grande →", site: "cerron" } },
+    ];
     return [
       { t: "Barra de Santiago: manglar y estero", x: "Un humedal Ramsar en Ahuachapán, junto al mar. El canal oscuro es el <b>estero</b>; lo verde es el <b>manglar</b>; los cuadritos de arriba son <b>cultivos de caña</b>.", go: { date: "2025-12-25" } },
       { t: "¿El radar dice la verdad?", x: `Comparamos NISAR con el mapa oficial de cobertura de la ESA. NISAR encontró el <b>${f.valid ? f.valid.toFixed(0) : "~90"} %</b> del agua del estero que marca el mapa, en época seca y en lluvias.`, go: { mode: "truth", ref: "wc", date: "2026-01-18", card: "valCard" } },
       { t: "El manglar se moja en lluvias", x: "En <b style='color:#e05ad0'>rosado</b>, manglar con agua debajo: la señal rebota en el agua y en los troncos (doble rebote). En la época lluviosa esa área crece.", go: { layer: "cls", date: "2026-09-03", fly: [[13.705, -90.02], 13] } },
-      { t: "Un manglar estable", x: "En un año la señal del manglar casi no cambió: es una <b>buena noticia</b>. Las amenazas reales (tala, camaroneras, caña) son lentas y se verán con varios años de NISAR.", go: { date: "2026-10-21" } },
-      { t: "Mira también el embalse", x: "En el embalse Cerrón Grande los cambios son mucho más grandes: el nivel baja metros y aparecen plantas flotantes. Ahí juntamos 5 misiones e inteligencia artificial.", go: {}, next: { label: "Ver Cerrón Grande →", site: "cerron" } },
+      { t: "Un manglar estable", x: "En un año la señal del manglar casi no cambió: es una <b>buena noticia</b>. Las amenazas reales (tala, camaroneras, caña) son lentas y se verán con varios años de NISAR.", go: { date: "2026-10-21", card: "mangCard" } },
+      { t: "Comparado con Jiquilisco", x: "La Bahía de Jiquilisco, el manglar más grande del país, se comporta igual: misma subida natural en lluvias y pérdida casi cero. Dos manglares sanos este año.", go: { card: "mangCard" }, next: { label: "Ver Jiquilisco →", site: "jiquilisco" } },
     ];
   }
 
@@ -208,7 +221,7 @@
       html += light("Temperatura del agua", e ? e.water_c.toFixed(0) : null, " °C", eco.map((o) => o.water_c), "high",
         ["fresca para el año", "normal", "caliente: favorece a las plantas"]);
     } else {
-      html += light("Agua del estero", d.water_km2.toFixed(1), " km²", S.dates.map((x) => x.water_km2), "low",
+      html += light(SITE.id === "jiquilisco" ? "Agua de la bahía" : "Agua del estero", d.water_km2.toFixed(1), " km²", S.dates.map((x) => x.water_km2), "low",
         ["menos agua libre que de costumbre", "normal para el año", "más agua libre"]);
       html += light("Manglar con agua debajo", d.floodveg_km2.toFixed(1), " km²", S.dates.map((x) => x.floodveg_km2), "none",
         ["poco: típico de la época seca", "intermedio", "mucho: típico de lluvias"]);

@@ -49,6 +49,10 @@
         <span class="sc-ico">🌿</span><b>Barra de Santiago</b>
         <span>Manglar y estero junto al mar · comprobado con el mapa oficial de la ESA</span>
       </button>
+      <button class="site-card" data-site="jiquilisco">
+        <span class="sc-ico">🌳</span><b>Bahía de Jiquilisco</b>
+        <span>El manglar más grande del país · comparado con Barra de Santiago</span>
+      </button>
     </div>
     <div class="hero-cta">
       <button id="heroTour" class="btn primary big">▶ Ver el recorrido guiado</button>
@@ -172,6 +176,14 @@
       <canvas id="lakeLvlChart" height="170"></canvas>
       <p class="hint" id="lakeHint">Nivel del agua (SWOT) y temperatura de la superficie del agua de día (ECOSTRESS).</p>
       <div class="kpis" id="lakeKpis"></div>
+    </div>
+
+    <div class="card" id="mangCard" hidden>
+      <h3>Dos manglares, mismo radar</h3>
+      <p class="hint" style="margin-top:0">Barra de Santiago y la Bahía de Jiquilisco vistos por NISAR en las mismas 13 fechas. La señal HV mide la estructura del bosque: si se tala, cae de golpe.</p>
+      <canvas id="mangChart" height="170"></canvas>
+      <div id="mangTable"></div>
+      <p class="hint"><b>Lectura:</b> los dos manglares suben juntos 3–4 dB en lluvias (hojas y suelo mojados: es natural) y la pérdida es casi cero. Están estables este año: buena noticia para el ecosistema y una línea base para detectar talas futuras. Las amenazas al manglar son lentas y se verán con varios años de NISAR.</p>
     </div>
 
     <div class="card" id="mlCard" hidden>

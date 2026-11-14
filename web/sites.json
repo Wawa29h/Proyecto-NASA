@@ -29,6 +29,25 @@
     "labels": {
       "water": "Agua del estero km²",
       "veg": "Manglar inundado km²"
+    },
+    "mangrove": true
+  },
+  {
+    "id": "jiquilisco",
+    "name": "Bahía de Jiquilisco",
+    "title": "Latido del Manglar",
+    "subtitle": "El manglar más grande de El Salvador · Usulután · radar NISAR banda L",
+    "base": "data-jiquilisco",
+    "center": [
+      13.25,
+      -88.5
+    ],
+    "lake": false,
+    "mangrove": true,
+    "min_coverage": 70,
+    "labels": {
+      "water": "Agua de la bahía km²",
+      "veg": "Manglar inundado km²"
     }
   }
 ]

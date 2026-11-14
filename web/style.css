@@ -162,3 +162,9 @@ body.expert .simple-only{display:none!important}
 body{display:flex;flex-direction:column;min-height:100%}
 .layout{flex:1;min-height:0;height:auto}
 @media (min-width:861px){ body{height:100%;overflow:hidden} }
+.mtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.mtable th,.mtable td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+.mtable th{color:var(--muted);font-weight:600}
+.mtable td:first-child{color:var(--muted)}
+.hero-sites{grid-template-columns:repeat(3,1fr)}
+@media (max-width:860px){.hero-sites{grid-template-columns:1fr}}

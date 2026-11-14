@@ -5,7 +5,7 @@ let SITE = null, BASE = "data";
 // rutas guardadas como "data/x.png" o "ref/x.png" -> carpeta del sitio
 const P = (p) => (p ? BASE + "/" + p.replace(/^data\//, "") : p);
 const getJSON = async (p) => { try { const r = await fetch(p, { cache: "no-store" }); return r.ok ? await r.json() : null; } catch { return null; } };
-let SWOT = null, ECO = null, RAINJ = null, ML = null;
+let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null;
 const mlFor = (d) => ML?.dates.find((m) => m.id === d.id);
 const fmtDate = (s) => new Date(s + "T12:00:00").toLocaleDateString("es-SV", { day: "numeric", month: "short", year: "numeric" });
 
@@ -349,6 +349,19 @@ function buildMlCard() {
   $("layerMlBtn").hidden = false;
   $("mlCard").hidden = false;
 }
+function buildMangCard() {
+  const names = Object.keys(MANG);
+  const colors = ["#00cf75", "#4fc3f7", "#ffd166"];
+  tsChart($("mangChart"), names.map((n, i) => ({
+    label: n, data: MANG[n].dates.map((r) => ({ x: T(r.date), y: r.hv_mangrove })), color: colors[i % 3], yAxisID: "h",
+  })), [{ id: "h", title: "HV del manglar (dB)" }]);
+  $("mangTable").innerHTML = `<table class="mtable"><tr><th></th>${names.map((n) => `<th>${n.replace("Bahia", "Bahía")}</th>`).join("")}</tr>` +
+    `<tr><td>Manglar (mapa ESA)</td>${names.map((n) => `<td>${MANG[n].mangrove_km2} km²</td>`).join("")}</tr>` +
+    `<tr><td><b>Pérdida en el año</b></td>${names.map((n) => `<td><b>${(MANG[n].loss_km2 * 100).toFixed(0)} ha (${MANG[n].loss_pct}%)</b></td>`).join("")}</tr>` +
+    `<tr><td>Subida de HV seca → lluvias</td>${names.map((n) => `<td>${MANG[n].hv_range_db} dB</td>`).join("")}</tr>` +
+    `<tr><td>Manglar con agua debajo</td>${names.map((n) => `<td>${MANG[n].flooded_range_pct[0]}–${MANG[n].flooded_range_pct[1]} %</td>`).join("")}</tr></table>`;
+  $("mangCard").hidden = false;
+}
 function buildWqCard() {
   const s2 = (REF?.sentinel2 || []).filter((s) => s.ndci != null && s.cloud_water_pct < 40);
   if (!s2.length) return;
@@ -474,7 +487,8 @@ $("play").onclick = () => {
 
   S = await getJSON(BASE + "/series.json");
   // control de calidad: fuera fechas sin contraste agua/vegetación o con menos del 90 % del recuadro cubierto
-  if (S && S.dates) S.dates = S.dates.filter((d) => d.qc !== false && (d.coverage_pct == null || d.coverage_pct >= 90));
+  const minCov = SITE.min_coverage ?? 90; // algunos sitios quedan siempre al borde de la pasada (mismo recorte en todas las fechas)
+  if (S && S.dates) S.dates = S.dates.filter((d) => d.qc !== false && (d.coverage_pct == null || d.coverage_pct >= minCov));
   if (!S || !S.dates || !S.dates.length) { $("empty").hidden = false; return; }
   const [W, Sth, E, N] = S.bbox;
   bounds = L.latLngBounds([Sth, W], [N, E]);
@@ -497,10 +511,17 @@ $("play").onclick = () => {
   ECO = await getJSON(BASE + "/ecostress.json");
   ML = await getJSON(BASE + "/ml.json");
   if (ML) buildMlCard();
+  if (REF && !(REF.sentinel2 || []).length) {
+    // sitio sin fotos Sentinel-2 descargadas: solo se compara con el mapa ESA
+    document.querySelectorAll('#truthSeg [data-ref="s2"], #truthSeg [data-ref="veg"]').forEach((b) => (b.hidden = true));
+    state.ref = "wc";
+    document.querySelectorAll("#truthSeg button").forEach((b) => b.classList.toggle("on", b.dataset.ref === "wc"));
+  }
   if (!REF) document.querySelector('[data-mode="truth"]').hidden = true;
   else $("legendWc").innerHTML = Object.values(REF.worldcover.legend).map((c) => `<span><i style="background:${c.color}"></i>${c.name}</span>`).join("");
   if (VAL && !SITE.lake) buildValChart();
   if (SITE.lake) buildLakeCard();
+  if (SITE.mangrove) { MANG = await getJSON("mangrove_comparison.json"); if (MANG) buildMangCard(); }
   buildWqCard();
 
   setKpis();
