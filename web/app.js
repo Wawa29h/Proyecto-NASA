@@ -6,7 +6,7 @@ let SITE = null, BASE = "data";
 const P = (p) => (p ? BASE + "/" + p.replace(/^data\//, "") : p);
 const getJSON = async (p) => { try { const r = await fetch(p, { cache: "no-store" }); return r.ok ? await r.json() : null; } catch { return null; } };
 let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null, CLOUDS = null, ALERTS = null;
-let GMW = null, CARBON = null, PONDS = null, CANE = null, FIRES = null, fireLayer = null;
+let GMW = null, CARBON = null, PONDS = null, CANE = null, FIRES = null, fireLayer = null, BURNS = null;
 const fmtInt = (n) => Math.round(n).toLocaleString("es-SV");
 const mlFor = (d) => ML?.dates.find((m) => m.id === d.id);
 const fmtDate = (s) => new Date(s + "T12:00:00").toLocaleDateString("es-SV", { day: "numeric", month: "short", year: "numeric" });
@@ -128,8 +128,15 @@ function render() {
                       ponds: PONDS && [PONDS.img, "Estanques detectados por NISAR", `<span style="color:#ff9a1e">■</span> agua quieta y rectangular: <b>${PONDS.count}</b> estanques, <b>${fmtInt(PONDS.area_ha)} ha</b>.`],
                       cane: CANE && [CANE.harvest_img, "Caña: mes de cosecha (fotos)", Object.entries(CANE.colors).map(([m, c]) => `<span style="color:${c}">■</span> ${m}`).join(" · ") + ` · <span style="color:#aaa">■</span> sin cosecha vista.` + (FIRES ? ` Puntos naranja: quemas (NASA FIRMS).` : "")],
                       canenisar: CANE?.nisar && [CANE.nisar.img, `Caña cortada vista por NISAR (${fmtDate(CANE.nisar.from)} → ${fmtDate(CANE.nisar.to)})`, `<span style="color:#ff6348">■</span> la señal del radar cayó ≥ 3 dB: la caña perdió hojas y tallos. <b>${CANE.nisar.cut_km2} km²</b>; el <b>${Math.round(CANE.nisar.agree_with_s2_pct)} %</b> coincide con lo que ven las fotos.`] };
+      if (BURNS) {
+        extra.burns = [BURNS.img_date, "Quemas de caña (fotos Sentinel-2)", `Color = fecha de la quema: <span style="color:#ffdc3c">■</span> noviembre → <span style="color:#d7140a">■</span> mayo. Los círculos son parcelas quemadas el mismo día; tócalos para ver la fecha y la distancia al manglar.`];
+        extra.burntype = [BURNS.img_type, "¿Quemada o cortada en verde?", `<span style="color:#e63946">■</span> quemada (${fmtInt(BURNS.burned_ha)} ha) · <span style="color:#2ecc71">■</span> cortada sin quemar (${fmtInt(BURNS.green_ha)} ha). El <b>${BURNS.burned_share_pct} %</b> de la cosecha vista fue con quema.`];
+      }
       if (fireLayer) { map.removeLayer(fireLayer); fireLayer = null; }
-      if (state.ref === "cane" && FIRES?.points?.length)
+      if (state.ref === "burns" && BURNS?.events?.length)
+        fireLayer = L.layerGroup(BURNS.events.map((e) => L.circleMarker([e.lat, e.lon], { radius: Math.min(14, 3 + Math.sqrt(e.ha) * 1.5), color: e.km_to_mangrove < 1 ? "#ff3b30" : "#fff", weight: 2, fillColor: "#ff7a00", fillOpacity: 0.55, pane: "paneB" })
+          .bindTooltip(`🔥 Quemada entre el ${fmtDate(e.from)} y el ${fmtDate(e.to)} · ${e.ha} ha · ${e.km_to_mangrove < 0.05 ? "pegada al" : e.km_to_mangrove + " km del"} manglar`))).addTo(map);
+      else if (state.ref === "cane" && FIRES?.points?.length)
         fireLayer = L.layerGroup(FIRES.points.map((p) => L.circleMarker([p.lat, p.lon], { radius: 4, color: "#fff", weight: 1, fillColor: "#ff7a00", fillOpacity: 0.9, pane: "paneB" })
           .bindTooltip(`Quema ${fmtDate(p.date)} · ${p.km_to_mangrove} km del manglar`))).addTo(map);
       if (extra[state.ref]) {
@@ -416,6 +423,7 @@ function buildCaneCard() {
     options: { animation: false, plugins: { legend: { labels: { color: "#c8d8d5", boxWidth: 10, font: { size: 11 } } } },
       scales: { x: { ticks: tick, grid: { display: false } }, y: { ticks: tick, grid: { color: gridColor }, title: { display: true, text: "km²", color: "#93aaa6" } } } },
   });
+  if (BURNS) buildBurns();
   $("fireBox").innerHTML = FIRES
     ? `🔥 <b>${FIRES.count}</b> puntos de quema detectados por NASA FIRMS (${fmtDate(FIRES.from)} – ${fmtDate(FIRES.to)}); <b>${FIRES.near_mangrove["<1 km"]}</b> a menos de 1 km del manglar y ${FIRES.near_mangrove["<3 km"]} a menos de 3 km.`
     : `🔥 Quemas (NASA FIRMS): el script está listo; falta la llave gratuita de FIRMS para bajar los puntos de fuego.`;
@@ -425,6 +433,34 @@ function buildCaneCard() {
     $("caneTemp").innerHTML = `🌡️ De día, el cañal está en promedio <b>${diff.toFixed(1)} °C más caliente</b> que el manglar (${eco.length} pasadas de NASA ECOSTRESS). El manglar refresca la zona.`;
   } else $("caneTemp").innerHTML = "🌡️ Temperatura manglar vs cañal (NASA ECOSTRESS): en proceso.";
   $("caneCard").hidden = false;
+}
+function buildBurns() {
+  const B = BURNS;
+  $("burnKpis").innerHTML =
+    kpi(`${fmtInt(B.burned_ha)} ha`, "de caña quemada en la zafra 2025–2026") +
+    kpi(`${B.burned_share_pct} %`, `de la cosecha fue con quema (el resto, ${fmtInt(B.green_ha)} ha, en verde)`) +
+    kpi(`${fmtInt(B.burned_within_1km_ha)} ha`, `quemadas a menos de 1 km del manglar (${fmtInt(B.burned_within_500m_ha)} ha a menos de 500 m)`) +
+    kpi(String(B.events_count), `quemas por parcela detectadas (${B.events_within_1km} a menos de 1 km del manglar)`);
+  const wk = Object.keys(B.by_week_ha);
+  new Chart($("burnWeekChart"), {
+    type: "bar",
+    data: { labels: wk.map((w) => new Date(w + "T12:00:00").toLocaleDateString("es-SV", { day: "numeric", month: "short" })),
+      datasets: [{ label: "ha quemadas por semana", data: wk.map((w) => B.by_week_ha[w]), backgroundColor: "#ff7a00" }] },
+    options: { animation: false, plugins: { legend: { display: false } },
+      scales: { x: { ticks: { ...tick, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }, grid: { display: false } }, y: { ticks: tick, grid: { color: gridColor }, title: { display: true, text: "ha", color: "#93aaa6" } } } },
+  });
+  if (B.median_window_days != null) $("burnWeekHint").innerHTML += ` La mitad de las quemas quedan fechadas con una ventana de <b>${B.median_window_days} días</b> o menos.`;
+  const short = (s) => new Date(s + "T12:00:00").toLocaleDateString("es-SV", { day: "numeric", month: "short" });
+  $("burnList").innerHTML = `<p class="hint" style="margin:0 0 4px">Quemas más cercanas al manglar (toca una para ir al lugar):</p>` +
+    B.events.slice().sort((a, b) => a.km_to_mangrove - b.km_to_mangrove || b.ha - a.ha).slice(0, 25).map((e, i) =>
+    `<div class="burnrow" data-i="${i}" data-lat="${e.lat}" data-lon="${e.lon}"><span>🔥</span><span>entre el <b>${short(e.from)}</b> y el <b>${short(e.to)}</b> · ${e.ha} ha</span>` +
+    `<span class="${e.km_to_mangrove < 1 ? "near" : ""}">${e.km_to_mangrove < 0.05 ? "pegada al manglar" : e.km_to_mangrove + " km"}</span></div>`).join("");
+  document.querySelectorAll(".burnrow").forEach((r) => (r.onclick = () => {
+    setMode("truth"); state.ref = "burns";
+    document.querySelectorAll("#truthSeg button").forEach((b) => b.classList.toggle("on", b.dataset.ref === "burns"));
+    render(); map.flyTo([+r.dataset.lat, +r.dataset.lon], 15, { duration: 1.2 });
+  }));
+  $("burnBox").hidden = false;
 }
 function buildMangroveExtras() {
   if (GMW) {
@@ -634,6 +670,8 @@ $("play").onclick = () => {
     PONDS = await getJSON(BASE + "/ref/ponds.json");
     CANE = await getJSON(BASE + "/ref/cane.json");
     FIRES = await getJSON(BASE + "/ref/fires.json");
+    BURNS = await getJSON(BASE + "/ref/burns.json");
+    document.querySelectorAll("#truthSeg .burn-only").forEach((b) => (b.hidden = !BURNS));
     document.querySelectorAll("#truthSeg .cane-only").forEach((b) => (b.hidden = !(b.dataset.ref === "cane" ? CANE : CANE?.nisar)));
     if (CANE) buildCaneCard();
     document.querySelectorAll("#truthSeg .mg-only").forEach((b) => (b.hidden = !({ gmw: GMW, height: CARBON, ponds: PONDS }[b.dataset.ref])));

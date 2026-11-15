@@ -194,3 +194,8 @@ body{display:flex;flex-direction:column;min-height:100%}
 .zone-label{background:rgba(10,20,22,.85);border:1px solid var(--line);color:#fff;border-radius:8px;padding:2px 8px;font:600 11px Inter,system-ui,sans-serif;white-space:nowrap}
 .bignum{font-size:28px;font-weight:700;color:var(--accent);line-height:1.15;margin:4px 0 8px}
 .bignum small{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:4px}
+.burnlist{display:flex;flex-direction:column;gap:4px;max-height:220px;overflow:auto;margin-bottom:8px}
+.burnrow{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;background:#0e1a1d;border-radius:8px;padding:6px 8px;font-size:12px;cursor:pointer;border:1px solid transparent}
+.burnrow:hover{border-color:var(--accent)}
+.burnrow b{font-variant-numeric:tabular-nums}
+.burnrow .near{color:#ff6b5b;font-weight:600}
