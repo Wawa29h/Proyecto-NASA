@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "data_status": "simulated",
+  "warning": "CONTRATO SIMULADO: Metadatos de procedencia y control de calidad.",
+  "sites": {
+    "barra": {
+      "crs": "EPSG:4326",
+      "step_degrees": 0.00018,
+      "approx_resolution_m": 20,
+      "radar_mission": "NISAR L2 GCOV",
+      "polarizations": ["HH", "HV"],
+      "qc_policy": "Filtro estricto: qc != false y cobertura >= 90%",
+      "sources": [
+        { "name": "NISAR L2 GCOV", "provider": "NASA-ISRO / ASF DAAC", "status": "processed" },
+        { "name": "ESA WorldCover 2021", "provider": "ESA", "resolution_m": 10, "status": "reference" },
+        { "name": "Sentinel-2 MSI", "provider": "Copernicus / ESA", "status": "optical_reference" },
+        { "name": "NASA POWER", "provider": "NASA Langley Research Center", "status": "meteorological" },
+        { "name": "Global Mangrove Watch v3", "provider": "JAXA", "status": "historical" },
+        { "name": "ECOSTRESS", "provider": "NASA JPL", "resolution_m": 70, "status": "complementary" }
+      ]
+    },
+    "jiquilisco": {
+      "crs": "EPSG:4326",
+      "step_degrees": 0.00018,
+      "approx_resolution_m": 20,
+      "radar_mission": "NISAR L2 GCOV",
+      "polarizations": ["HH", "HV"],
+      "qc_policy": "Filtro adaptado: qc != false y cobertura >= 50% (borde de barrido)",
+      "limitations": [
+        "Las primeras cuatro fechas cubren aproximadamente el 57% del recuadro.",
+        "Fechas posteriores rellenadas con órbita descendente (desfase temporal de 5 días).",
+        "Sin fotografías Sentinel-2 ni modelo de IA publicados en el visor."
+      ]
+    },
+    "cerron": {
+      "crs": "EPSG:4326",
+      "step_degrees": 0.00018,
+      "approx_resolution_m": 20,
+      "radar_mission": "NISAR L2 GCOV",
+      "polarizations": ["HH", "HV"],
+      "model": "Random Forest (120 árboles, prof. 12) - scikit-learn",
+      "model_f1_mean": 0.544,
+      "swot_mission": "NASA/CNES SWOT",
+      "swot_qc_filter": "quality <= 1"
+    }
+  }
+}

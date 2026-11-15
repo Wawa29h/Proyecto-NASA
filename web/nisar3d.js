@@ -76,9 +76,9 @@
     try {
       const es = await fetch(opts.url || "data/el_salvador.geojson").then((r) => r.json());
       globe.polygonsData(es.features)
-        .polygonCapColor(() => "rgba(47,214,163,0.10)")
-        .polygonSideColor(() => "rgba(47,214,163,0.12)")
-        .polygonStrokeColor(() => "#7dffd6")
+        .polygonCapColor(() => "rgba(20,155,165,0.15)")
+        .polygonSideColor(() => "rgba(20,155,165,0.20)")
+        .polygonStrokeColor(() => "#149BA5")
         .polygonAltitude(opts.altitude ?? 0.0005)   // ~3 km: casi pegado al suelo, sin "pared" al acercarse
         .polygonsTransitionDuration(0);
     } catch { /* sin contorno */ }

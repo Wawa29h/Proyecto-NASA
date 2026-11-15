@@ -82,7 +82,7 @@
 
   // ---------- globo ----------
   const globe = Globe()(document.getElementById("globe"))
-    .backgroundColor("#06090c")
+    .backgroundColor("#0b1416")
     .globeImageUrl("https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg")
     .bumpImageUrl("https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png")
     .showAtmosphere(true).atmosphereColor("#7fd8ff").atmosphereAltitude(0.18)
@@ -198,7 +198,7 @@
     const split = (pts) => { const out = []; let cur = []; for (const p of pts) { if (cur.length && Math.abs(p[1] - cur[cur.length - 1][1]) > 180) { out.push(cur); cur = []; } cur.push(p); } if (cur.length) out.push(cur); return out; };
     const paths = [];
     split(past).forEach((pts) => paths.push({ pts, color: "#5f7a80", stroke: 0.6 }));
-    split(fut).forEach((pts) => paths.push({ pts, color: "#2fd6a3", stroke: 0.9 }));
+    split(fut).forEach((pts) => paths.push({ pts, color: "#149BA5", stroke: 1.1 }));
     swath.forEach((arr) => split(arr).forEach((pts) => paths.push({ pts, color: "rgba(255,138,0,0.35)", stroke: 1.6 })));
     globe.pathsData(paths);
   }

@@ -5,7 +5,7 @@ let SITE = null, BASE = "data";
 // rutas guardadas como "data/x.png" o "ref/x.png" -> carpeta del sitio
 const P = (p) => (p ? BASE + "/" + p.replace(/^data\//, "") : p);
 const getJSON = async (p) => { try { const r = await fetch(p, { cache: "no-store" }); return r.ok ? await r.json() : null; } catch { return null; } };
-let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null, CLOUDS = null, ALERTS = null;
+let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null, CLOUDS = null, ALERTS = null, INTERP = null;
 let GMW = null, CARBON = null, PONDS = null, CANE = null, FIRES = null, fireLayer = null, BURNS = null;
 const fmtInt = (n) => Math.round(n).toLocaleString("es-SV");
 const mlFor = (d) => ML?.dates.find((m) => m.id === d.id);
@@ -115,6 +115,8 @@ function render() {
     }
     $("dateLabel").textContent = fmtDate(d.date);
     $("dateSlider").value = state.idx;
+    $("dateSlider").setAttribute("aria-valuenow", state.idx);
+    $("dateSlider").setAttribute("aria-valuetext", fmtDate(d.date) + (d.qc === false ? " (QC rechazado)" : ""));
     // de dónde viene cada pedazo: rayas grises = sin escaneo; celestes = rellenado con otra órbita
     if (d.coverage_pct != null && d.coverage_pct < 90 && !fullRef()) {
       const b = bounds, lat = (b.getNorth() + b.getSouth()) / 2, lon = b.getEast() - (b.getEast() - b.getWest()) * 0.2;
@@ -194,6 +196,20 @@ function render() {
   } else {
     renderChange();
   }
+
+  const isPair = state.mode === "compare" || state.mode === "change";
+  const interpCard = $("interpCard");
+  const warnEl = $("comparabilityWarning");
+  if (isPair && S && S.dates) {
+    const A = S.dates[state.a], B = S.dates[state.b];
+    if (A && B) {
+      updateComparabilityWarning(A, B);
+      updateInterpretation(A, B);
+    }
+  } else {
+    if (interpCard) interpCard.hidden = true;
+    if (warnEl) warnEl.hidden = true;
+  }
   applyClip();
   $("legendRgb").hidden = state.layer !== "rgb" && state.layer !== "ml";
   $("legendCls").hidden = state.layer !== "cls";
@@ -260,6 +276,79 @@ function pxKm2() {
 }
 const kpi = (v, l) => `<div class="kpi"><b>${v}</b><span>${l}</span></div>`;
 
+function updateComparabilityWarning(A, B) {
+  const el = $("comparabilityWarning");
+  if (!el) return;
+  const covA = A.coverage_pct ?? 100;
+  const covB = B.coverage_pct ?? 100;
+  const fillsA = A.fill_from || [];
+  const fillsB = B.fill_from || [];
+  const diffCov = Math.abs(covA - covB);
+  const issues = [];
+
+  if (diffCov >= 8) {
+    issues.push(`Diferencia de cobertura del barrido radar: <b>${Math.round(covA)}%</b> (${fmtDate(A.date)}) vs <b>${Math.round(covB)}%</b> (${fmtDate(B.date)}).`);
+  }
+  if (fillsA.length || fillsB.length) {
+    issues.push(`Una o ambas observaciones incorporan rellenos orbitales con desfase temporal (no simultáneos).`);
+  }
+
+  if (issues.length) {
+    el.hidden = false;
+    el.innerHTML = `⚠ <b>Soporte espacial no homogéneo:</b> ${issues.join(" ")} Los cambios calculados en km² brutos no representan un cambio físico absoluto de toda la cuenca sin una máscara común.`;
+  } else {
+    el.hidden = true;
+  }
+}
+
+function updateInterpretation(A, B) {
+  const card = $("interpCard");
+  const box = $("interpContent");
+  if (!card || !box) return;
+
+  const siteInterp = INTERP?.sites ? INTERP.sites[SITE.id] : null;
+  const pairInterp = siteInterp?.comparisons?.find((c) => c.before_id === A.id && c.after_id === B.id);
+  const isSimulated = INTERP?.data_status === "simulated";
+
+  card.hidden = false;
+
+  if (pairInterp) {
+    const badge = isSimulated ? `<span class="badge-simulated">Datos simulados (prueba)</span><br>` : "";
+    if (pairInterp.status === "not_comparable") {
+      box.innerHTML = badge +
+        `<b>Resultado no comparable directamente:</b><br>` +
+        `Las observaciones del <b>${fmtDate(A.date)}</b> y <b>${fmtDate(B.date)}</b> no comparten el mismo soporte espacial o temporal.<br>` +
+        (pairInterp.limitations?.length ? `<p class="hint" style="margin-top:4px">${pairInterp.limitations.map((l) => "• " + l).join("<br>")}</p>` : "");
+      return;
+    }
+
+    if (pairInterp.status === "supported" && pairInterp.hypotheses?.length) {
+      const hyposHtml = pairInterp.hypotheses.map((h) =>
+        `<div class="interp-hypo">` +
+        `<b>${h.summary}</b><br>` +
+        (h.evidence ? `<span>Evidencia: ${h.evidence}</span><br>` : "") +
+        (h.confidence ? `<small style="color:var(--muted)">Confianza: ${h.confidence}</small>` : "") +
+        `</div>`
+      ).join("");
+
+      box.innerHTML = badge +
+        (pairInterp.observed_change ? `<span>Cambio observado: <b>${pairInterp.observed_change.delta_km2} ${pairInterp.observed_change.unit}</b> en ${pairInterp.observed_change.variable}</span><br>` : "") +
+        hyposHtml +
+        (pairInterp.limitations?.length ? `<p class="hint" style="margin-top:4px">${pairInterp.limitations.map((l) => "• " + l).join("<br>")}</p>` : "");
+      return;
+    }
+  }
+
+  // Si no hay hipótesis precalculadas:
+  const covA = A.coverage_pct ?? 100, covB = B.coverage_pct ?? 100;
+  if (Math.abs(covA - covB) > 10) {
+    box.innerHTML = `<b>No comparable:</b> La cobertura del barrido difiere significativamente entre ${fmtDate(A.date)} (${Math.round(covA)}%) y ${fmtDate(B.date)} (${Math.round(covB)}%). Se requiere una máscara común aprobada por el equipo científico.`;
+  } else {
+    box.innerHTML = `<b>Información científica pendiente:</b> No hay evidencia suficiente para proponer una explicación causal automática entre el <b>${fmtDate(A.date)}</b> y el <b>${fmtDate(B.date)}</b>.<br>` +
+      `<p class="hint" style="margin-top:4px">Las variaciones de retrodispersión radar pueden obedecer a múltiples variables (humedad del dosel, nivel de marea, rugosidad superficial o fenología vegetal). Pendiente de reglas validadas.</p>`;
+  }
+}
+
 // ---------- lluvia (Open-Meteo, sin llave) ----------
 async function loadRain() {
   RAINJ = await getJSON(BASE + "/rain.json");
@@ -309,6 +398,19 @@ function buildChart() {
       onClick: (_, els) => { if (els.length) { state.idx = els[0].index; setMode("single"); } },
     },
   });
+
+  const tbl = $("chartAccessibleTable");
+  if (tbl) {
+    const rainName = RAINJ ? "Lluvia (mm)" : "Lluvia (Open-Meteo mm)";
+    const vegName = SITE.labels.veg;
+    const waterName = SITE.labels.water;
+    const rowsHtml = S.dates.map((d) => {
+      const rVal = rain12(d.date);
+      const vVal = SITE.lake ? d.floatveg_km2 : d.floodveg_km2;
+      return `<tr><td>${fmtDate(d.date)}</td><td>${rVal ?? "—"}</td><td>${d.water_km2 != null ? d.water_km2.toFixed(2) : "—"}</td><td>${vVal != null ? vVal.toFixed(2) : "—"}</td></tr>`;
+    }).join("");
+    tbl.innerHTML = `<table class="sr-table" aria-label="Tabla accesible de observaciones temporales"><thead><tr><th scope="col">Fecha</th><th scope="col">${rainName}</th><th scope="col">${waterName}</th><th scope="col">${vegName}</th></tr></thead><tbody>${rowsHtml}</tbody></table>`;
+  }
 }
 function buildValChart() {
   const colors = { Manglar: "#00cf75", Bosque: "#2e7d32", Cultivo: "#f096ff", Pasto: "#ffe14c", Agua: "#3d8bfd" };
@@ -417,11 +519,12 @@ function buildMangCard() {
   tsChart($("mangChart"), names.map((n, i) => ({
     label: n, data: MANG[n].dates.map((r) => ({ x: T(r.date), y: r.hv_mangrove })), color: colors[i % 3], yAxisID: "h",
   })), [{ id: "h", title: "HV del manglar (dB)" }]);
-  $("mangTable").innerHTML = `<table class="mtable"><tr><th></th>${names.map((n) => `<th>${n.replace("Bahia", "Bahía")}</th>`).join("")}</tr>` +
-    `<tr><td>Manglar (mapa ESA)</td>${names.map((n) => `<td>${MANG[n].mangrove_km2} km²</td>`).join("")}</tr>` +
-    `<tr><td><b>Pérdida en el año</b></td>${names.map((n) => `<td><b>${(MANG[n].loss_km2 * 100).toFixed(0)} ha (${MANG[n].loss_pct}%)</b></td>`).join("")}</tr>` +
-    `<tr><td>Subida de HV seca → lluvias</td>${names.map((n) => `<td>${MANG[n].hv_range_db} dB</td>`).join("")}</tr>` +
-    `<tr><td>Manglar con agua debajo</td>${names.map((n) => `<td>${MANG[n].flooded_range_pct[0]}–${MANG[n].flooded_range_pct[1]} %</td>`).join("")}</tr></table>`;
+  $("mangTable").innerHTML = `<table class="mtable" aria-label="Tabla comparativa de manglares"><thead><tr><th scope="col">Indicador</th>${names.map((n) => `<th scope="col">${n.replace("Bahia", "Bahía")}</th>`).join("")}</tr></thead><tbody>` +
+    `<tr><th scope="row">Manglar (mapa ESA)</th>${names.map((n) => `<td>${MANG[n].mangrove_km2} km²</td>`).join("")}</tr>` +
+    `<tr><th scope="row"><b>Pérdida en el año *</b></th>${names.map((n) => `<td><b>${(MANG[n].loss_km2 * 100).toFixed(0)} ha (${MANG[n].loss_pct}%)</b></td>`).join("")}</tr>` +
+    `<tr><th scope="row">Rango de HV observado en el año</th>${names.map((n) => `<td>${MANG[n].hv_range_db} dB</td>`).join("")}</tr>` +
+    `<tr><th scope="row">Manglar con agua debajo</th>${names.map((n) => `<td>${MANG[n].flooded_range_pct[0]}–${MANG[n].flooded_range_pct[1]} %</td>`).join("")}</tr></tbody></table>` +
+    `<p class="hint" style="margin-top:6px;font-size:11px;color:var(--muted)">* Nota científica: La cifra reportada como 'pérdida' responde al umbral de caída radar (&lt; -3 dB en media de 3 fechas); es un indicador de variación de retrodispersión, no una comprobación de tala física sin verificación en campo.</p>`;
   $("mangCard").hidden = false;
 }
 function buildCaneCard() {
@@ -584,13 +687,21 @@ function highlightChart() {
   chart.update();
 }
 function setKpis() {
-  const w = S.dates.map((d) => d.water_km2), f = S.dates.map((d) => d.floodveg_km2);
-  const iMax = f.indexOf(Math.max(...f)), iMin = f.indexOf(Math.min(...f));
+  const w = S.dates.map((d) => d.water_km2);
+  const f = S.dates.map((d) => (SITE.lake ? d.floatveg_km2 : d.floodveg_km2));
+  const wOk = w.filter((x) => x != null);
+  const fOk = f.filter((x) => x != null);
+  const vegLabel = SITE.lake ? "plantas en agua" : "veg. inundada";
+  if (!wOk.length || !fOk.length) {
+    $("kpis").innerHTML = kpi(S.dates.length, "pasadas NISAR") + kpi("—", "observaciones válidas");
+    return;
+  }
+  const iMax = f.indexOf(Math.max(...fOk)), iMin = f.indexOf(Math.min(...fOk));
   $("kpis").innerHTML =
     kpi(S.dates.length, "pasadas NISAR") +
-    kpi(`${Math.min(...w).toFixed(1)}–${Math.max(...w).toFixed(1)}`, "km² de agua abierta") +
-    kpi(f[iMax].toFixed(1) + " km²", "máx. veg. inundada · " + fmtDate(S.dates[iMax].date)) +
-    kpi(f[iMin].toFixed(1) + " km²", "mín. veg. inundada · " + fmtDate(S.dates[iMin].date));
+    kpi(`${Math.min(...wOk).toFixed(1)}–${Math.max(...wOk).toFixed(1)}`, "km² de agua abierta") +
+    kpi(f[iMax].toFixed(1) + " km²", `máx. ${vegLabel} · ` + fmtDate(S.dates[iMax].date)) +
+    kpi(f[iMin].toFixed(1) + " km²", `mín. ${vegLabel} · ` + fmtDate(S.dates[iMin].date));
 }
 
 // ---------- sonda de un punto ----------
@@ -623,13 +734,13 @@ map.on("click", async (e) => {
   });
   const cur = state.mode === "single" ? state.idx : state.b;
   if (probeMarker) map.removeLayer(probeMarker);
-  probeMarker = L.circleMarker(e.latlng, { radius: 7, color: "#fff", weight: 2, fillColor: "#2fd6a3", fillOpacity: 1 }).addTo(map);
+  probeMarker = L.circleMarker(e.latlng, { radius: 7, color: "#fff", weight: 2, fillColor: "#149BA5", fillOpacity: 1 }).addTo(map);
   const ok = vals.filter((v) => v !== null);
   $("probe").innerHTML = `<b>${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}</b><br>
     ${fmtDate(S.dates[cur].date)}: <b>${vals[cur] ?? "—"} dB</b> · ${interpret(vals[cur])}<br>
     Rango en el año: ${ok.length ? Math.min(...ok) + " a " + Math.max(...ok) + " dB" : "—"}`;
   $("probeChart").hidden = false;
-  const data = { labels: S.dates.map((d) => fmtDate(d.date)), datasets: [{ label: "HH (dB)", data: vals, borderColor: "#2fd6a3", tension: 0.3, pointRadius: 2 }] };
+  const data = { labels: S.dates.map((d) => fmtDate(d.date)), datasets: [{ label: "HH (dB)", data: vals, borderColor: "#149BA5", tension: 0.3, pointRadius: 2 }] };
   if (probeChart) { probeChart.data = data; probeChart.update(); }
   else probeChart = new Chart($("probeChart"), {
     type: "line", data,
@@ -641,7 +752,11 @@ map.on("click", async (e) => {
 // ---------- controles ----------
 function setMode(m) {
   state.mode = m;
-  document.querySelectorAll(".modes button").forEach((b) => b.classList.toggle("on", b.dataset.mode === m));
+  document.querySelectorAll(".modes button").forEach((b) => {
+    const active = b.dataset.mode === m;
+    b.classList.toggle("on", active);
+    b.setAttribute("aria-selected", active ? "true" : "false");
+  });
   stopPlay();
   if (typeof stopZafra === "function") stopZafra(false);
   if (m !== "truth" && fireLayer) { map.removeLayer(fireLayer); fireLayer = null; }   // las llamas solo en "Radar vs foto"
@@ -704,7 +819,7 @@ $("play").onclick = () => {
   map.invalidateSize();
   map.fitBounds(bounds, { padding: [10, 10] });
   setTimeout(() => { map.invalidateSize(); map.fitBounds(bounds, { padding: [10, 10], animate: false }); }, 400);
-  L.rectangle(bounds, { color: "#2fd6a3", weight: 1, fill: false, dashArray: "4 4", interactive: false }).addTo(map);
+  L.rectangle(bounds, { color: "#149BA5", weight: 1, fill: false, dashArray: "4 4", interactive: false }).addTo(map);
 
   const n = S.dates.length;
   $("dateSlider").max = n - 1;
@@ -713,7 +828,14 @@ $("play").onclick = () => {
   $("selA").innerHTML = $("selB").innerHTML = opts;
   state.idx = n - 1; state.a = 0; state.b = n - 1;
   $("selA").value = 0; $("selB").value = n - 1;
+  $("dateSlider").setAttribute("aria-label", "Línea temporal de observaciones radar NISAR");
+  $("siteSel").setAttribute("aria-label", "Seleccionar región de estudio");
+  $("selA").setAttribute("aria-label", "Fecha inicial para comparación");
+  $("selB").setAttribute("aria-label", "Fecha posterior para comparación");
+  $("thr").setAttribute("aria-label", "Umbral de cambio en decibelios");
+  $("opacity").setAttribute("aria-label", "Opacidad de la capa radar");
 
+  INTERP = (await getJSON(BASE + "/interpretations.json")) || (await getJSON("fixtures/interpretations_simulated.json"));
   REF = await getJSON(BASE + "/ref/reference.json");
   VAL = await getJSON(BASE + "/ref/validation.json");
   SWOT = await getJSON(BASE + "/swot.json");

@@ -99,6 +99,8 @@
         ["hh_promedio_db", (r) => r.hh_mean_db],
         ["hv_promedio_db", (r) => r.hv_mean_db],
         ["control_calidad", (r) => r.qc],
+        ["porcentaje_rellenado", (r) => r.filled_pct ?? ""],
+        ["motivo_rechazo_qc", (r) => r.qc_reason ?? ""],
         ["escena_nisar", (r) => r.scene]
       ];
       // BOM UTF-8 y punto y coma para lectura sencilla en Excel en español.
