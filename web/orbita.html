@@ -7,39 +7,40 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b1416;--panel:rgba(12,24,27,.94);--card:#152428;--line:#24393e;--text:#e7f1ef;--muted:#93aaa6;--accent:#149BA5;--accent2:#ff8a00}
+:root{--bg:#0b1416;--panel:#0f1d20;--card:#152428;--line:#24393e;--text:#e7f1ef;--muted:#93aaa6;--accent:#149BA5;--accent2:#ff8a00;--bar:380px}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 Inter,system-ui,sans-serif;overflow:hidden}
-#globe{position:fixed;inset:0}
-.glass{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 40px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
 button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-/* título compacto */
-.title{position:fixed;top:12px;left:12px;z-index:6;display:flex;align-items:center;gap:10px;padding:8px 12px}
-.title b{font-size:14px}.title b small{color:var(--accent);font-weight:700;margin-right:6px}
-.title a{color:var(--accent);text-decoration:none;font-size:12px;white-space:nowrap}
-.live{width:8px;height:8px;border-radius:50%;background:#ff4b4b;box-shadow:0 0 0 0 rgba(255,75,75,.7);animation:live 1.6s infinite}
+/* globo a la izquierda, una sola barra a la derecha con opciones e información */
+#globe{position:fixed;left:0;top:0;bottom:0;right:var(--bar)}
+.bar{position:fixed;right:0;top:0;bottom:0;width:var(--bar);z-index:6;display:flex;flex-direction:column;background:var(--panel);border-left:1px solid var(--line);box-shadow:-10px 0 30px rgba(0,0,0,.35)}
+.bar-top{padding:12px 14px 10px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px}
+.brand b{font-size:15px}.brand b small{color:var(--accent);font-weight:700;margin-right:6px}
+.brand a{margin-left:auto;color:var(--accent);text-decoration:none;font-size:12px;white-space:nowrap}
+.live{width:8px;height:8px;border-radius:50%;background:#ff4b4b;flex:none;animation:live 1.6s infinite}
 @keyframes live{70%{box-shadow:0 0 0 8px rgba(255,75,75,0)}100%{box-shadow:0 0 0 0 rgba(255,75,75,0)}}
-/* barra de controles abajo */
-.bar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:10px;padding:8px 10px;max-width:calc(100% - 24px);flex-wrap:wrap;justify-content:center}
-.now{min-width:210px;padding:0 6px;border-right:1px solid var(--line)}
-.now b{display:block;font-size:15px}
-.now span{display:block;color:var(--muted);font-size:11px;line-height:1.35}
-.seg{display:flex;background:#0e1a1d;border:1px solid var(--line);border-radius:10px;padding:2px}
-.seg button{background:none;border:0;color:var(--muted);padding:6px 8px;border-radius:8px;cursor:pointer;font:inherit;font-weight:600;font-size:12px}
-.seg button.on{background:var(--accent);color:#04231a}
-.ib{display:inline-flex;align-items:center;gap:6px;background:#162a2e;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 10px;cursor:pointer;font:inherit;font-size:12px;font-weight:600;white-space:nowrap}
+.now{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
+.now b{display:block;font-size:17px}
+.now span{display:block;color:var(--muted);font-size:12px;line-height:1.4}
+.now #nowClock{color:var(--text);margin-top:2px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.ib{display:flex;align-items:center;gap:7px;background:#162a2e;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:8px 9px;cursor:pointer;font:inherit;font-size:12px;font-weight:600;text-align:left;line-height:1.2;min-height:40px}
+.ib .ico{width:16px;text-align:center;flex:none}
 .ib:hover{border-color:var(--accent)}
-.ib.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
-.ib.fire{background:linear-gradient(135deg,#7a1a05,#c43c08);border-color:#ff6a2a}
-.ib.fire.on{box-shadow:0 0 0 2px #ffb347,0 0 18px #ff5a1f;animation:fireBtn 1.2s ease-in-out infinite}
-@keyframes fireBtn{50%{box-shadow:0 0 0 2px #ffd27a,0 0 28px #ff3b1f}}
-.ib .lbl{display:inline}
-/* paneles que se abren */
-.drawer{position:fixed;top:64px;right:12px;z-index:7;width:320px;max-height:calc(100% - 150px);overflow:auto;padding:12px 14px;display:none}
-.drawer.open{display:block;animation:slideIn .25s ease}
-@keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
-.drawer h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;align-items:center}
-.drawer h3 button{background:none;border:0;color:var(--muted);font-size:16px;cursor:pointer}
+.ib.on{border-color:var(--accent);background:#173a3e;box-shadow:0 0 0 1px var(--accent) inset}
+.ib.fire{background:linear-gradient(135deg,#5a1505,#a3330a);border-color:#d0541f}
+.ib.fire.on{box-shadow:0 0 0 2px #ffb347 inset}
+.bar-body{flex:1;overflow:auto;padding:12px 14px 16px;display:flex;flex-direction:column;gap:10px}
+.tip{margin:0;color:var(--muted);font-size:12px;line-height:1.4;padding:8px 10px;border:1px dashed var(--line);border-radius:10px}
+.note{display:none;padding:10px 12px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:13px}
+.note.show{display:block;animation:fadeIn .25s ease}
+.note.pin{border-color:#2fd6a3}.note.fire{border-color:#ff6a2a}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.sec{display:none;padding:12px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
+.sec.open{display:block;animation:fadeIn .25s ease}
+.sec h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sec h3 button{background:none;border:0;color:var(--muted);font-size:16px;cursor:pointer}
 .pass{border-top:1px solid var(--line);padding:8px 0 4px;margin-top:6px}
 .pass:first-of-type{border-top:0;margin-top:0;padding-top:2px}
 .pass b{display:block;font-size:14px}
@@ -51,21 +52,40 @@ summary{cursor:pointer;font-weight:600;font-size:13px}
 details p{margin:6px 0 0;color:var(--muted);font-size:12px}
 .legend div{display:flex;align-items:center;gap:8px;font-size:12px;margin:3px 0}
 .sw{width:14px;height:4px;border-radius:2px;flex:none}.dotsw{width:10px;height:10px;border-radius:50%;flex:none}
-.toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:7;max-width:min(560px,calc(100% - 24px));padding:8px 14px;font-size:13px;display:none;text-align:center}
-.toast.show{display:block;animation:slideIn .25s ease}
+.warn{color:var(--accent2);font-size:12px}
+.pin-big{font-size:16px;font-weight:700;margin:4px 0 2px}
+.pin-row{color:var(--muted);font-size:12px;margin-top:4px}
+.real-lead{margin:0 0 10px;font-size:13px}
+.real-step{display:flex;gap:10px;margin:8px 0;font-size:12px;color:var(--muted)}
+.real-step b{color:var(--text)}
+.real-step i{flex:none;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-style:normal;font-weight:700;font-size:11px;display:grid;place-items:center}
+.real-tbl{width:100%;border-collapse:collapse;font-size:12px;margin:6px 0}
+.real-tbl th{color:var(--muted);font-weight:600;text-align:left;padding:4px;border-bottom:1px solid var(--line)}
+.real-tbl td{padding:4px;border-bottom:1px solid rgba(36,57,62,.6)}
+.real-tbl td.d{font-weight:700;text-align:right}
+.real-tbl .ok{color:#2fd6a3}.real-tbl .mid{color:#ffc94d}.real-tbl .far{color:var(--muted)}
+.real-verdict{margin:8px 0 6px;padding:8px 10px;border-radius:10px;background:rgba(47,214,163,.12);border:1px solid rgba(47,214,163,.4);font-size:13px}
+.real-verdict:empty{display:none}
+.sec a,.note a{color:var(--accent)}
 #load{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:9;transition:opacity .6s,visibility 0s .6s}
 #load.off{opacity:0;visibility:hidden;pointer-events:none}
 #load div{text-align:center;color:var(--muted)}#load b{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
-.warn{color:var(--accent2);font-size:12px}
 .site-pin{display:flex;align-items:center;gap:6px;transform:translate(-6px,-6px);pointer-events:none;white-space:nowrap}
 .site-pin i{width:12px;height:12px;border-radius:50%;background:#ff5a1f;border:2px solid #fff;box-shadow:0 0 10px rgba(255,90,31,.9)}
-.site-pin span{font:600 12px Inter,system-ui,sans-serif;color:#fff;background:rgba(6,9,12,.65);padding:2px 7px;border-radius:6px;text-shadow:0 1px 3px #000}
-
+.site-pin span{font:600 11px Inter,system-ui,sans-serif;color:#fff;background:rgba(6,9,12,.7);padding:2px 7px;border-radius:6px;text-shadow:0 1px 3px #000}
+#globe.far .site-pin:not(.user) span{display:none}
+.site-pin.user{pointer-events:auto}
+.site-pin.user i{background:#2fd6a3;box-shadow:0 0 10px rgba(47,214,163,.9)}
+.site-pin.user .x{background:none;border:0;color:#cbd;cursor:pointer;font-size:12px;padding:0 2px;pointer-events:auto}
 @media (max-width:760px){
-  .ib .lbl{display:none}.ib{padding:8px 10px;font-size:15px}
-  .now{min-width:0;flex:1 1 100%;border-right:0;border-bottom:1px solid var(--line);padding:0 2px 6px}
-  .drawer{left:12px;right:12px;width:auto;top:auto;bottom:118px;max-height:50%}
-  .title b{font-size:13px}
+  :root{--bar:100%}
+  #globe{right:0;bottom:52%}
+  .bar{top:auto;height:52%;width:100%;border-left:0;border-top:1px solid var(--line);box-shadow:0 -10px 30px rgba(0,0,0,.35)}
+  .bar-top{padding:10px 12px 8px}
+  .now{margin-top:8px;padding:8px 10px}.now b{font-size:15px}
+  .opts{grid-template-columns:repeat(4,1fr);gap:5px}
+  .ib{flex-direction:column;justify-content:center;gap:3px;font-size:10px;text-align:center;padding:6px 4px;min-height:52px}
+  .bar-body{padding:10px 12px 14px}
 }
 </style>
 </head>
@@ -73,47 +93,61 @@ details p{margin:6px 0 0;color:var(--muted);font-size:12px}
 <div id="globe"></div>
 <div id="load"><div><b>Buscando a NISAR…</b><span id="loadTxt">cargando la Tierra y la órbita</span></div></div>
 
-<div class="title glass"><span class="live" title="en vivo"></span><b><small>MANGLO</small>NISAR en vivo</b><a href="index.html?site=barra">← volver al mapa</a></div>
-
-<div class="toast glass" id="fireNote"></div>
-
-<div class="bar glass">
-  <div class="now"><b id="nowPos">—</b><span id="nowSub">—</span><span id="nowClock">—</span></div>
-  <div class="seg" id="speedSeg" title="Velocidad del tiempo">
-    <button data-s="1" class="on">Real</button><button data-s="60">×60</button><button data-s="600">×600</button><button data-s="3600">×3600</button>
+<aside class="bar" aria-label="Controles e información">
+  <div class="bar-top">
+    <div class="brand"><span class="live" title="en vivo"></span><b><small>MANGLO</small>NISAR en vivo</b><a href="index.html?site=barra">← volver al mapa</a></div>
+    <div class="now"><b id="nowPos">—</b><span id="nowSub">—</span><span id="nowClock">—</span></div>
+    <nav class="opts" aria-label="Opciones">
+      <button class="ib" id="nextBtn" title="Adelanta el reloj hasta la próxima pasada sobre El Salvador"><span class="ico">⏭</span><span class="lbl">Próxima pasada</span></button>
+      <button class="ib" id="passBtn" title="Fecha y hora de las próximas pasadas sobre cada sitio"><span class="ico">📅</span><span class="lbl">¿Cuándo pasa?</span></button>
+      <button class="ib" id="followBtn" title="La cámara acompaña al satélite"><span class="ico">🎯</span><span class="lbl">Seguir a NISAR</span></button>
+      <button class="ib" id="closeBtn" title="Acércate al satélite y su haz de radar"><span class="ico">🛰</span><span class="lbl">Acercarme</span></button>
+      <button class="ib fire" id="fireBtn" title="Las quemas de caña de la zafra junto al manglar"><span class="ico">🔥</span><span class="lbl">Quemas</span></button>
+      <button class="ib" id="realBtn" title="Comparamos la predicción con las imágenes que NISAR tomó de verdad"><span class="ico">✅</span><span class="lbl">¿Es real?</span></button>
+      <button class="ib" id="infoBtn" title="Qué significa cada cosa"><span class="ico">ℹ</span><span class="lbl">¿Qué veo?</span></button>
+      <button class="ib" id="nowBtn" title="Hora real de hoy"><span class="ico">⟲</span><span class="lbl">Al presente</span></button>
+    </nav>
   </div>
-  <button class="ib" id="nowBtn" title="Volver a la hora real">⟲<span class="lbl">Ahora</span></button>
-  <button class="ib" id="nextBtn" title="Saltar a la próxima pasada sobre El Salvador">⏭<span class="lbl">Próxima pasada</span></button>
-  <button class="ib" id="followBtn" title="La cámara sigue al satélite">🎯<span class="lbl">Seguir</span></button>
-  <button class="ib" id="closeBtn" title="Ver el satélite de cerca">🛰<span class="lbl">De cerca</span></button>
-  <button class="ib fire" id="fireBtn" title="Quemas de caña junto al manglar">🔥<span class="lbl">Quemas</span></button>
-  <button class="ib" id="passBtn" title="Cuándo vuelve a pasar sobre cada sitio">📅<span class="lbl">Pasadas</span></button>
-  <button class="ib" id="infoBtn" title="Qué estoy viendo">ℹ<span class="lbl">¿Qué es esto?</span></button>
-</div>
-
-<div class="drawer glass" id="passDrawer">
-  <h3>Próxima pasada sobre cada sitio <button data-close="passDrawer" aria-label="Cerrar">✕</button></h3>
-  <div id="passes"><div class="sub">calculando…</div></div>
-  <div class="sub" id="tleNote" style="margin-top:8px"></div>
-</div>
-
-<div class="drawer glass" id="infoDrawer">
-  <h3>Qué ves <button data-close="infoDrawer" aria-label="Cerrar">✕</button></h3>
-  <div class="legend">
-    <div><i class="dotsw" style="background:#d9a531;box-shadow:0 0 8px #d9a531"></i>NISAR en 3D, a 747 km (tamaño muy exagerado: mide ~12 m)</div>
-    <div><i class="sw" style="background:#ff8a00;height:8px;opacity:.5"></i>Haz del radar: lo que está mirando ahora</div>
-    <div><i class="sw" style="background:#149BA5"></i>Por dónde va a pasar (próximos 50 min)</div>
-    <div><i class="sw" style="background:#5f7a80"></i>Por dónde pasó (últimos 50 min)</div>
-    <div><i class="sw" style="background:#ff8a00;height:8px;opacity:.6"></i>Franja de 240 km que ve el radar (a su izquierda)</div>
-    <div><i class="dotsw" style="background:#ff5a1f"></i>Barra de Santiago · Jiquilisco · Cerrón Grande</div>
-    <div><i class="dotsw" style="background:#ff3b1f;box-shadow:0 0 10px #ff3b1f"></i>Quemas de caña junto al manglar (zafra 2025–2026)</div>
+  <div class="bar-body" id="barBody">
+    <p class="tip" id="pinTip">📍 Toca cualquier punto del planeta y te digo el día y la hora exacta en que NISAR lo verá.</p>
+    <div class="note pin" id="pinNote"></div>
+    <div class="note fire" id="fireNote"></div>
+    <div class="sec" id="passDrawer">
+      <h3>Próxima pasada sobre cada sitio <button data-close="passDrawer" aria-label="Cerrar">✕</button></h3>
+      <div id="passes"><div class="sub">calculando…</div></div>
+      <div class="sub" id="tleNote" style="margin-top:8px"></div>
+    </div>
+    <div class="sec" id="realDrawer">
+      <h3>¿Cómo sé que la pasada es real? <button data-close="realDrawer" aria-label="Cerrar">✕</button></h3>
+      <p class="real-lead">La hora de cada pasada no es inventada: sale de la <b>órbita oficial de NISAR</b> y la comprobamos contra las <b>imágenes que el satélite ya tomó</b>.</p>
+      <div class="real-step"><i>1</i><div><b>La órbita es pública.</b> La Fuerza Espacial de EE. UU. rastrea todos los satélites y publica su órbita (llamada TLE) en CelesTrak. NISAR es el satélite número <b>65053</b>. Con esos números y el mismo cálculo que usan los rastreadores (SGP4) sabemos dónde está segundo a segundo.</div></div>
+      <div class="real-step"><i>2</i><div><b>Cada imagen trae su hora.</b> Las imágenes NISAR que usa MANGLO vienen de la NASA con la hora exacta en que se tomaron, escrita en su nombre. Le preguntamos al globo: ¿a qué hora pasó NISAR sobre el sitio ese día?</div></div>
+      <div class="real-step"><i>3</i><div><b>Comparamos.</b> Esta tabla se calcula en vivo en tu navegador:</div></div>
+      <div id="realTable"><div class="sub">calculando…</div></div>
+      <p class="real-verdict" id="realVerdict"></p>
+      <details><summary>¿Por qué el error crece hacia atrás?</summary><p>La órbita que usamos es la de esta semana. NISAR enciende sus motores de vez en cuando para corregir su camino, así que mientras más lejos en el pasado, más se corre el cálculo. Por eso las predicciones de los <b>próximos días</b> (las del pin) son las más exactas.</p></details>
+      <details><summary>¿Qué NO asegura esto?</summary><p>Asegura <b>cuándo pasa</b> y <b>hacia qué lado mira</b>. No asegura que ese día la NASA haya encendido el radar sobre ese punto: eso depende de su plan de grabación. Sobre Centroamérica graba en casi todas las pasadas.</p></details>
+      <details><summary>Compruébalo tú</summary><p>Entra a <a href="https://search.asf.alaska.edu" target="_blank" rel="noopener">search.asf.alaska.edu</a>, busca NISAR sobre El Salvador y mira la hora de las imágenes. Cuando llegue la próxima pasada que dice el globo, debería aparecer una imagen nueva con esa hora.</p></details>
+    </div>
+    <div class="sec" id="infoDrawer">
+      <h3>Qué ves <button data-close="infoDrawer" aria-label="Cerrar">✕</button></h3>
+      <div class="legend">
+        <div><i class="dotsw" style="background:#d9a531;box-shadow:0 0 8px #d9a531"></i>NISAR en 3D, a 747 km (tamaño muy exagerado: mide ~12 m)</div>
+        <div><i class="sw" style="background:#ff8a00;height:8px;opacity:.5"></i>Haz del radar: lo que está mirando ahora</div>
+        <div><i class="sw" style="background:#149BA5"></i>Por dónde va a pasar (próximos 50 min)</div>
+        <div><i class="sw" style="background:#5f7a80"></i>Por dónde pasó (últimos 50 min)</div>
+        <div><i class="sw" style="background:#ff8a00;height:8px;opacity:.6"></i>Franja de 240 km que ve el radar (a su izquierda)</div>
+        <div><i class="dotsw" style="background:#ff5a1f"></i>Barra de Santiago · Jiquilisco · Cerrón Grande</div>
+        <div><i class="dotsw" style="background:#ff3b1f;box-shadow:0 0 10px #ff3b1f"></i>Quemas de caña junto al manglar (zafra 2025–2026)</div>
+      </div>
+      <details open><summary>¿Por qué mira de lado y no hacia abajo?</summary><p>Un radar necesita ángulo para distinguir lo cercano de lo lejano. NISAR apunta a su izquierda, a una franja de unos 240 km que empieza a unos 430 km de su vertical. Por eso no pasa <i>encima</i> de El Salvador: pasa a un lado y lo mira de reojo.</p></details>
+      <details><summary>¿Por qué cada 12 días?</summary><p>Da 173 vueltas en 12 días exactos y entonces repite el mismo camino con precisión de metros. Así cada imagen nueva se compara con la anterior punto por punto: eso permite ver cambios.</p></details>
+      <details><summary>¿Por qué pasa de madrugada?</summary><p>Su órbita va casi de polo a polo y está sincronizada con el Sol: cruza el ecuador a las 6 a. m. subiendo y a las 6 p. m. bajando. Sobre El Salvador la pasada de la mañana cae cerca de las 5:30. Como el radar lleva su propia luz, la hora y las nubes le dan igual.</p></details>
+      <details><summary>¿Qué es "subiendo" y "bajando"?</summary><p>En una vuelta cruza el país hacia el norte (subiendo) y en otra hacia el sur (bajando). Como mira a la izquierda, subiendo ve hacia el oeste y bajando hacia el este.</p></details>
+      <details><summary>¿Qué tan exacto es esto?</summary><p>La posición sale de los elementos orbitales públicos (TLE) de CelesTrak con el modelo SGP4, el mismo que usan los rastreadores de satélites. Es exacto a segundos durante unos días. La franja y el haz del radar están dibujados de forma aproximada.</p></details>
+    </div>
   </div>
-  <details open><summary>¿Por qué mira de lado y no hacia abajo?</summary><p>Un radar necesita ángulo para distinguir lo cercano de lo lejano. NISAR apunta a su izquierda, a una franja de unos 240 km que empieza a unos 430 km de su vertical. Por eso no pasa <i>encima</i> de El Salvador: pasa a un lado y lo mira de reojo.</p></details>
-  <details><summary>¿Por qué cada 12 días?</summary><p>Da 173 vueltas en 12 días exactos y entonces repite el mismo camino con precisión de metros. Así cada imagen nueva se compara con la anterior punto por punto: eso permite ver cambios.</p></details>
-  <details><summary>¿Por qué pasa de madrugada?</summary><p>Su órbita va casi de polo a polo y está sincronizada con el Sol: cruza el ecuador a las 6 a. m. subiendo y a las 6 p. m. bajando. Sobre El Salvador la pasada de la mañana cae cerca de las 5:30. Como el radar lleva su propia luz, la hora y las nubes le dan igual.</p></details>
-  <details><summary>¿Qué es "subiendo" y "bajando"?</summary><p>En una vuelta cruza el país hacia el norte (subiendo) y en otra hacia el sur (bajando). Como mira a la izquierda, subiendo ve hacia el oeste y bajando hacia el este.</p></details>
-  <details><summary>¿Qué tan exacto es esto?</summary><p>La posición sale de los elementos orbitales públicos (TLE) de CelesTrak con el modelo SGP4, el mismo que usan los rastreadores de satélites. Es exacto a segundos durante unos días. La franja y el haz del radar están dibujados de forma aproximada.</p></details>
-</div>
+</aside>
 
 <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.40.0/dist/globe.gl.min.js"></script>
 <!-- Three.js DESPUÉS de globe.gl: si va antes, globe.gl lo usa de base y se rompen los cuadros de alta resolución -->
@@ -123,18 +157,18 @@ details p{margin:6px 0 0;color:var(--muted);font-size:12px}
 <script src="orbita.js"></script>
 <script>
   // paneles que se abren y cierran (uno a la vez)
-  const drawers = { passBtn: "passDrawer", infoBtn: "infoDrawer" };
+  const drawers = { passBtn: "passDrawer", realBtn: "realDrawer", infoBtn: "infoDrawer" };
   Object.entries(drawers).forEach(([b, d]) => document.getElementById(b).onclick = () => {
     const el = document.getElementById(d), open = !el.classList.contains("open");
     Object.values(drawers).forEach((x) => document.getElementById(x).classList.remove("open"));
     Object.keys(drawers).forEach((x) => document.getElementById(x).classList.remove("on"));
-    if (open) { el.classList.add("open"); document.getElementById(b).classList.add("on"); }
+    if (open) { el.classList.add("open"); document.getElementById(b).classList.add("on"); el.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
   });
   document.querySelectorAll("[data-close]").forEach((x) => x.onclick = () => {
     document.getElementById(x.dataset.close).classList.remove("open");
     Object.keys(drawers).forEach((b) => document.getElementById(b).classList.remove("on"));
   });
-  // el aviso de quemas se muestra arriba como una nota corta
+  // el aviso de quemas se muestra como una nota en la barra
   new MutationObserver(() => document.getElementById("fireNote").classList.toggle("show", !!document.getElementById("fireNote").textContent.trim()))
     .observe(document.getElementById("fireNote"), { childList: true, subtree: true, characterData: true });
 </script>

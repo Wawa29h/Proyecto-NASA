@@ -116,6 +116,10 @@ function render() {
       setTimeout(() => map.hasLayer(prevA) && map.removeLayer(prevA), 650);
     }
     $("dateLabel").textContent = fmtDate(d.date);
+    // el botón del planeta abre el globo en el instante exacto en que NISAR tomó esta imagen
+    const scn = Array.isArray(d.scene) ? d.scene[0] : d.scene, mt = scn && scn.match(/_(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})_/);
+    const ob = $("btnOrbit");
+    if (ob) ob.href = "orbita.html?site=" + SITE.id + (mt ? `&t=${mt[1]}-${mt[2]}-${mt[3]}T${mt[4]}:${mt[5]}:${mt[6]}Z` : "");
     $("dateSlider").value = state.idx;
     $("dateSlider").setAttribute("aria-valuenow", state.idx);
     $("dateSlider").setAttribute("aria-valuetext", fmtDate(d.date) + (d.qc === false ? " (QC rechazado)" : ""));

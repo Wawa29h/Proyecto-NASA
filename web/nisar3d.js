@@ -71,10 +71,20 @@
   // El Salvador resaltado: imágenes satelitales de alta resolución al acercarse (tiles de Esri World Imagery)
   // y el contorno del país brillando (geoBoundaries).
   async function highlightES(globe, opts = {}) {
-    if (typeof globe.globeTileEngineUrl === "function")
+    if (opts.tiles !== false && typeof globe.globeTileEngineUrl === "function")
       globe.globeTileEngineUrl((x, y, l) => `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${l}/${y}/${x}`);
     try {
       const es = await fetch(opts.url || "data/el_salvador.geojson").then((r) => r.json());
+      // globe.gl (d3-geo) quiere el borde exterior en sentido horario. El archivo viene al revés (antihorario, estándar
+      // GeoJSON) y entonces el "país" era TODO el planeta menos El Salvador: una capa casi pegada al suelo que dejaba
+      // manchas azules en todo el globo. Se invierten los anillos que vengan antihorarios.
+      const area = (ring) => ring.reduce((s, p, i) => { const q = ring[(i + 1) % ring.length]; return s + (q[0] - p[0]) * (q[1] + p[1]); }, 0);
+      const fix = (poly) => poly.map((ring, i) => ((area(ring) < 0) === (i === 0) ? ring.slice().reverse() : ring));
+      es.features.forEach((f) => {
+        const g = f.geometry; if (!g) return;
+        if (g.type === "Polygon") g.coordinates = fix(g.coordinates);
+        else if (g.type === "MultiPolygon") g.coordinates = g.coordinates.map(fix);
+      });
       globe.polygonsData(es.features)
         .polygonCapColor(() => "rgba(20,155,165,0.15)")
         .polygonSideColor(() => "rgba(20,155,165,0.20)")
