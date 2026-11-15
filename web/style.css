@@ -1,6 +1,6 @@
 :root{
   --bg:#0b1416; --panel:#111d20; --card:#152428; --line:#24393e;
-  --text:#e7f1ef; --muted:#93aaa6; --accent:#2fd6a3; --accent2:#ff8a00;
+  --text:#e7f1ef; --muted:#93aaa6; --accent:#149BA5; --accent2:#ff8a00;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -10,8 +10,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/
 .brand h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.2px}
 .brand p{margin:0;color:var(--muted);font-size:12px}
 #siteSel{margin-left:6px;font-weight:600;max-width:220px}
-.dot{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(47,214,163,.6);animation:pulse 2s infinite}
-@keyframes pulse{70%{box-shadow:0 0 0 10px rgba(47,214,163,0)}100%{box-shadow:0 0 0 0 rgba(47,214,163,0)}}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(20,155,165,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 10px rgba(20,155,165,0)}100%{box-shadow:0 0 0 0 rgba(20,155,165,0)}}
 .modes{display:flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
 .modes button,.seg button{background:none;border:0;color:var(--muted);padding:7px 12px;border-radius:8px;cursor:pointer;font:inherit;font-weight:500}
 .modes button.on,.seg button.on{background:var(--accent);color:#04231a}
@@ -82,7 +82,7 @@ body.expert .simple-only{display:none!important}
 
 /* portada */
 .hero{position:fixed;inset:0;z-index:2000;overflow:auto;display:grid;place-items:center;padding:24px 16px;
-  background:radial-gradient(1200px 600px at 20% 10%,rgba(47,214,163,.18),transparent 60%),
+  background:radial-gradient(1200px 600px at 20% 10%,rgba(20,155,165,.18),transparent 60%),
              radial-gradient(900px 500px at 90% 90%,rgba(79,195,247,.15),transparent 60%),rgba(6,14,16,.97);
   animation:fadeIn .5s ease both}
 .hero.out{animation:fadeOut .45s ease both}
@@ -126,7 +126,7 @@ body.expert .simple-only{display:none!important}
 .light b{display:block;font-size:13px}
 .light span{font-size:12px;color:var(--muted)}
 .light .val{color:var(--text);font-weight:600}
-.g{color:#2fd6a3;background:#2fd6a3}.y{color:#ffc542;background:#ffc542}.r{color:#ff6b5b;background:#ff6b5b}.n{color:#5b7a80;background:#5b7a80}
+.g{color:#149BA5;background:#149BA5}.y{color:#ffc542;background:#ffc542}.r{color:#ff6b5b;background:#ff6b5b}.n{color:#5b7a80;background:#5b7a80}
 
 /* línea de estaciones bajo el deslizador */
 .seasons{position:relative;height:30px;margin-top:8px}
@@ -147,7 +147,7 @@ body.expert .simple-only{display:none!important}
 @keyframes fadeOut{to{opacity:0;visibility:hidden}}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fadeSwap{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
-@keyframes pulseCard{0%,100%{border-color:var(--line)}50%{border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,214,163,.25)}}
+@keyframes pulseCard{0%,100%{border-color:var(--line)}50%{border-color:var(--accent);box-shadow:0 0 0 3px rgba(20,155,165,.25)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 @media (max-width:860px){
@@ -172,7 +172,7 @@ body{display:flex;flex-direction:column;min-height:100%}
 .fillnote .c-fill{color:#4fc3f7}.fillnote .c-gap{color:#b8c2c6}
 
 /* momento wow */
-.card.wow{border-color:rgba(47,214,163,.5);background:linear-gradient(180deg,rgba(47,214,163,.10),var(--card) 40%)}
+.card.wow{border-color:rgba(20,155,165,.5);background:linear-gradient(180deg,rgba(20,155,165,.10),var(--card) 40%)}
 .wow .eyebrow{margin:0 0 4px}
 .wow-h{font-size:18px!important;text-transform:none!important;letter-spacing:0!important;color:var(--text)!important;margin:0 0 6px!important;line-height:1.25}
 .wow-lead{margin:0 0 10px;color:#d6e4e1;font-size:13px}
@@ -189,7 +189,7 @@ body{display:flex;flex-direction:column;min-height:100%}
 .az .bulb{width:12px;height:12px;border-radius:50%;box-shadow:0 0 8px currentColor}
 .az small{display:block;color:var(--muted);font-size:11px}
 .az .tr{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
-.az .up{color:#ff8a65}.az .down{color:#2fd6a3}.az .eq{color:var(--muted)}
+.az .up{color:#ff8a65}.az .down{color:#149BA5}.az .eq{color:var(--muted)}
 .alertmsg{white-space:pre-wrap;background:#0a1416;border:1px dashed var(--line);border-radius:10px;padding:10px;font:12px/1.5 ui-monospace,Consolas,monospace;color:#cfe0dc;margin:0 0 8px;max-height:190px;overflow:auto}
 .zone-label{background:rgba(10,20,22,.85);border:1px solid var(--line);color:#fff;border-radius:8px;padding:2px 8px;font:600 11px Inter,system-ui,sans-serif;white-space:nowrap}
 .bignum{font-size:28px;font-weight:700;color:var(--accent);line-height:1.15;margin:4px 0 8px}
@@ -233,8 +233,8 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .intro h1{margin:0;font-size:clamp(24px,4vw,44px);line-height:1.12;max-width:820px;text-shadow:0 2px 18px rgba(0,0,0,.8)}
 .intro-sub{margin:0;max-width:620px;color:#cfe1dd;font-size:clamp(14px,1.6vw,17px);text-shadow:0 2px 12px rgba(0,0,0,.9)}
 .intro .eyebrow{margin:0;text-shadow:0 2px 10px rgba(0,0,0,.9)}
-.intro-go{font-size:18px;padding:14px 38px;border-radius:999px;margin-top:6px;box-shadow:0 0 0 0 rgba(47,214,163,.6);animation:goPulse 1.8s ease-out infinite}
-@keyframes goPulse{70%{box-shadow:0 0 0 18px rgba(47,214,163,0)}100%{box-shadow:0 0 0 0 rgba(47,214,163,0)}}
+.intro-go{font-size:18px;padding:14px 38px;border-radius:999px;margin-top:6px;box-shadow:0 0 0 0 rgba(20,155,165,.6);animation:goPulse 1.8s ease-out infinite}
+@keyframes goPulse{70%{box-shadow:0 0 0 18px rgba(20,155,165,0)}100%{box-shadow:0 0 0 0 rgba(20,155,165,0)}}
 .intro-skip{background:none;border:0;color:var(--muted);font:inherit;font-size:12px;cursor:pointer;text-decoration:underline}
 
 /* fuego más discreto en el mapa 2D (lo espectacular queda en el globo 3D) */
@@ -245,3 +245,277 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 @keyframes flash{0%{transform:scale(1.8);opacity:1}100%{transform:scale(1);opacity:.7}}
 @keyframes pop{0%{transform:scale(1.4)}100%{transform:scale(1)}}
 .zafra-clock{font-size:15px;box-shadow:0 0 12px rgba(255,80,20,.25)}
+
+/* ======================================================================
+   IDENTIDAD MANGLO + MODO CIENTÍFICO (de Keylen, rama feature/modo-cientifico)
+   ====================================================================== */
+:root{--bg:#091C25;--panel:#102F39;--card:#163D45;--line:#2B5660;--text:#F7F3E5;--muted:#B7CFCE;--accent:#149BA5;--accent2:#FF930D;--green:#72A934;--navy:#063F5C}
+body{background:var(--bg)}
+/* ==========================================
+
+   SECCIÓN DE ANÁLISIS CIENTÍFICO
+
+========================================== */
+
+.scientific-analysis {
+
+  width: 100%;
+
+  padding: 32px;
+
+  background: var(--bg);
+
+  border-top: 1px solid var(--line);
+
+}
+
+.analysis-header {
+
+  margin-bottom: 24px;
+
+}
+
+.analysis-header h2 {
+
+  margin: 0 0 8px;
+
+  color: var(--text);
+
+  font-size: 24px;
+
+  font-weight: 700;
+
+}
+
+.analysis-header p {
+
+  margin: 0;
+
+  color: var(--muted);
+
+  font-size: 14px;
+
+  line-height: 1.6;
+
+}
+
+/* ==========================================
+
+   TARJETAS CIENTÍFICAS ALINEADAS
+
+========================================== */
+
+.analysis-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(2,minmax(0,1fr));
+
+  gap: 20px;
+
+  /* Iguala la altura de tarjetas por fila */
+
+  align-items: stretch;
+
+}
+
+.analysis-grid > .card {
+
+  min-width: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  margin: 0;
+
+  padding: 20px;
+
+  overflow: hidden;
+
+  background: var(--card);
+
+  border: 1px solid var(--line);
+
+  border-radius: 16px;
+
+}
+
+.analysis-grid > .card[hidden] {
+
+  display: none !important;
+
+}
+
+.analysis-grid > .card h3 {
+
+  margin: 0 0 16px;
+
+  color: var(--text);
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  line-height: 1.5;
+
+}
+
+.analysis-grid .hint {
+
+  margin-top: 10px;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+
+}
+
+.analysis-grid .kpis {
+
+  margin-bottom: 14px;
+
+}
+
+/* ==========================================
+
+   GRÁFICAS
+
+========================================== */
+
+.analysis-grid canvas {
+
+  display: block;
+
+  max-width: 100%;
+
+  margin: 10px 0;
+
+}
+
+/* Chart.js conserva el control de la
+
+   proporción y el tamaño de sus gráficas. */
+
+/* LOGO OFICIAL DE MANGLO */
+.brand-logo {
+  display: block;
+  width: 95px;
+  height: 85px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: #F7F3E5;
+  border-radius: 12px;
+  padding: 6px;
+}
+
+@media (max-width: 600px) {
+  .brand-logo {
+    width: 65px;
+    height: 65px;
+    padding: 4px;
+  }
+}
+
+
+/* ==========================================
+   HERRAMIENTAS CIENTÍFICAS DE EXPORTACIÓN
+   Diseño discreto para conservar el dashboard aprobado
+========================================== */
+
+.science-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.science-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 9px;
+  background: #145462;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.science-tool-btn:hover:not(:disabled) {
+  background: #167180;
+  border-color: #69C4C8;
+}
+
+.science-tool-btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.science-tool-picker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.science-tool-picker select {
+  min-height: 38px;
+  max-width: 260px;
+  padding: 7px 10px;
+  border-color: var(--line);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.science-tool-status {
+  flex-basis: 100%;
+  min-height: 1.3em;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.science-tool-status[data-error="true"] {
+  color: #FFBD87;
+}
+
+.science-tool-btn:focus-visible,
+.science-tool-picker select:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .science-tools {
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .science-tool-btn,
+  .science-tool-picker {
+    width: 100%;
+  }
+
+  .science-tool-picker {
+    justify-content: space-between;
+  }
+
+  .science-tool-picker select {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* ajustes para unir el modo científico con el resto de la app */
+.brand-logo{width:70px;height:62px}
+@media (min-width:861px){ body.expert{height:auto;overflow:auto} body.expert .layout{flex:none;height:calc(100vh - 96px);min-height:460px} }
+@media (max-width:1100px){ .analysis-grid{grid-template-columns:1fr} }
+@media (max-width:600px){ .scientific-analysis{padding:18px 16px} .brand-logo{width:52px;height:48px} }
+.analysis-grid > .card.reveal{opacity:1;transform:none}

@@ -10,7 +10,27 @@
 
   // ---------- modo experto ----------
   const sw = $("expertSw");
-  const setExpert = (on) => { document.body.classList.toggle("expert", on); sw.checked = on; store.set("expert", on ? "1" : "0"); };
+  // Modo científico (idea de Keylen, rama feature/modo-cientifico): títulos científicos, título
+  // "MANGLO | Modo Científico" y las tarjetas de análisis pasan a la cuadrícula "Análisis científico detallado"
+  // debajo del mapa, con exportación de datos (CSV) y gráficas (PNG). Al apagarlo todo vuelve a su lugar.
+  const SCI_CARDS = ["rhythmCard", "caneCard", "histCard", "carbonCard", "pondsCard", "mangCard", "lakeCard", "mlCard", "wqCard", "valCard", "probeCard"];
+  const homes = {};
+  function placeScienceCards(on) {
+    const grid = $("analysisGrid");
+    if (!grid) return;
+    SCI_CARDS.forEach((id) => {
+      const el = $(id);
+      if (!el) return;
+      if (!homes[id]) { homes[id] = document.createComment("lugar:" + id); el.parentNode.insertBefore(homes[id], el); }
+      if (on) grid.appendChild(el);
+      else homes[id].parentNode.insertBefore(el, homes[id].nextSibling);
+    });
+    document.querySelectorAll("[data-sci]").forEach((h) => { h.textContent = on ? h.dataset.sci : h.dataset.simple; });
+    const t = $("siteTitle");
+    if (t) t.textContent = on ? "MANGLO | Modo Científico" : (typeof SITE !== "undefined" && SITE ? SITE.title : "MANGLO");
+    setTimeout(() => { try { map.invalidateSize(); } catch {} window.dispatchEvent(new Event("resize")); }, 60);   // las gráficas se reacomodan
+  }
+  const setExpert = (on) => { document.body.classList.toggle("expert", on); sw.checked = on; store.set("expert", on ? "1" : "0"); placeScienceCards(on); };
   setExpert(store.get("expert") === "1");
   sw.onchange = () => setExpert(sw.checked);
 
@@ -338,6 +358,7 @@
   // ---------- ganchos de app.js ----------
   window.onRender = () => { updateSema(); moveNow(); updateAlert(); };
   window.onDataReady = () => {
+    if (document.body.classList.contains("expert")) placeScienceCards(true);   // la app ya puso su título: reaplicar
     if (SITE.lake) { buildWow(); drawZones(); updateAlert(); }
     heroStats();
     seasons();

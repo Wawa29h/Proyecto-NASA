@@ -681,7 +681,7 @@ $("play").onclick = () => {
 
 // ---------- arranque ----------
 (async function init() {
-  const sites = (await getJSON("sites.json")) || [{ id: "barra", name: "Barra de Santiago", title: "Latido del Manglar", subtitle: "", base: "data", center: [13.715, -90.04], lake: false, labels: { water: "Agua km²", veg: "Veg. inundada km²" } }];
+  const sites = (await getJSON("sites.json")) || [{ id: "barra", name: "Barra de Santiago", title: "MANGLO | Modo Científico", subtitle: "", base: "data", center: [13.715, -90.04], lake: false, labels: { water: "Agua km²", veg: "Veg. inundada km²" } }];
   const want = new URLSearchParams(location.search).get("site");
   SITE = sites.find((s) => s.id === want) || sites[0];
   BASE = SITE.base;

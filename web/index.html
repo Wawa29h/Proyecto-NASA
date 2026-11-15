@@ -13,7 +13,7 @@
 <body>
 <header class="top">
   <div class="brand">
-    <span class="dot"></span>
+    <img src="img/Logo_manglo.png" alt="Logo de MANGLO" class="brand-logo">
     <div>
       <h1 id="siteTitle">Latido del Manglar</h1>
       <p id="siteSub">Barra de Santiago, El Salvador · radar NISAR banda L</p>
@@ -30,8 +30,8 @@
     <button id="tourBtn" class="btn primary">▶ Recorrido</button>
     <a id="btn3d" class="btn" href="respira.html" title="Ver el terreno en 3D: sube y baja con el radar">⛰ Ver en 3D</a>
     <a class="btn" href="orbita.html" title="El planeta en 3D con el satélite NISAR moviéndose en su órbita real, su radar y las quemas">🌍 Ver el planeta</a>
-    <label class="switch" title="Muestra los datos técnicos (dB, F1, índices)">
-      <input type="checkbox" id="expertSw"><span class="track"><span class="knob"></span></span><span class="sw-label">Modo experto</span>
+    <label class="switch" title="Modo científico: datos técnicos, análisis detallado y exportación de datos y gráficas">
+      <input type="checkbox" id="expertSw"><span class="track"><span class="knob"></span></span><span class="sw-label">Modo científico</span>
     </label>
   </div>
 </header>
@@ -131,7 +131,7 @@
 
     <div class="card" id="ctlSingle">
       <div class="row between">
-        <h3>Fecha</h3>
+        <h3 data-simple="Fecha" data-sci="Selección temporal">Fecha</h3>
         <button id="play" class="btn" aria-label="Reproducir">▶ Animar</button>
       </div>
       <div class="datebig" id="dateLabel">—</div>
@@ -142,7 +142,7 @@
     </div>
 
     <div class="card" id="ctlTruth" hidden>
-      <h3>¿Qué hay en realidad?</h3>
+      <h3 data-simple="¿Qué hay en realidad?" data-sci="Validación con imágenes de referencia">¿Qué hay en realidad?</h3>
       <p class="hint" id="truthHint" style="margin-top:0">Izquierda: radar NISAR. Derecha: referencia independiente. Arrastra la barra blanca.</p>
       <div class="seg" id="truthSeg">
         <button data-ref="s2" class="on">Foto Sentinel-2</button>
@@ -162,7 +162,7 @@
     </div>
 
     <div class="card" id="ctlPair" hidden>
-      <h3>Comparar dos fechas</h3>
+      <h3 data-simple="Comparar dos fechas" data-sci="Comparación temporal">Comparar dos fechas</h3>
       <label>Antes <select id="selA"></select></label>
       <label>Después <select id="selB"></select></label>
       <div class="presets">
@@ -179,7 +179,7 @@
     </div>
 
     <div class="card" id="ctlLayer">
-      <h3>Capa</h3>
+      <h3 data-simple="Capa" data-sci="Capas NISAR">Capa</h3>
       <div class="seg" id="layerSeg">
         <button data-layer="rgb" class="on">Falso color</button>
         <button data-layer="cls">Agua / manglar inundado</button>
@@ -208,8 +208,8 @@
       </div>
     </div>
 
-    <div class="card">
-      <h3>El ritmo del estero</h3>
+    <div class="card" id="rhythmCard">
+      <h3 data-simple="El ritmo del estero" data-sci="Indicadores del área de estudio">El ritmo del estero</h3>
       <div class="kpis" id="kpis"></div>
       <canvas id="chart" height="190"></canvas>
       <p class="hint">Barras: lluvia de 12 días antes de cada pasada (Open-Meteo). Líneas: áreas medidas por NISAR.</p>
@@ -284,7 +284,7 @@
     </div>
 
     <div class="card" id="mlCard" hidden>
-      <h3>IA: el radar aprende de la foto</h3>
+      <h3 data-simple="IA: el radar aprende de la foto" data-sci="Clasificación mediante inteligencia artificial">IA: el radar aprende de la foto</h3>
       <p class="hint" style="margin-top:0">Los días despejados, Sentinel-2 marca dónde hay plantas sobre el agua. Con esas "respuestas" entrenamos un modelo (Random Forest) que aprende cómo se ven esas plantas en el radar NISAR. Así se detectan también en días nublados.</p>
       <div class="kpis" id="mlKpis"></div>
       <canvas id="mlChart" class="tech" height="150"></canvas>
@@ -292,26 +292,26 @@
     </div>
 
     <div class="card tech" id="wqCard" hidden>
-      <h3>Color del agua (Sentinel-2)</h3>
+      <h3 data-simple="Color del agua (Sentinel-2)" data-sci="Indicadores ópticos del agua">Color del agua (Sentinel-2)</h3>
       <canvas id="wqChart" height="160"></canvas>
       <p class="hint">NDCI ≈ clorofila/algas · NDTI ≈ turbidez/sedimento. Mediana sobre el agua abierta sin nubes. Son índices relativos: sirven para comparar fechas, no son mg/L.</p>
     </div>
 
     <div class="card tech" id="valCard" hidden>
-      <h3>Firma de radar por cobertura</h3>
+      <h3 data-simple="Firma de radar por cobertura" data-sci="Validación: firma de radar por cobertura">Firma de radar por cobertura</h3>
       <canvas id="valChart" height="200"></canvas>
       <p class="hint">HV mediana (dB) de cada tipo de cobertura según el mapa ESA WorldCover 2021. El manglar debe mantenerse alto todo el año; el cultivo baja cuando se cosecha.</p>
       <div class="kpis" id="valKpis"></div>
     </div>
 
-    <div class="card">
-      <h3>Toca un punto del mapa</h3>
+    <div class="card" id="probeCard">
+      <h3 data-simple="Toca un punto del mapa" data-sci="Análisis por punto">Toca un punto del mapa</h3>
       <div id="probe" class="probe">Toca el estero, el manglar o un cultivo y verás su señal de radar en cada fecha.</div>
       <canvas id="probeChart" height="140" hidden></canvas>
     </div>
 
     <details class="card about">
-      <summary>¿Qué estoy viendo?</summary>
+      <summary data-simple="¿Qué estoy viendo?" data-sci="Metodología y fundamentos científicos">¿Qué estoy viendo?</summary>
       <p><b>NISAR</b> (NASA + ISRO) es un radar: manda su propia energía de microondas, así que ve de día, de noche y con nubes. Pasa por aquí cada 12 días.</p>
       <p>La <b>banda L</b> (24 cm) atraviesa las copas y llega a los troncos y al agua. Lo que regresa depende de la <b>rugosidad</b> y de la <b>humedad</b> (constante dieléctrica).</p>
       <ul>
@@ -320,15 +320,34 @@
         <li><b>HV</b> mide la dispersión en volumen (ramas y hojas): sirve para la estructura y la biomasa del bosque.</li>
       </ul>
       <p><b>Hipótesis:</b> en la época lluviosa (mayo–octubre) los ríos Cara Sucia y Paz suben y el área de manglar con doble rebote debe crecer. En la seca (noviembre–abril) se reduce y el agua queda en el canal del estero. Los cambios bruscos fuera de ese ritmo pueden venir de tala, camaroneras, quemas de caña o azolve de la bocana.</p>
-      <p class="hint">Los umbrales de clase son aproximados (ver README). Los datos son productos NISAR L2 GCOV de ASF DAAC.</p>
+      <p class="hint">Las clasificaciones y los umbrales son aproximados. Los cambios observados no demuestran por sí solos una causa; consulta el README para conocer las limitaciones de los datos. Datos: productos NISAR L2 GCOV de ASF DAAC.</p>
     </details>
   </aside>
 </main>
+
+<!-- MODO CIENTÍFICO: análisis detallado y exportación (se llena al activar el modo científico) -->
+<section class="scientific-analysis tech" id="scienceSection" aria-label="Análisis científico detallado">
+  <div class="analysis-header">
+    <h2>Análisis científico detallado</h2>
+    <p>Explora indicadores, series temporales, clasificación, validación y resultados del monitoreo satelital.</p>
+  </div>
+  <!-- Herramientas de exportación: no alteran el procesamiento de app.js -->
+  <div class="science-tools" aria-label="Exportaciones del análisis científico">
+    <button class="science-tool-btn" id="exportCsv" type="button" title="Descargar las mediciones NISAR del sitio seleccionado">↓ Descargar datos CSV</button>
+    <label class="science-tool-picker" for="exportChartSelect">Gráfica
+      <select id="exportChartSelect" aria-label="Gráfica que deseas exportar"><option value="">Seleccionar gráfica</option></select>
+    </label>
+    <button class="science-tool-btn" id="exportPng" type="button">↓ Descargar PNG</button>
+    <span class="science-tool-status" id="exportStatus" role="status" aria-live="polite"></span>
+  </div>
+  <div class="analysis-grid" id="analysisGrid"></div>
+</section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="app.js"></script>
 <script src="story.js"></script>
 <script src="intro.js"></script>
+<script src="scientific-tools.js"></script>
 </body>
 </html>

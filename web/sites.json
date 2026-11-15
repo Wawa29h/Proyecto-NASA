@@ -2,7 +2,7 @@
   {
     "id": "barra",
     "name": "Barra de Santiago",
-    "title": "Latido del Manglar",
+    "title": "MANGLO",
     "subtitle": "Manglar y estero · Ahuachapán, El Salvador · radar NISAR banda L",
     "base": "data",
     "center": [
@@ -19,7 +19,7 @@
   {
     "id": "jiquilisco",
     "name": "Bahía de Jiquilisco",
-    "title": "Latido del Manglar",
+    "title": "MANGLO",
     "subtitle": "El manglar más grande de El Salvador · Usulután · radar NISAR banda L",
     "base": "data-jiquilisco",
     "center": [
@@ -37,7 +37,7 @@
   {
     "id": "cerron",
     "name": "Embalse Cerrón Grande",
-    "title": "Pulso del Embalse",
+    "title": "MANGLO",
     "subtitle": "Cerrón Grande · Chalatenango/Cabañas, El Salvador · NISAR + SWOT + ECOSTRESS + GPM + Sentinel-2",
     "base": "data-cerron",
     "center": [
