@@ -353,7 +353,44 @@
   };
 
   // botones "Ver ... →" de las tarjetas del manglar: abren esa vista en el mapa (radar a la izquierda)
-  document.querySelectorAll("[data-goref]").forEach((b) => (b.onclick = () => go({ mode: "truth", ref: b.dataset.goref, date: S.dates[state.idx]?.date })));
+  // Abrir la capa científica y volver al mapa desde el panel o las gráficas de abajo.
+  // Antes se actualizaba el mapa, pero quedaba fuera de la pantalla y parecía no funcionar.
+  let mapNoticeTimer;
+  const openMapReference = (reference) => {
+    if (!S?.dates?.length || !SITE) return;
+    const chosen = document.querySelector(`#truthSeg [data-ref="${reference}"]`);
+    if (!chosen || chosen.hidden) {
+      alert("Esta capa no está disponible para el sitio seleccionado.");
+      return;
+    }
+    go({ mode: "truth", ref: reference, date: S.dates[state.idx]?.date });
+    const mapArea = document.querySelector(".mapwrap");
+    if (!mapArea) return;
+    mapArea.scrollIntoView({ behavior: "smooth", block: "start" });
+    let notice = document.querySelector(".map-layer-notice");
+    if (!notice) {
+      notice = document.createElement("div");
+      notice.className = "map-layer-notice";
+      notice.setAttribute("role", "status");
+      notice.setAttribute("aria-live", "polite");
+      mapArea.appendChild(notice);
+    }
+    const labels = {
+      cane: "Cosecha por mes: referencia de Sentinel-2",
+      canenisar: "Cosecha detectada por radar NISAR",
+      burns: "Quemas detectadas cerca del manglar",
+      burntype: "Parcelas quemadas y cortadas en verde",
+      gmw: "Evolución histórica del manglar",
+      ponds: "Estanques cercanos al manglar"
+    };
+    notice.textContent = "Capa activada · " + (labels[reference] || "Referencia satelital");
+    clearTimeout(mapNoticeTimer);
+    mapNoticeTimer = setTimeout(() => { notice.remove(); }, 4500);
+    setTimeout(() => { try { map.invalidateSize(); } catch {} }, 350);
+  };
+  document.querySelectorAll("[data-goref]").forEach((b) => {
+    b.onclick = () => openMapReference(b.dataset.goref);
+  });
 
   // ---------- ganchos de app.js ----------
   window.onRender = () => { updateSema(); moveNow(); updateAlert(); };

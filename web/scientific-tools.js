@@ -116,29 +116,35 @@
     }
   }
 
+  // Solo incluir gráficas que ya existen y que realmente se ven en el modo actual.
   function availableCharts() {
     if (typeof Chart === "undefined" || typeof Chart.getChart !== "function") return [];
     return CHARTS.filter(([id]) => {
       const canvas = $(id);
-      return canvas && !canvas.closest("[hidden]") && Chart.getChart(canvas);
+      if (!canvas || canvas.hidden || canvas.closest("[hidden]")) return false;
+      if (!canvas.getClientRects().length) return false;
+      return Boolean(Chart.getChart(canvas));
     });
   }
 
   function refreshCharts() {
-    const oldValue = chartSelect.value;
     const charts = availableCharts();
+    const oldValue = chartSelect.value;
+    const oldIds = Array.from(chartSelect.options).map((o) => o.value).join("|");
+    const newIds = charts.length ? charts.map(([id]) => id).join("|") : "";
+    // La selección no debe reconstruirse cuando el usuario intenta desplegarla:
+    // esto impedía que algunos navegadores aceptaran el clic.
+    if (oldIds === newIds) return;
     chartSelect.replaceChildren();
-    charts.forEach(([id, label]) => {
-      const opt = document.createElement("option");
-      opt.value = id;
-      opt.textContent = label;
-      chartSelect.appendChild(opt);
-    });
-    if (charts.some(([id]) => id === oldValue)) chartSelect.value = oldValue;
-    else if (charts.length) chartSelect.value = charts[0][0];
-    // Mantener los controles utilizables incluso mientras app.js termina de cargar.
-    // Cada clic vuelve a verificar si hay gráficas disponibles.
-    if (!charts.length) {
+    if (charts.length) {
+      charts.forEach(([id, label]) => {
+        const opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = label;
+        chartSelect.appendChild(opt);
+      });
+      chartSelect.value = charts.some(([id]) => id === oldValue) ? oldValue : charts[0][0];
+    } else {
       const opt = document.createElement("option");
       opt.textContent = "Las gráficas aún no están disponibles";
       opt.value = "";
@@ -170,9 +176,9 @@
 
   csvButton.addEventListener("click", downloadCsv);
   pngButton.addEventListener("click", downloadPng);
-  chartSelect.addEventListener("focus", refreshCharts);
-  chartSelect.addEventListener("pointerdown", refreshCharts);
-  pngButton.addEventListener("pointerenter", refreshCharts);
+  // Refrescar al activar el modo científico, nunca durante pointerdown del select.
+  $("expertSw")?.addEventListener("change", () => setTimeout(refreshCharts, 120));
+  $("siteSel")?.addEventListener("change", () => setTimeout(refreshCharts, 120));
 
   refreshCharts();
   // Las gráficas se construyen de forma asíncrona en app.js.
@@ -182,7 +188,7 @@
   let attempts = 0;
   const check = setInterval(() => {
     refreshCharts();
-    if (availableCharts().length || ++attempts >= 60) clearInterval(check);
+    if (++attempts >= 60) clearInterval(check);
   }, 500);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshCharts(); });
 })();

@@ -519,3 +519,79 @@ body{background:var(--bg)}
 @media (max-width:1100px){ .analysis-grid{grid-template-columns:1fr} }
 @media (max-width:600px){ .scientific-analysis{padding:18px 16px} .brand-logo{width:52px;height:48px} }
 .analysis-grid > .card.reveal{opacity:1;transform:none}
+
+
+/* === MANGLO mejoras visuales desde main integrado === */
+html{scroll-behavior:smooth}
+
+.brand{align-items:center}
+.brand-mark{width:66px;height:66px;border-radius:18px;background:linear-gradient(180deg,rgba(247,243,229,.95),rgba(209,233,234,.95));display:grid;place-items:center;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18);flex-shrink:0;border:1px solid rgba(255,255,255,.18)}
+.brand-logo{width:120px;height:74px;object-fit:cover;object-position:left center;transform:translateX(-10px);display:block;background:none!important;padding:0!important;border-radius:0!important}
+
+.science-banner{position:relative;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:24px;align-items:center;padding:26px 24px 58px;background:radial-gradient(circle at top right, rgba(20,155,165,.18), transparent 35%),linear-gradient(180deg,#0b2430 0%,#102f39 100%);border-bottom:1px solid var(--line);overflow:hidden}
+.science-banner::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);background-size:24px 24px;mask-image:linear-gradient(180deg,rgba(0,0,0,.95),rgba(0,0,0,.55));pointer-events:none}
+.science-banner__content,.science-banner__art,.scroll-cue{position:relative;z-index:1}
+.science-banner h2{margin:0 0 10px;font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-.5px}
+.science-banner p{max-width:68ch;margin:0;color:#d7e7e8;font-size:15px;line-height:1.7}
+.science-banner__chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.science-banner__chips span{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(8,20,25,.45);border:1px solid rgba(159,208,255,.22);color:#f7f3e5;font-size:12px;font-weight:600;backdrop-filter:blur(6px)}
+.science-banner__art{display:flex;justify-content:flex-end}
+.science-banner__art img{width:min(100%,440px);height:auto;display:block;filter:drop-shadow(0 12px 36px rgba(0,0,0,.24))}
+.scroll-cue{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:#f7f3e5;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.2px;opacity:.92}
+.scroll-cue i{display:grid;place-items:center;width:38px;height:38px;border-radius:999px;background:rgba(247,243,229,.1);border:1px solid rgba(247,243,229,.22);font-style:normal;font-size:18px;animation:mangloBounce 1.7s infinite}
+@keyframes mangloBounce{0%,20%,50%,80%,100%{transform:translateY(0)}40%{transform:translateY(6px)}60%{transform:translateY(3px)}}
+
+@media (max-width:960px){.science-banner{grid-template-columns:1fr;padding:22px 18px 62px}.science-banner__art{justify-content:center}.science-banner p{max-width:none}}
+@media (max-width:600px){.brand-mark{width:54px;height:54px;border-radius:15px}.brand-logo{width:98px;height:60px;transform:translateX(-8px)}.science-banner h2{font-size:28px}.science-banner__chips span{font-size:11px;padding:7px 10px}.scroll-cue span{font-size:11px}}
+
+
+/* CORRECCIÓN: símbolo MANGLO independiente, sin recortes ni deformación. */
+.brand-mark{position:relative;flex:0 0 76px;width:76px;height:70px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:5px;background:#F7F3E5;border:1px solid rgba(255,255,255,.32);border-radius:15px;box-shadow:0 5px 18px rgba(0,0,0,.25)}
+.brand-mark .brand-logo{position:static!important;display:block;max-width:100%!important;width:100%!important;height:100%!important;left:auto!important;top:auto!important;object-fit:contain!important;object-position:center!important;transform:none!important;padding:0!important;margin:0!important;background:transparent!important;border:0!important;border-radius:0!important}
+/* El banner sigue estrictamente el interruptor ya implementado por story.js. */
+body:not(.expert) .science-banner{display:none!important}
+@media(max-width:600px){.brand-mark{flex-basis:59px;width:59px;height:55px;padding:4px;border-radius:12px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.scroll-cue i{animation:none}}
+
+
+/* Ajuste visual de la ilustración científica: imagen real en lugar de formas abstractas */
+.science-banner__art img {
+  width: 100%;
+  max-width: 560px;
+  height: clamp(190px, 23vw, 285px);
+  object-fit: cover;
+  object-position: center;
+  border-radius: 18px;
+  border: 1px solid rgba(135, 238, 232, .28);
+  box-shadow: 0 16px 36px rgba(0,0,0,.34), 0 0 35px rgba(20,155,165,.12);
+}
+@media(max-width:960px) {
+  .science-banner__art img { max-width: 560px; height: 240px; }
+}
+@media(max-width:600px) {
+  .science-banner__art img { height: 185px; border-radius: 14px; }
+}
+
+/* Confirmación visual al abrir capas de cosecha y radar en el mapa */
+.map-layer-notice {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  max-width: calc(100% - 108px);
+  padding: 12px 16px;
+  text-align: center;
+  background: rgba(5, 33, 40, .94);
+  color: #f7f3e5;
+  border: 1px solid #149ba5;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.32);
+  font-weight: 600;
+  font-size: 13px;
+  pointer-events: none;
+  line-height: 1.4;
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-layer-notice { transition:none; }
+}
