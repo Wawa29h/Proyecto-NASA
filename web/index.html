@@ -92,6 +92,9 @@
 
 <main class="layout">
   <section class="mapwrap">
+    <div class="map-mini-legend" id="mapLegend" hidden aria-label="Cómo leer los colores del radar">
+      <span><i style="background:#b6e25a"></i>plantas</span><span><i style="background:#9a6fd0"></i>suelo pelado</span><span><i style="background:#1b2430;border:1px solid #567"></i>agua</span>
+    </div>
     <div id="map"></div>
     <div id="divider" hidden><span></span></div>
     <div class="maptag left" id="tagA" hidden></div>
@@ -184,6 +187,8 @@
       <div class="presets">
         <button class="chip" id="presetSeason">Seca vs lluviosa</button>
       </div>
+      <div class="explain" id="pairExplain" hidden></div>
+      <button class="btn explain-go" id="goChange" hidden>¿Qué cambió de verdad? Verlo pintado →</button>
       <div id="changeOpts" hidden>
         <label class="inline">Umbral <input type="range" id="thr" min="1" max="8" step="0.5" value="3"> <b id="thrVal">3 dB</b></label>
         <div class="legend">
@@ -231,7 +236,7 @@
     <button class="more-toggle simple-only" id="moreToggle" type="button" aria-expanded="false"><span>Ver más hallazgos</span><small>caña, carbono, IA, 30 años…</small><i>↓</i></button>
 
     <div class="card more-card" id="rhythmCard">
-      <h3 data-simple="El ritmo del estero" data-sci="Indicadores del área de estudio">El ritmo del estero</h3>
+      <h3 data-simple="El pulso del estero" data-sci="Indicadores del área de estudio">El pulso del estero</h3>
       <div class="kpis" id="kpis"></div>
       <canvas id="chart" height="190"></canvas>
       <p class="hint">Barras: lluvia de 12 días antes de cada pasada (Open-Meteo). Líneas: áreas medidas por NISAR.</p>
@@ -247,7 +252,7 @@
     </div>
 
     <div class="card more-card" id="caneCard" hidden>
-      <h3>La caña alrededor del manglar</h3>
+      <h3>La presión de al lado: la caña</h3>
       <p class="hint" style="margin-top:0">El manglar está estable, pero tiene presión al lado: cañales que se cosechan y se queman en la zafra (noviembre–mayo). Así se vigila esa presión año con año.</p>
       <div class="kpis" id="caneKpis"></div>
       <canvas id="caneChart" height="150"></canvas>
@@ -273,7 +278,7 @@
     </div>
 
     <div class="card more-card" id="histCard" hidden>
-      <h3>30 años de manglar con el mismo tipo de radar</h3>
+      <h3>30 años, el mismo manglar</h3>
       <p class="hint" style="margin-top:0">Antes de NISAR, satélites japoneses con radar en banda L (el mismo tipo) mapearon los manglares del mundo desde 1996. Unimos ese registro con NISAR.</p>
       <canvas id="histChart" height="160"></canvas>
       <div class="kpis" id="histKpis"></div>
@@ -282,7 +287,7 @@
     </div>
 
     <div class="card more-card" id="carbonCard" hidden>
-      <h3>Carbono azul: lo que guarda el manglar</h3>
+      <h3>Carbono azul</h3>
       <div class="bignum" id="carbonBig"></div>
       <div class="kpis" id="carbonKpis"></div>
       <button class="btn" data-goref="height">Ver la altura de los árboles →</button>

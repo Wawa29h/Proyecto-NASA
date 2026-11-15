@@ -193,8 +193,8 @@ function render() {
     const A = S.dates[state.a], B = S.dates[state.b];
     ovA = overlay(urlFor(A), "paneA");
     ovB = overlay(urlFor(B), "paneB");
-    $("tagA").textContent = "Antes · " + fmtDate(A.date);
-    $("tagB").textContent = "Después · " + fmtDate(B.date);
+    $("tagA").textContent = seasonOf(A.date) + " · " + fmtDate(A.date);
+    $("tagB").textContent = seasonOf(B.date) + " · " + fmtDate(B.date);
   } else {
     renderChange();
   }
@@ -203,6 +203,9 @@ function render() {
   $("legendCls").hidden = state.layer !== "cls";
   $("legendMl").hidden = state.layer !== "ml";
   $("legendPhoto").hidden = state.layer !== "photo";
+  $("mapLegend").hidden = !(state.mode === "single" || state.mode === "compare") || state.layer !== "rgb";
+  $("pairExplain").hidden = $("goChange").hidden = state.mode !== "compare";
+  if (state.mode === "compare") $("pairExplain").innerHTML = explainPair(S.dates[state.a], S.dates[state.b]);
   highlightChart();
   if (prevA && !ovA) map.removeLayer(prevA);
   window.onRender && window.onRender();
@@ -381,6 +384,37 @@ function buildLakeCard() {
     (ecoDay.length ? kpi(`${Math.min(...ecoDay.map((o) => o.water_c)).toFixed(0)}–${Math.max(...ecoDay.map((o) => o.water_c)).toFixed(0)} °C`, "agua de día (ECOSTRESS)") : "");
   $("lakeCard").hidden = false;
 }
+// ---------- "Antes / después" explicado en lenguaje simple ----------
+const isRainy = (iso) => { const m = +iso.slice(5, 7); return m >= 5 && m <= 10; };   // El Salvador: lluvias de mayo a octubre
+const seasonOf = (iso) => (isRainy(iso) ? "Época de lluvias" : "Época seca");
+function explainPair(A, B) {
+  if (!A || !B) return "";
+  const sameSeason = isRainy(A.date) === isRainy(B.date);
+  const km = (x) => (x == null ? "—" : (+x).toFixed(1).replace(".0", ""));
+  const trend = (a, b, up, down) => (b - a > 0.15 * Math.max(a, 0.5) ? up : a - b > 0.15 * Math.max(a, 0.5) ? down : "casi igual");
+  let out = `<p class="explain-h">${sameSeason ? `Las dos fechas son de la <b>${seasonOf(A.date).toLowerCase().replace("época de ", "época de ")}</b>` : `<b>${seasonOf(A.date)}</b> contra <b>${seasonOf(B.date).toLowerCase()}</b>`}</p>`;
+  if (SITE.lake) {
+    out += `<p>💧 <b>Agua del embalse:</b> ${km(A.water_km2)} → ${km(B.water_km2)} km² (${trend(A.water_km2, B.water_km2, "subió: llovió o la represa guardó agua", "bajó: la represa usó agua para generar luz")}).</p>`;
+    out += `<p>🌿 <b>Plantas sobre el agua</b> (verde encima del agua, posible lirio): ${km(A.floatveg_km2)} → ${km(B.floatveg_km2)} km².</p>`;
+    out += `<p class="explain-note">${sameSeason ? "En la misma época el embalse debería verse parecido: un cambio grande de lirio sí es para avisar." : "Entre seca y lluvias es normal que el embalse cambie mucho de tamaño."}</p>`;
+    return out;
+  }
+  out += sameSeason
+    ? `<p>🟪 El paisaje debería verse parecido. Si una mancha <b>dentro del manglar</b> pasa de verde a morado, eso sí sería para revisar (posible tala).</p>`
+    : `<p>🟪→🟩 Las parcelas que pasan de <b>morado a verde</b> (o al revés) son sobre todo <b>caña</b>: se corta en la zafra (noviembre a mayo) y vuelve a crecer con la lluvia. <b>Es normal.</b></p>`;
+  const mg = MANG && MANG[{ barra: "Barra de Santiago", jiquilisco: "Bahia de Jiquilisco" }[SITE.id]];
+  const hv = (d) => mg?.dates.find((r) => r.date === d.date)?.hv_mangrove;
+  if (mg && hv(A) != null && hv(B) != null) {
+    const dd = hv(B) - hv(A);
+    out += `<p>🌳 <b>El manglar</b> (junto al estero) ${Math.abs(dd) < 1 ? "<b>casi no cambió</b>." : dd > 0 ? `se ve más brillante: con la lluvia las hojas y el suelo mojados rebotan más el radar. <b>Es natural</b>, no es que creciera.` : `se ve un poco más apagado: hojas y suelo más secos. <b>Es natural.</b>`} En todo el año perdió solo <b>${Math.round(mg.loss_km2 * 100)} ha</b>: está estable.</p>`;
+  }
+  const part = [A, B].filter((d) => (d.coverage_pct ?? 100) + (d.time_filled_pct || 0) < 90);
+  out += `<p>💧 <b>Agua del estero:</b> ${km(A.water_km2)} → ${km(B.water_km2)} km².` +
+    (part.length ? ` <span class="explain-warn">⚠ El ${part.map((d) => fmtDate(d.date)).join(" y el ")} el radar solo vio el ${Math.round(part[0].coverage_pct)} % del recuadro: ese número sale más bajo de lo real.</span>` : "") + `</p>`;
+  if (A.ocean_km2) out += `<p class="explain-note">El mar cambia de color por el <b>viento y las olas</b>, no porque el agua sea distinta.</p>`;
+  return out;
+}
+
 // ---------- IAs entrenadas con NISAR (MangroveNet y radar→foto) ----------
 const pctTxt = (x) => Math.round(x * 100) + " %";
 function aiInfo() {
@@ -701,6 +735,7 @@ $("opacity").oninput = (e) => { state.opacity = +e.target.value; [ovA, ovB].forE
 $("selA").onchange = (e) => { state.a = +e.target.value; render(); };
 $("selB").onchange = (e) => { state.b = +e.target.value; render(); };
 $("thr").oninput = (e) => { $("thrVal").textContent = e.target.value + " dB"; renderChange(); };
+$("goChange").onclick = () => setMode("change");
 $("presetSeason").onclick = () => {
   // fecha más seca (menos veg. inundada) vs más húmeda; en embalse: menos vs más plantas
   const f = S.dates.map((d) => (SITE.lake ? d.floatveg_km2 ?? 0 : d.floodveg_km2));

@@ -646,3 +646,35 @@ body.show-more .more-toggle small{display:none}
 body:not(.expert) .modes{background:transparent;border-color:rgba(255,255,255,.06)}
 body:not(.expert) .modes button{font-weight:500}
 body:not(.expert) .modes button.on{background:rgba(20,155,165,.2);color:#9ff3ee;box-shadow:inset 0 0 0 1px rgba(135,238,232,.35)}
+
+
+/* === Fase 2 · jerarquía, paleta corta y halftone sutil === */
+:root{--cream:#F7F3E5;--cyan:#87eee8;--ink:#091C25;--eco:#72A934}
+/* tarjetas de contenido: título protagonista, texto de apoyo en segundo plano */
+.panel{gap:14px}
+.panel .card{padding:14px 15px}
+.panel .card h3{font-size:16px;line-height:1.25;text-transform:none;letter-spacing:-.1px;color:var(--cream);font-weight:700;margin:0 0 10px}
+/* tarjetas de control (fecha, capa, comparar, referencia): rótulo pequeño, no compiten */
+#ctlSingle h3,#ctlLayer h3,#ctlPair h3,#ctlTruth h3,#semaCard h3{font-size:12px;text-transform:uppercase;letter-spacing:1.1px;color:var(--cyan);font-weight:700}
+.panel .hint{font-size:12px;line-height:1.5;color:var(--muted)}
+.panel .card p{line-height:1.5}
+.kpi b{color:var(--cream)}
+/* halftone: puntos muy suaves como acento, nunca encima del contenido */
+.science-banner::before{background-image:radial-gradient(rgba(135,238,232,.8) 1.3px,transparent 1.9px);background-size:11px 11px;-webkit-mask-image:radial-gradient(ellipse 30% 70% at 48% 30%,#000 0%,transparent 100%);mask-image:radial-gradient(ellipse 30% 70% at 48% 30%,#000 0%,transparent 100%);opacity:.5}
+.science-banner::after{content:"";position:absolute;left:0;bottom:0;width:45%;height:60%;pointer-events:none;background-image:radial-gradient(rgba(247,243,229,.5) 1px,transparent 1.5px);background-size:9px 9px;-webkit-mask-image:radial-gradient(ellipse at 0% 100%,#000 0%,transparent 60%);mask-image:radial-gradient(ellipse at 0% 100%,#000 0%,transparent 60%);opacity:.3}
+.scientific-analysis{position:relative}
+.scientific-analysis::before{content:"";position:absolute;left:0;right:0;top:0;height:90px;pointer-events:none;background-image:radial-gradient(rgba(135,238,232,.6) 1px,transparent 1.5px);background-size:10px 10px;-webkit-mask-image:linear-gradient(180deg,#000,transparent);mask-image:linear-gradient(180deg,#000,transparent);opacity:.12}
+.more-toggle{background-image:radial-gradient(rgba(135,238,232,.35) 1px,transparent 1.4px);background-size:8px 8px;background-color:rgba(20,155,165,.08);background-position:right center;background-repeat:repeat-y}
+
+
+/* === "Antes / después" explicado + mini leyenda sobre el mapa === */
+.explain{margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(20,155,165,.1);border-left:3px solid var(--accent);font-size:13px;line-height:1.5;color:var(--text)}
+.explain p{margin:0 0 6px}.explain p:last-child{margin:0}
+.explain .explain-h{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--cyan)}
+.explain .explain-note{font-size:12px;color:var(--muted)}
+.explain-go{margin-top:8px;width:100%}
+.map-mini-legend{position:absolute;left:10px;bottom:26px;z-index:900;display:flex;gap:10px;padding:6px 10px;border-radius:999px;background:rgba(5,25,32,.82);color:var(--cream);font-size:12px;backdrop-filter:blur(4px);pointer-events:none}
+.map-mini-legend span{display:inline-flex;align-items:center;gap:5px}
+.map-mini-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.explain .explain-warn{display:block;margin-top:3px;font-size:12px;color:#ffc27a}
+@media (max-width:640px){.maptag.left{left:48px}.maptag{font-size:11px;max-width:38%;white-space:normal;line-height:1.25;padding:4px 7px}.map-mini-legend{font-size:11px;gap:8px}}
