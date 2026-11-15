@@ -1,0 +1,136 @@
+dispositivo: NVIDIA GeForce RTX 5070 Ti Laptop GPU
+  barra: 722x1000 px, etiquetados 100%
+  jiquilisco: 889x2222 px, etiquetados 100%
+  cerron: 1111x1889 px, etiquetados 100%
+paso    200 |   0.7 min | loss 0.826 | Barra (nunca vista): exactitud 0.599  F1 manglar 0.729  F1 medio 0.431  <- mejor, guardado
+paso    400 |   1.1 min | loss 0.652 | Barra (nunca vista): exactitud 0.748  F1 manglar 0.703  F1 medio 0.585  <- mejor, guardado
+paso    600 |   1.4 min | loss 0.582 | Barra (nunca vista): exactitud 0.768  F1 manglar 0.660  F1 medio 0.629  <- mejor, guardado
+paso    800 |   1.8 min | loss 0.543 | Barra (nunca vista): exactitud 0.791  F1 manglar 0.729  F1 medio 0.670  <- mejor, guardado
+paso   1000 |   2.1 min | loss 0.536 | Barra (nunca vista): exactitud 0.790  F1 manglar 0.770  F1 medio 0.652
+paso   1200 |   2.5 min | loss 0.514 | Barra (nunca vista): exactitud 0.811  F1 manglar 0.856  F1 medio 0.685  <- mejor, guardado
+paso   1400 |   2.9 min | loss 0.489 | Barra (nunca vista): exactitud 0.809  F1 manglar 0.842  F1 medio 0.702  <- mejor, guardado
+paso   1600 |   3.2 min | loss 0.482 | Barra (nunca vista): exactitud 0.743  F1 manglar 0.001  F1 medio 0.477
+paso   1800 |   3.6 min | loss 0.522 | Barra (nunca vista): exactitud 0.761  F1 manglar 0.536  F1 medio 0.627
+paso   2000 |   3.9 min | loss 0.460 | Barra (nunca vista): exactitud 0.794  F1 manglar 0.834  F1 medio 0.677
+paso   2200 |   4.3 min | loss 0.462 | Barra (nunca vista): exactitud 0.815  F1 manglar 0.853  F1 medio 0.699
+paso   2400 |   4.7 min | loss 0.453 | Barra (nunca vista): exactitud 0.812  F1 manglar 0.835  F1 medio 0.706  <- mejor, guardado
+paso   2600 |   5.0 min | loss 0.468 | Barra (nunca vista): exactitud 0.778  F1 manglar 0.656  F1 medio 0.653
+paso   2800 |   5.4 min | loss 0.453 | Barra (nunca vista): exactitud 0.758  F1 manglar 0.295  F1 medio 0.596
+paso   3000 |   5.7 min | loss 0.444 | Barra (nunca vista): exactitud 0.766  F1 manglar 0.442  F1 medio 0.624
+paso   3200 |   6.1 min | loss 0.436 | Barra (nunca vista): exactitud 0.826  F1 manglar 0.867  F1 medio 0.724  <- mejor, guardado
+paso   3400 |   6.5 min | loss 0.430 | Barra (nunca vista): exactitud 0.748  F1 manglar 0.278  F1 medio 0.593
+paso   3600 |   6.8 min | loss 0.425 | Barra (nunca vista): exactitud 0.776  F1 manglar 0.624  F1 medio 0.647
+paso   3800 |   7.2 min | loss 0.463 | Barra (nunca vista): exactitud 0.756  F1 manglar 0.400  F1 medio 0.611
+paso   4000 |   7.6 min | loss 0.431 | Barra (nunca vista): exactitud 0.773  F1 manglar 0.464  F1 medio 0.627
+paso   4200 |   7.9 min | loss 0.424 | Barra (nunca vista): exactitud 0.807  F1 manglar 0.812  F1 medio 0.699
+paso   4400 |   8.3 min | loss 0.415 | Barra (nunca vista): exactitud 0.740  F1 manglar 0.278  F1 medio 0.580
+paso   4600 |   8.6 min | loss 0.417 | Barra (nunca vista): exactitud 0.800  F1 manglar 0.747  F1 medio 0.687
+paso   4800 |   9.0 min | loss 0.417 | Barra (nunca vista): exactitud 0.791  F1 manglar 0.697  F1 medio 0.660
+paso   5000 |   9.4 min | loss 0.409 | Barra (nunca vista): exactitud 0.793  F1 manglar 0.781  F1 medio 0.686
+paso   5200 |   9.7 min | loss 0.410 | Barra (nunca vista): exactitud 0.788  F1 manglar 0.762  F1 medio 0.666
+paso   5400 |  10.1 min | loss 0.417 | Barra (nunca vista): exactitud 0.806  F1 manglar 0.712  F1 medio 0.677
+paso   5600 |  10.4 min | loss 0.411 | Barra (nunca vista): exactitud 0.751  F1 manglar 0.354  F1 medio 0.579
+paso   5800 |  10.8 min | loss 0.397 | Barra (nunca vista): exactitud 0.808  F1 manglar 0.819  F1 medio 0.672
+paso   6000 |  11.2 min | loss 0.396 | Barra (nunca vista): exactitud 0.812  F1 manglar 0.835  F1 medio 0.706
+paso   6200 |  11.5 min | loss 0.402 | Barra (nunca vista): exactitud 0.759  F1 manglar 0.400  F1 medio 0.592
+paso   6400 |  11.9 min | loss 0.406 | Barra (nunca vista): exactitud 0.759  F1 manglar 0.461  F1 medio 0.586
+paso   6600 |  12.2 min | loss 0.391 | Barra (nunca vista): exactitud 0.797  F1 manglar 0.787  F1 medio 0.674
+paso   6800 |  12.6 min | loss 0.387 | Barra (nunca vista): exactitud 0.794  F1 manglar 0.753  F1 medio 0.661
+paso   7000 |  13.0 min | loss 0.402 | Barra (nunca vista): exactitud 0.736  F1 manglar 0.631  F1 medio 0.604
+paso   7200 |  13.3 min | loss 0.457 | Barra (nunca vista): exactitud 0.777  F1 manglar 0.621  F1 medio 0.640
+paso   7400 |  13.7 min | loss 0.399 | Barra (nunca vista): exactitud 0.788  F1 manglar 0.671  F1 medio 0.646
+paso   7600 |  14.0 min | loss 0.385 | Barra (nunca vista): exactitud 0.795  F1 manglar 0.763  F1 medio 0.681
+paso   7800 |  14.4 min | loss 0.382 | Barra (nunca vista): exactitud 0.791  F1 manglar 0.726  F1 medio 0.665
+paso   8000 |  14.7 min | loss 0.374 | Barra (nunca vista): exactitud 0.762  F1 manglar 0.534  F1 medio 0.617
+paso   8200 |  15.1 min | loss 0.386 | Barra (nunca vista): exactitud 0.788  F1 manglar 0.791  F1 medio 0.666
+paso   8400 |  15.5 min | loss 0.374 | Barra (nunca vista): exactitud 0.805  F1 manglar 0.824  F1 medio 0.698
+paso   8600 |  15.8 min | loss 0.427 | Barra (nunca vista): exactitud 0.783  F1 manglar 0.682  F1 medio 0.660
+paso   8800 |  16.2 min | loss 0.386 | Barra (nunca vista): exactitud 0.773  F1 manglar 0.615  F1 medio 0.635
+paso   9000 |  16.6 min | loss 0.377 | Barra (nunca vista): exactitud 0.778  F1 manglar 0.661  F1 medio 0.653
+paso   9200 |  16.9 min | loss 0.367 | Barra (nunca vista): exactitud 0.768  F1 manglar 0.512  F1 medio 0.627
+paso   9400 |  17.3 min | loss 0.372 | Barra (nunca vista): exactitud 0.780  F1 manglar 0.722  F1 medio 0.645
+paso   9600 |  17.7 min | loss 0.367 | Barra (nunca vista): exactitud 0.811  F1 manglar 0.815  F1 medio 0.691
+paso   9800 |  18.0 min | loss 0.360 | Barra (nunca vista): exactitud 0.790  F1 manglar 0.753  F1 medio 0.672
+paso  10000 |  18.4 min | loss 0.361 | Barra (nunca vista): exactitud 0.783  F1 manglar 0.713  F1 medio 0.640
+paso  10200 |  18.7 min | loss 0.359 | Barra (nunca vista): exactitud 0.795  F1 manglar 0.754  F1 medio 0.685
+paso  10400 |  19.1 min | loss 0.368 | Barra (nunca vista): exactitud 0.783  F1 manglar 0.653  F1 medio 0.644
+paso  10600 |  19.5 min | loss 0.357 | Barra (nunca vista): exactitud 0.774  F1 manglar 0.704  F1 medio 0.622
+paso  10800 |  19.8 min | loss 0.352 | Barra (nunca vista): exactitud 0.783  F1 manglar 0.669  F1 medio 0.652
+paso  11000 |  20.2 min | loss 0.358 | Barra (nunca vista): exactitud 0.794  F1 manglar 0.823  F1 medio 0.680
+paso  11200 |  20.6 min | loss 0.375 | Barra (nunca vista): exactitud 0.777  F1 manglar 0.641  F1 medio 0.636
+paso  11400 |  20.9 min | loss 0.363 | Barra (nunca vista): exactitud 0.772  F1 manglar 0.532  F1 medio 0.628
+paso  11600 |  21.3 min | loss 0.362 | Barra (nunca vista): exactitud 0.788  F1 manglar 0.724  F1 medio 0.652
+paso  11800 |  21.7 min | loss 0.347 | Barra (nunca vista): exactitud 0.791  F1 manglar 0.769  F1 medio 0.670
+paso  12000 |  22.0 min | loss 0.346 | Barra (nunca vista): exactitud 0.795  F1 manglar 0.784  F1 medio 0.674
+paso  12200 |  22.4 min | loss 0.340 | Barra (nunca vista): exactitud 0.793  F1 manglar 0.821  F1 medio 0.672
+paso  12400 |  22.8 min | loss 0.342 | Barra (nunca vista): exactitud 0.799  F1 manglar 0.799  F1 medio 0.668
+paso  12600 |  23.1 min | loss 0.344 | Barra (nunca vista): exactitud 0.803  F1 manglar 0.801  F1 medio 0.696
+paso  12800 |  23.5 min | loss 0.339 | Barra (nunca vista): exactitud 0.781  F1 manglar 0.672  F1 medio 0.649
+paso  13000 |  23.8 min | loss 0.343 | Barra (nunca vista): exactitud 0.787  F1 manglar 0.712  F1 medio 0.647
+paso  13200 |  24.2 min | loss 0.336 | Barra (nunca vista): exactitud 0.791  F1 manglar 0.722  F1 medio 0.668
+paso  13400 |  24.6 min | loss 0.335 | Barra (nunca vista): exactitud 0.753  F1 manglar 0.480  F1 medio 0.614
+paso  13600 |  24.9 min | loss 0.333 | Barra (nunca vista): exactitud 0.772  F1 manglar 0.657  F1 medio 0.650
+paso  13800 |  25.3 min | loss 0.333 | Barra (nunca vista): exactitud 0.771  F1 manglar 0.600  F1 medio 0.639
+paso  14000 |  25.7 min | loss 0.334 | Barra (nunca vista): exactitud 0.762  F1 manglar 0.414  F1 medio 0.608
+paso  14200 |  26.0 min | loss 0.329 | Barra (nunca vista): exactitud 0.787  F1 manglar 0.805  F1 medio 0.673
+paso  14400 |  26.4 min | loss 0.330 | Barra (nunca vista): exactitud 0.780  F1 manglar 0.627  F1 medio 0.646
+paso  14600 |  26.7 min | loss 0.323 | Barra (nunca vista): exactitud 0.787  F1 manglar 0.731  F1 medio 0.669
+paso  14800 |  27.1 min | loss 0.327 | Barra (nunca vista): exactitud 0.810  F1 manglar 0.824  F1 medio 0.696
+paso  15000 |  27.5 min | loss 0.325 | Barra (nunca vista): exactitud 0.763  F1 manglar 0.418  F1 medio 0.600
+paso  15200 |  27.8 min | loss 0.324 | Barra (nunca vista): exactitud 0.794  F1 manglar 0.785  F1 medio 0.665
+paso  15400 |  28.2 min | loss 0.324 | Barra (nunca vista): exactitud 0.758  F1 manglar 0.456  F1 medio 0.613
+paso  15600 |  28.6 min | loss 0.337 | Barra (nunca vista): exactitud 0.794  F1 manglar 0.756  F1 medio 0.675
+paso  15800 |  28.9 min | loss 0.319 | Barra (nunca vista): exactitud 0.782  F1 manglar 0.654  F1 medio 0.669
+paso  16000 |  29.3 min | loss 0.321 | Barra (nunca vista): exactitud 0.787  F1 manglar 0.667  F1 medio 0.667
+paso  16200 |  29.7 min | loss 0.317 | Barra (nunca vista): exactitud 0.744  F1 manglar 0.222  F1 medio 0.547
+paso  16400 |  30.0 min | loss 0.324 | Barra (nunca vista): exactitud 0.794  F1 manglar 0.728  F1 medio 0.678
+paso  16600 |  30.4 min | loss 0.319 | Barra (nunca vista): exactitud 0.782  F1 manglar 0.575  F1 medio 0.644
+paso  16800 |  30.7 min | loss 0.315 | Barra (nunca vista): exactitud 0.786  F1 manglar 0.639  F1 medio 0.667
+paso  17000 |  31.1 min | loss 0.318 | Barra (nunca vista): exactitud 0.799  F1 manglar 0.791  F1 medio 0.688
+paso  17200 |  31.5 min | loss 0.314 | Barra (nunca vista): exactitud 0.776  F1 manglar 0.594  F1 medio 0.649
+paso  17400 |  31.8 min | loss 0.310 | Barra (nunca vista): exactitud 0.787  F1 manglar 0.691  F1 medio 0.667
+paso  17600 |  32.2 min | loss 0.311 | Barra (nunca vista): exactitud 0.783  F1 manglar 0.779  F1 medio 0.660
+paso  17800 |  32.5 min | loss 0.313 | Barra (nunca vista): exactitud 0.775  F1 manglar 0.586  F1 medio 0.635
+paso  18000 |  32.9 min | loss 0.314 | Barra (nunca vista): exactitud 0.778  F1 manglar 0.602  F1 medio 0.648
+paso  18200 |  33.3 min | loss 0.315 | Barra (nunca vista): exactitud 0.784  F1 manglar 0.629  F1 medio 0.664
+paso  18400 |  33.6 min | loss 0.310 | Barra (nunca vista): exactitud 0.782  F1 manglar 0.635  F1 medio 0.656
+paso  18600 |  34.0 min | loss 0.305 | Barra (nunca vista): exactitud 0.795  F1 manglar 0.766  F1 medio 0.679
+paso  18800 |  34.3 min | loss 0.309 | Barra (nunca vista): exactitud 0.791  F1 manglar 0.685  F1 medio 0.675
+paso  19000 |  34.7 min | loss 0.305 | Barra (nunca vista): exactitud 0.757  F1 manglar 0.441  F1 medio 0.617
+paso  19200 |  35.1 min | loss 0.301 | Barra (nunca vista): exactitud 0.809  F1 manglar 0.791  F1 medio 0.700
+paso  19400 |  35.4 min | loss 0.302 | Barra (nunca vista): exactitud 0.771  F1 manglar 0.601  F1 medio 0.640
+paso  19600 |  35.8 min | loss 0.304 | Barra (nunca vista): exactitud 0.773  F1 manglar 0.554  F1 medio 0.640
+paso  19800 |  36.1 min | loss 0.300 | Barra (nunca vista): exactitud 0.790  F1 manglar 0.694  F1 medio 0.670
+paso  20000 |  36.5 min | loss 0.299 | Barra (nunca vista): exactitud 0.759  F1 manglar 0.519  F1 medio 0.617
+paso  20200 |  36.9 min | loss 0.298 | Barra (nunca vista): exactitud 0.778  F1 manglar 0.641  F1 medio 0.653
+paso  20400 |  37.2 min | loss 0.302 | Barra (nunca vista): exactitud 0.762  F1 manglar 0.408  F1 medio 0.614
+paso  20600 |  37.6 min | loss 0.301 | Barra (nunca vista): exactitud 0.809  F1 manglar 0.795  F1 medio 0.704
+paso  20800 |  38.0 min | loss 0.296 | Barra (nunca vista): exactitud 0.773  F1 manglar 0.572  F1 medio 0.639
+paso  21000 |  38.3 min | loss 0.315 | Barra (nunca vista): exactitud 0.784  F1 manglar 0.663  F1 medio 0.668
+paso  21200 |  38.7 min | loss 0.302 | Barra (nunca vista): exactitud 0.783  F1 manglar 0.680  F1 medio 0.661
+paso  21400 |  39.1 min | loss 0.296 | Barra (nunca vista): exactitud 0.800  F1 manglar 0.795  F1 medio 0.685
+paso  21600 |  39.4 min | loss 0.298 | Barra (nunca vista): exactitud 0.798  F1 manglar 0.818  F1 medio 0.682
+paso  21800 |  39.8 min | loss 0.290 | Barra (nunca vista): exactitud 0.779  F1 manglar 0.605  F1 medio 0.652
+paso  22000 |  40.1 min | loss 0.299 | Barra (nunca vista): exactitud 0.776  F1 manglar 0.625  F1 medio 0.650
+paso  22200 |  40.5 min | loss 0.288 | Barra (nunca vista): exactitud 0.772  F1 manglar 0.689  F1 medio 0.650
+paso  22400 |  40.9 min | loss 0.291 | Barra (nunca vista): exactitud 0.804  F1 manglar 0.781  F1 medio 0.692
+paso  22600 |  41.2 min | loss 0.295 | Barra (nunca vista): exactitud 0.781  F1 manglar 0.606  F1 medio 0.656
+paso  22800 |  41.6 min | loss 0.291 | Barra (nunca vista): exactitud 0.794  F1 manglar 0.782  F1 medio 0.681
+paso  23000 |  42.0 min | loss 0.288 | Barra (nunca vista): exactitud 0.787  F1 manglar 0.717  F1 medio 0.661
+paso  23200 |  42.3 min | loss 0.290 | Barra (nunca vista): exactitud 0.791  F1 manglar 0.693  F1 medio 0.666
+paso  23400 |  42.7 min | loss 0.287 | Barra (nunca vista): exactitud 0.783  F1 manglar 0.646  F1 medio 0.656
+paso  23600 |  43.1 min | loss 0.290 | Barra (nunca vista): exactitud 0.804  F1 manglar 0.810  F1 medio 0.692
+paso  23800 |  43.4 min | loss 0.287 | Barra (nunca vista): exactitud 0.777  F1 manglar 0.604  F1 medio 0.641
+paso  24000 |  43.8 min | loss 0.290 | Barra (nunca vista): exactitud 0.795  F1 manglar 0.746  F1 medio 0.680
+paso  24200 |  44.1 min | loss 0.286 | Barra (nunca vista): exactitud 0.762  F1 manglar 0.468  F1 medio 0.621
+paso  24400 |  44.5 min | loss 0.285 | Barra (nunca vista): exactitud 0.793  F1 manglar 0.704  F1 medio 0.669
+paso  24600 |  44.9 min | loss 0.285 | Barra (nunca vista): exactitud 0.793  F1 manglar 0.711  F1 medio 0.677
+paso  24800 |  45.2 min | loss 0.285 | Barra (nunca vista): exactitud 0.762  F1 manglar 0.470  F1 medio 0.609
+paso  25000 |  45.6 min | loss 0.285 | Barra (nunca vista): exactitud 0.797  F1 manglar 0.778  F1 medio 0.684
+paso  25200 |  45.9 min | loss 0.287 | Barra (nunca vista): exactitud 0.801  F1 manglar 0.822  F1 medio 0.692
+paso  25400 |  46.3 min | loss 0.286 | Barra (nunca vista): exactitud 0.792  F1 manglar 0.725  F1 medio 0.670
+paso  25600 |  46.7 min | loss 0.288 | Barra (nunca vista): exactitud 0.801  F1 manglar 0.759  F1 medio 0.692
+paso  25800 |  47.0 min | loss 0.284 | Barra (nunca vista): exactitud 0.786  F1 manglar 0.790  F1 medio 0.665
+paso  26000 |  47.4 min | loss 0.287 | Barra (nunca vista): exactitud 0.792  F1 manglar 0.733  F1 medio 0.677
+paso  26200 |  47.8 min | loss 0.289 | Barra (nunca vista): exactitud 0.807  F1 manglar 0.809  F1 medio 0.699
+paso  26400 |  48.1 min | loss 0.284 | Barra (nunca vista): exactitud 0.781  F1 manglar 0.605  F1 medio 0.651

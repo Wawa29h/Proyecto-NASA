@@ -13,7 +13,7 @@
   // Modo científico (idea de Keylen, rama feature/modo-cientifico): títulos científicos, título
   // "MANGLO | Modo Científico" y las tarjetas de análisis pasan a la cuadrícula "Análisis científico detallado"
   // debajo del mapa, con exportación de datos (CSV) y gráficas (PNG). Al apagarlo todo vuelve a su lugar.
-  const SCI_CARDS = ["rhythmCard", "caneCard", "histCard", "carbonCard", "pondsCard", "mangCard", "lakeCard", "mlCard", "wqCard", "valCard", "probeCard"];
+  const SCI_CARDS = ["rhythmCard", "caneCard", "histCard", "carbonCard", "pondsCard", "mangCard", "lakeCard", "mlCard", "aiCard", "wqCard", "valCard", "probeCard"];
   const homes = {};
   function placeScienceCards(on) {
     const grid = $("analysisGrid");
@@ -33,6 +33,17 @@
   const setExpert = (on) => { document.body.classList.toggle("expert", on); sw.checked = on; store.set("expert", on ? "1" : "0"); placeScienceCards(on); };
   setExpert(store.get("expert") === "1");
   sw.onchange = () => setExpert(sw.checked);
+
+  // ---------- primera vista simple: los hallazgos extra quedan plegados tras "Ver más" ----------
+  const moreBtn = $("moreToggle");
+  function setMore(on) {
+    document.body.classList.toggle("show-more", on);
+    if (!moreBtn) return;
+    moreBtn.setAttribute("aria-expanded", on ? "true" : "false");
+    moreBtn.querySelector("span").textContent = on ? "Ver menos" : "Ver más hallazgos";
+    moreBtn.querySelector("i").textContent = on ? "↑" : "↓";
+  }
+  if (moreBtn) moreBtn.onclick = () => setMore(!document.body.classList.contains("show-more"));
 
   // ---------- números que cuentan solos ----------
   function countUp(el, ms = 900) {
@@ -129,6 +140,7 @@
   function focusCard(id) {
     const el = $(id);
     if (!el || el.hidden) return;
+    if (el.classList.contains("more-card")) setMore(true);   // el recorrido abre los hallazgos plegados
     el.classList.add("in");
     el.scrollIntoView({ behavior: "smooth", block: "center" });
     el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
@@ -353,7 +365,45 @@
   };
 
   // botones "Ver ... →" de las tarjetas del manglar: abren esa vista en el mapa (radar a la izquierda)
-  document.querySelectorAll("[data-goref]").forEach((b) => (b.onclick = () => go({ mode: "truth", ref: b.dataset.goref, date: S.dates[state.idx]?.date })));
+  // Abrir la capa científica y volver al mapa desde el panel o las gráficas de abajo.
+  // Antes se actualizaba el mapa, pero quedaba fuera de la pantalla y parecía no funcionar.
+  let mapNoticeTimer;
+  const openMapReference = (reference) => {
+    if (!S?.dates?.length || !SITE) return;
+    const chosen = document.querySelector(`#truthSeg [data-ref="${reference}"]`);
+    if (!chosen || chosen.hidden) {
+      alert("Esta capa no está disponible para el sitio seleccionado.");
+      return;
+    }
+    go({ mode: "truth", ref: reference, date: S.dates[state.idx]?.date });
+    const mapArea = document.querySelector(".mapwrap");
+    if (!mapArea) return;
+    mapArea.scrollIntoView({ behavior: "smooth", block: "start" });
+    let notice = document.querySelector(".map-layer-notice");
+    if (!notice) {
+      notice = document.createElement("div");
+      notice.className = "map-layer-notice";
+      notice.setAttribute("role", "status");
+      notice.setAttribute("aria-live", "polite");
+      mapArea.appendChild(notice);
+    }
+    const labels = {
+      cane: "Cosecha por mes: referencia de Sentinel-2",
+      canenisar: "Cosecha detectada por radar NISAR",
+      burns: "Quemas detectadas cerca del manglar",
+      burntype: "Parcelas quemadas y cortadas en verde",
+      gmw: "Evolución histórica del manglar",
+      ponds: "Estanques cercanos al manglar",
+      ai: "Mapa hecho por IA solo con radar (MangroveNet)"
+    };
+    notice.textContent = "Capa activada · " + (labels[reference] || "Referencia satelital");
+    clearTimeout(mapNoticeTimer);
+    mapNoticeTimer = setTimeout(() => { notice.remove(); }, 4500);
+    setTimeout(() => { try { map.invalidateSize(); } catch {} }, 350);
+  };
+  document.querySelectorAll("[data-goref]").forEach((b) => {
+    b.onclick = () => openMapReference(b.dataset.goref);
+  });
 
   // ---------- ganchos de app.js ----------
   window.onRender = () => { updateSema(); moveNow(); updateAlert(); };

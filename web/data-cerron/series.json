@@ -186,25 +186,35 @@
    "rgb": "data/2026-07-05_A134_rgb.png",
    "hh": "data/2026-07-05_A134_hh.png",
    "cls": "data/2026-07-05_A134_cls.png",
-   "valid_km2": 608.88,
-   "water_km2": 81.661,
+   "valid_km2": 817.49,
+   "water_km2": 83.824,
    "ocean_km2": 0.0,
-   "floodveg_km2": 2.163,
-   "hh_mean_db": -8.99,
-   "hv_mean_db": -14.88,
-   "floatveg_km2": 5.122,
+   "floodveg_km2": 2.912,
+   "hh_mean_db": -8.82,
+   "hv_mean_db": -14.74,
+   "floatveg_km2": 6.094,
    "thr": {
-    "hh": -14.57,
-    "hv": -19.81
+    "hh": -14.7,
+    "hv": -19.94
    },
    "calib": {
-    "water_hh": -18.43,
-    "water_hv": -23.44,
-    "veg_hh": -7.4,
-    "veg_hv": -13.08,
+    "water_hh": -18.56,
+    "water_hv": -23.53,
+    "veg_hh": -7.54,
+    "veg_hv": -13.27,
     "qc": true
    },
-   "qc": true
+   "qc": true,
+   "src": "data/2026-07-05_A134_src.png",
+   "time_filled_pct": 25.5,
+   "time_fill_from": [
+    {
+     "date": "2026-07-17",
+     "gap_days": 12,
+     "pct": 25.5
+    }
+   ],
+   "coverage_real_pct": 74.5
   },
   {
    "id": "2026-07-17_A134",
@@ -291,25 +301,35 @@
    "rgb": "data/2026-08-22_A134_rgb.png",
    "hh": "data/2026-08-22_A134_hh.png",
    "cls": "data/2026-08-22_A134_cls.png",
-   "valid_km2": 817.19,
-   "water_km2": 84.057,
+   "valid_km2": 817.49,
+   "water_km2": 83.414,
    "ocean_km2": 0.0,
    "floodveg_km2": 2.734,
-   "hh_mean_db": -8.94,
-   "hv_mean_db": -14.74,
+   "hh_mean_db": -8.99,
+   "hv_mean_db": -14.76,
    "floatveg_km2": 6.051,
    "thr": {
-    "hh": -14.7,
+    "hh": -14.84,
     "hv": -19.76
    },
    "calib": {
-    "water_hh": -18.56,
+    "water_hh": -18.7,
     "water_hv": -23.25,
-    "veg_hh": -7.54,
+    "veg_hh": -7.68,
     "veg_hv": -13.27,
     "qc": true
    },
-   "qc": true
+   "qc": true,
+   "src": "data/2026-08-22_A134_src.png",
+   "time_filled_pct": 0.0,
+   "time_fill_from": [
+    {
+     "date": "2026-08-10",
+     "gap_days": 12,
+     "pct": 0.0
+    }
+   ],
+   "coverage_real_pct": 100.0
   },
   {
    "id": "2026-09-03_A134",
@@ -433,25 +453,35 @@
    "rgb": "data/2026-10-09_A134_rgb.png",
    "hh": "data/2026-10-09_A134_hh.png",
    "cls": "data/2026-10-09_A134_cls.png",
-   "valid_km2": 815.14,
-   "water_km2": 93.211,
+   "valid_km2": 817.49,
+   "water_km2": 94.085,
    "ocean_km2": 0.0,
-   "floodveg_km2": 5.106,
-   "hh_mean_db": -7.69,
-   "hv_mean_db": -13.7,
-   "floatveg_km2": 2.755,
+   "floodveg_km2": 5.157,
+   "hh_mean_db": -7.75,
+   "hv_mean_db": -13.72,
+   "floatveg_km2": 2.773,
    "thr": {
-    "hh": -13.51,
+    "hh": -13.56,
     "hv": -19.09
    },
    "calib": {
     "water_hh": -17.32,
     "water_hv": -22.78,
-    "veg_hh": -6.44,
+    "veg_hh": -6.57,
     "veg_hv": -12.24,
     "qc": true
    },
-   "qc": true
+   "qc": true,
+   "src": "data/2026-10-09_A134_src.png",
+   "time_filled_pct": 0.3,
+   "time_fill_from": [
+    {
+     "date": "2026-09-27",
+     "gap_days": 12,
+     "pct": 0.3
+    }
+   ],
+   "coverage_real_pct": 99.7
   },
   {
    "id": "2026-10-21_A134",

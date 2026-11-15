@@ -169,7 +169,9 @@ body{display:flex;flex-direction:column;min-height:100%}
 .hero-sites{grid-template-columns:repeat(3,1fr)}
 @media (max-width:860px){.hero-sites{grid-template-columns:1fr}}
 .fillnote{font-size:12px;color:var(--muted);margin:-2px 0 8px;line-height:1.5}
-.fillnote .c-fill{color:#4fc3f7}.fillnote .c-gap{color:#b8c2c6}
+.fillnote .c-fill{color:#4fc3f7}.fillnote .c-gap{color:#b8c2c6}.fillnote .c-time{color:#c89bff}
+.photo-note{border-left:3px solid #c89bff;padding-left:8px}.ai-btns{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.ai-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}.ai-table td,.ai-table th{padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
 
 /* momento wow */
 .card.wow{border-color:rgba(20,155,165,.5);background:linear-gradient(180deg,rgba(20,155,165,.10),var(--card) 40%)}
@@ -519,3 +521,128 @@ body{background:var(--bg)}
 @media (max-width:1100px){ .analysis-grid{grid-template-columns:1fr} }
 @media (max-width:600px){ .scientific-analysis{padding:18px 16px} .brand-logo{width:52px;height:48px} }
 .analysis-grid > .card.reveal{opacity:1;transform:none}
+
+
+/* === MANGLO mejoras visuales desde main integrado === */
+html{scroll-behavior:smooth}
+
+.brand{align-items:center}
+.brand-mark{width:66px;height:66px;border-radius:18px;background:linear-gradient(180deg,rgba(247,243,229,.95),rgba(209,233,234,.95));display:grid;place-items:center;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18);flex-shrink:0;border:1px solid rgba(255,255,255,.18)}
+.brand-logo{width:120px;height:74px;object-fit:cover;object-position:left center;transform:translateX(-10px);display:block;background:none!important;padding:0!important;border-radius:0!important}
+
+.science-banner{position:relative;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:24px;align-items:center;padding:26px 24px 58px;background:radial-gradient(circle at top right, rgba(20,155,165,.18), transparent 35%),linear-gradient(180deg,#0b2430 0%,#102f39 100%);border-bottom:1px solid var(--line);overflow:hidden}
+.science-banner::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);background-size:24px 24px;mask-image:linear-gradient(180deg,rgba(0,0,0,.95),rgba(0,0,0,.55));pointer-events:none}
+.science-banner__content,.science-banner__art,.scroll-cue{position:relative;z-index:1}
+.science-banner h2{margin:0 0 10px;font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-.5px}
+.science-banner p{max-width:68ch;margin:0;color:#d7e7e8;font-size:15px;line-height:1.7}
+.science-banner__chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.science-banner__chips span{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(8,20,25,.45);border:1px solid rgba(159,208,255,.22);color:#f7f3e5;font-size:12px;font-weight:600;backdrop-filter:blur(6px)}
+.science-banner__art{display:flex;justify-content:flex-end}
+.science-banner__art img{width:min(100%,440px);height:auto;display:block;filter:drop-shadow(0 12px 36px rgba(0,0,0,.24))}
+.scroll-cue{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:#f7f3e5;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.2px;opacity:.92}
+.scroll-cue i{display:grid;place-items:center;width:38px;height:38px;border-radius:999px;background:rgba(247,243,229,.1);border:1px solid rgba(247,243,229,.22);font-style:normal;font-size:18px;animation:mangloBounce 1.7s infinite}
+@keyframes mangloBounce{0%,20%,50%,80%,100%{transform:translateY(0)}40%{transform:translateY(6px)}60%{transform:translateY(3px)}}
+
+@media (max-width:960px){.science-banner{grid-template-columns:1fr;padding:22px 18px 62px}.science-banner__art{justify-content:center}.science-banner p{max-width:none}}
+@media (max-width:600px){.brand-mark{width:54px;height:54px;border-radius:15px}.brand-logo{width:98px;height:60px;transform:translateX(-8px)}.science-banner h2{font-size:28px}.science-banner__chips span{font-size:11px;padding:7px 10px}.scroll-cue span{font-size:11px}}
+
+
+/* CORRECCIÓN: símbolo MANGLO independiente, sin recortes ni deformación. */
+.brand-mark{position:relative;flex:0 0 76px;width:76px;height:70px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:5px;background:#F7F3E5;border:1px solid rgba(255,255,255,.32);border-radius:15px;box-shadow:0 5px 18px rgba(0,0,0,.25)}
+.brand-mark .brand-logo{position:static!important;display:block;max-width:100%!important;width:100%!important;height:100%!important;left:auto!important;top:auto!important;object-fit:contain!important;object-position:center!important;transform:none!important;padding:0!important;margin:0!important;background:transparent!important;border:0!important;border-radius:0!important}
+/* El banner sigue estrictamente el interruptor ya implementado por story.js. */
+body:not(.expert) .science-banner{display:none!important}
+@media(max-width:600px){.brand-mark{flex-basis:59px;width:59px;height:55px;padding:4px;border-radius:12px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.scroll-cue i{animation:none}}
+
+
+/* Ajuste visual de la ilustración científica: imagen real en lugar de formas abstractas */
+.science-banner__art img {
+  width: 100%;
+  max-width: 560px;
+  height: clamp(190px, 23vw, 285px);
+  object-fit: cover;
+  object-position: center;
+  border-radius: 18px;
+  border: 1px solid rgba(135, 238, 232, .28);
+  box-shadow: 0 16px 36px rgba(0,0,0,.34), 0 0 35px rgba(20,155,165,.12);
+}
+@media(max-width:960px) {
+  .science-banner__art img { max-width: 560px; height: 240px; }
+}
+@media(max-width:600px) {
+  .science-banner__art img { height: 185px; border-radius: 14px; }
+}
+
+/* Confirmación visual al abrir capas de cosecha y radar en el mapa */
+.map-layer-notice {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  max-width: calc(100% - 108px);
+  padding: 12px 16px;
+  text-align: center;
+  background: rgba(5, 33, 40, .94);
+  color: #f7f3e5;
+  border: 1px solid #149ba5;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.32);
+  font-weight: 600;
+  font-size: 13px;
+  pointer-events: none;
+  line-height: 1.4;
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-layer-notice { transition:none; }
+}
+
+
+/* === Banner del modo científico: menos texto, imagen real (foto Sentinel-2 | radar NISAR) === */
+.science-banner{padding:28px 24px;grid-template-columns:minmax(0,1fr) minmax(280px,1.1fr);gap:32px;flex-shrink:0}
+.science-banner .eyebrow{margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#87eee8}
+.science-banner h2{font-size:clamp(30px,4.2vw,52px);line-height:1.05;letter-spacing:-1px;color:#F7F3E5;margin:0 0 12px}
+.science-banner__content>p:not(.eyebrow){font-size:16px;color:#cfe3e4;max-width:40ch}
+.science-banner__cta{display:inline-flex;align-items:center;gap:10px;margin-top:20px;padding:11px 18px;border-radius:999px;background:#149BA5;color:#fff;font-weight:700;font-size:14px;text-decoration:none;box-shadow:0 8px 22px rgba(20,155,165,.3);transition:transform .15s,background .15s}
+.science-banner__cta:hover{background:#18b1bc;transform:translateY(-1px)}
+.science-banner__cta i{font-style:normal;animation:mangloBounce 1.7s infinite}
+.science-banner__art{position:relative;margin:0;justify-content:flex-end}
+.science-banner__art img{max-width:none;width:100%;height:clamp(200px,24vw,300px)}
+.science-banner__art figcaption{position:absolute;bottom:12px;padding:5px 10px;border-radius:999px;background:rgba(5,25,32,.78);color:#F7F3E5;font-size:12px;font-weight:600;backdrop-filter:blur(4px)}
+.science-banner__art .tag-photo{left:12px}
+.science-banner__art .tag-radar{right:12px}
+@media (max-width:960px){.science-banner{grid-template-columns:1fr;gap:18px;padding:22px 18px}.science-banner__art img{height:220px}}
+@media (max-width:600px){.science-banner h2{font-size:30px}.science-banner__content>p:not(.eyebrow){font-size:14px}.science-banner__art img{height:170px}.science-banner__art figcaption{font-size:11px;bottom:8px}}
+@media (prefers-reduced-motion:reduce){.science-banner__cta i{animation:none}}
+
+/* === Encabezado propio para celular: una fila de marca, pestañas y botones en filas deslizables === */
+@media (max-width:640px){
+  .top{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:8px 12px 10px;flex-wrap:nowrap}
+  .brand{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%}
+  .brand-mark{flex:none;width:40px;height:40px;padding:3px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+  .brand h1{font-size:15px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .brand p#siteSub{display:none}
+  #siteSel{margin:0;max-width:150px;font-size:12px;padding:6px 4px}
+  .modes{width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .modes::-webkit-scrollbar,.hdr-actions::-webkit-scrollbar{display:none}
+  .modes button{flex:1 0 auto;white-space:nowrap;padding:7px 6px;font-size:12px}
+  .hdr-actions{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;width:100%;margin:0 -12px;padding:0 12px;box-sizing:content-box}
+  .hdr-actions .btn{flex:none;white-space:nowrap;padding:7px 11px;font-size:13px}
+  .hdr-actions .switch{flex:none;white-space:nowrap;padding-right:28px}
+  .hdr-actions{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+}
+
+
+/* === Primera vista simple: mapa + "¿Cómo está?" + fecha; lo demás tras "Ver más" === */
+body:not(.expert):not(.show-more) .panel .more-card{display:none!important}
+.more-toggle{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;align-items:center;width:100%;text-align:left;gap:2px 10px;padding:12px 14px;border-radius:12px;border:1px dashed rgba(135,238,232,.35);background:rgba(20,155,165,.08);color:#F7F3E5;font:inherit;cursor:pointer;transition:background .15s,border-color .15s}
+.more-toggle:hover{background:rgba(20,155,165,.16);border-color:rgba(135,238,232,.6)}
+.more-toggle span{font-weight:700;font-size:14px}
+.more-toggle small{grid-row:2;color:var(--muted);font-size:12px}
+.more-toggle i{grid-row:1/3;grid-column:2;font-style:normal;font-size:18px;color:#87eee8}
+body.show-more .more-toggle small{display:none}
+/* pestañas más discretas en modo sencillo */
+body:not(.expert) .modes{background:transparent;border-color:rgba(255,255,255,.06)}
+body:not(.expert) .modes button{font-weight:500}
+body:not(.expert) .modes button.on{background:rgba(20,155,165,.2);color:#9ff3ee;box-shadow:inset 0 0 0 1px rgba(135,238,232,.35)}

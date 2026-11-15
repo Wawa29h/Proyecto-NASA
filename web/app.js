@@ -6,6 +6,7 @@ let SITE = null, BASE = "data";
 const P = (p) => (p ? BASE + "/" + p.replace(/^data\//, "") : p);
 const getJSON = async (p) => { try { const r = await fetch(p, { cache: "no-store" }); return r.ok ? await r.json() : null; } catch { return null; } };
 let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null, CLOUDS = null, ALERTS = null;
+let MNET = null, RFOTO = null;   // IAs entrenadas: MangroveNet (mapa) y radar→foto
 let GMW = null, CARBON = null, PONDS = null, CANE = null, FIRES = null, fireLayer = null, BURNS = null;
 const fmtInt = (n) => Math.round(n).toLocaleString("es-SV");
 const mlFor = (d) => ML?.dates.find((m) => m.id === d.id);
@@ -41,7 +42,8 @@ function clearOverlays() {
   [ovA, ovB, ovChange, ovSrc, gapNote].forEach((o) => o && map.removeLayer(o));
   ovA = ovB = ovChange = ovSrc = gapNote = null;
 }
-const urlFor = (d) => P(state.layer === "cls" ? d.cls : d.rgb);
+const photoFor = (d) => RFOTO?.dates?.find((x) => x.date === d.date);
+const urlFor = (d) => P(state.layer === "cls" ? d.cls : state.layer === "photo" && photoFor(d) ? photoFor(d).img : d.rgb);
 // capa IA: falso color atenuado debajo + plantas detectadas por el modelo encima
 function mlOverlay(d, pane = "paneChange") {
   const m = mlFor(d);
@@ -115,8 +117,8 @@ function render() {
     }
     $("dateLabel").textContent = fmtDate(d.date);
     $("dateSlider").value = state.idx;
-    // de dónde viene cada pedazo: rayas grises = sin escaneo; celestes = rellenado con otra órbita
-    if (d.coverage_pct != null && d.coverage_pct < 90 && !fullRef()) {
+    // de dónde viene cada pedazo: rayas grises = sin escaneo; celestes = otra órbita; moradas = aproximado de otra fecha
+    if (d.coverage_pct != null && d.coverage_pct + (d.time_filled_pct || 0) < 90 && !fullRef()) {
       const b = bounds, lat = (b.getNorth() + b.getSouth()) / 2, lon = b.getEast() - (b.getEast() - b.getWest()) * 0.2;
       const later = S.dates.find((x) => x.qc && (x.coverage_pct ?? 100) >= 99);
       gapNote = L.marker([lat, lon], { interactive: false, icon: L.divIcon({ className: "gapnote", iconSize: [230, 0], iconAnchor: [115, 0],
@@ -125,15 +127,16 @@ function render() {
     if (d.src && !fullRef()) ovSrc = L.imageOverlay(P(d.src), bounds, { pane: "paneChange", opacity: 1, interactive: false }).addTo(map);
     const fills = d.fill_from || [];
     const note = $("fillNote");
-    if (d.coverage_pct != null && (d.coverage_pct < 99.5 || fills.length || d.edge_trim_km)) {
+    if (d.coverage_pct != null && (d.coverage_pct < 99.5 || fills.length || d.time_filled_pct || d.edge_trim_km)) {
       note.hidden = false;
       note.innerHTML = `Cobertura <b>${Math.round(d.coverage_pct)} %</b>` +
         (fills.length ? ` · <span class="c-fill">▨ ${fills.map((f) => `${f.pct} % de la órbita ${f.track} ${f.direction === "DESCENDING" ? "descendente" : "ascendente"} (${f.gap_days} días)`).join(", ")}</span>` : "") +
-        (d.coverage_pct < 99.5 ? ` · <span class="c-gap">▨ sin escaneo${fills.length ? "" : ": no había otra órbita cerca"}</span>` : "") +
+        (d.time_filled_pct ? ` · <span class="c-time">▨ ${d.time_filled_pct} % aproximado con la pasada del ${(d.time_fill_from || []).map((f) => fmtDate(f.date)).join(", ")}</span>` : "") +
+        (d.coverage_pct + (d.time_filled_pct || 0) < 99.5 ? ` · <span class="c-gap">▨ sin escaneo${fills.length || d.time_filled_pct ? "" : ": no había otra órbita cerca"}</span>` : "") +
         (d.edge_trim_km ? ` · borde con ruido recortado (${d.edge_trim_km} km)` : "");
     } else note.hidden = true;
     if (state.mode === "truth" && REF) {
-      $("tagA").textContent = "Radar NISAR (NASA-ISRO) · " + fmtDate(d.date);
+      $("tagA").textContent = (state.layer === "photo" && photoFor(d) ? "Radar NISAR convertido en foto por IA (aproximado) · " : "Radar NISAR (NASA-ISRO) · ") + fmtDate(d.date);
       const gmwInfo = () => {
         const pres = BURNS ? `<br>🔥 <b>Círculos naranja:</b> quemas de caña de 2025–2026 vistas por <b>Sentinel-2 (ESA)</b>; borde rojo = a menos de 1 km del manglar.` :
                      PONDS ? `<br><span style="color:#ff9a1e">■</span> <b>Estanques</b> de camarón y sal encontrados por <b>NISAR</b> (${PONDS.count}, ${fmtInt(PONDS.area_ha)} ha).` : "";
@@ -142,6 +145,7 @@ function render() {
       };
       const extra = { gmw: GMW && [GMW.change_img, `Manglar 1996 → 2020 (JAXA) ${BURNS ? "+ quemas 2025–26 (Sentinel-2)" : PONDS ? "+ estanques (NISAR)" : ""}`, gmwInfo()],
                       height: CARBON && [CARBON.height_img, "Altura de los árboles · NASA (Simard 2019)", `Más verde claro = árboles más altos. Altura media <b>${CARBON.mean_height_m} m</b>, máxima ${CARBON.max_height_m} m.`],
+                      ai: MNET && ["ref/mangrovenet.png", "Mapa hecho por IA solo con radar NISAR · MangroveNet", aiInfo()],
                       ponds: PONDS && [PONDS.img, "Estanques · radar NISAR", `<span style="color:#ff9a1e">■</span> agua quieta y rectangular: <b>${PONDS.count}</b> estanques, <b>${fmtInt(PONDS.area_ha)} ha</b>.`],
                       cane: CANE && [CANE.harvest_img, "Caña: mes de cosecha · fotos Sentinel-2 (ESA)", Object.entries(CANE.colors).map(([m, c]) => `<span style="color:${c}">■</span> ${m}`).join(" · ") + ` · <span style="color:#aaa">■</span> sin cosecha vista.` + (FIRES ? ` Puntos naranja: quemas (NASA FIRMS).` : "")],
                       canenisar: CANE?.nisar && [CANE.nisar.img, `Caña cortada · radar NISAR (${fmtDate(CANE.nisar.from)} → ${fmtDate(CANE.nisar.to)})`, `<span style="color:#ff6348">■</span> la señal del radar cayó ≥ 3 dB: la caña perdió hojas y tallos. <b>${CANE.nisar.cut_km2} km²</b>; el <b>${Math.round(CANE.nisar.agree_with_s2_pct)} %</b> coincide con lo que ven las fotos.`] };
@@ -198,6 +202,7 @@ function render() {
   $("legendRgb").hidden = state.layer !== "rgb" && state.layer !== "ml";
   $("legendCls").hidden = state.layer !== "cls";
   $("legendMl").hidden = state.layer !== "ml";
+  $("legendPhoto").hidden = state.layer !== "photo";
   highlightChart();
   if (prevA && !ovA) map.removeLayer(prevA);
   window.onRender && window.onRender();
@@ -376,6 +381,39 @@ function buildLakeCard() {
     (ecoDay.length ? kpi(`${Math.min(...ecoDay.map((o) => o.water_c)).toFixed(0)}–${Math.max(...ecoDay.map((o) => o.water_c)).toFixed(0)} °C`, "agua de día (ECOSTRESS)") : "");
   $("lakeCard").hidden = false;
 }
+// ---------- IAs entrenadas con NISAR (MangroveNet y radar→foto) ----------
+const pctTxt = (x) => Math.round(x * 100) + " %";
+function aiInfo() {
+  const m = MNET.metrics_vs_worldcover, mg = m.per_class.manglar;
+  const leg = MNET.classes.map((c, i) => `<span style="color:${MNET.colors[i]}">■</span> ${c}`).join(" · ");
+  const test = MNET.role === "validación";
+  return `${leg}<br>` + (test
+    ? `<b>Esta IA nunca vio este lugar:</b> aprendió en ${MNET.train_sites.map((s) => s === "jiquilisco" ? "Jiquilisco" : "Cerrón Grande").join(" y ")} y aquí la probamos. `
+    : `<b>Aquí la IA aprendió</b> (no es una prueba independiente: la prueba es Barra de Santiago). `) +
+    (mg ? `Reconoce el manglar con <b>${pctTxt(mg.f1)}</b> de acierto y mide <b>${MNET.mangrove_km2_pred} km²</b> (el mapa de la ESA dice ${MNET.mangrove_km2_worldcover} km²).` :
+          `Aquí no hay manglar y la IA no inventó ninguno (${MNET.mangrove_km2_pred} km²).`) +
+    `<br>Cambia a "Mapa ESA WorldCover" para compararlos.`;
+}
+function buildAiCard() {
+  const m = MNET.metrics_vs_worldcover, mg = m.per_class.manglar;
+  const test = MNET.role === "validación";
+  $("aiKpis").innerHTML =
+    (mg ? kpi(pctTxt(mg.f1), `acierto reconociendo el manglar${test ? " en un lugar que la IA nunca vio" : " (aquí aprendió; la prueba real es Barra)"}`) +
+          kpi(`${MNET.mangrove_km2_pred} km²`, `de manglar según la IA (ESA: ${MNET.mangrove_km2_worldcover} km²)`) : "") +
+    kpi(pctTxt(m.accuracy), "del mapa clasificado igual que la ESA") +
+    (RFOTO ? kpi(`${RFOTO.val_error_0_255}/255`, `error del radar→foto en zona nunca vista (adivinar el color medio: ${RFOTO.baseline_mean_color_error})`) : "");
+  $("aiHint").innerHTML = `<b>1. MangroveNet</b> dibuja el mapa de agua, manglar, árboles y caña usando solo radar: así se puede vigilar cada 12 días aunque esté nublado.` +
+    (RFOTO ? ` <b>2. Radar → foto</b> convierte cada pasada en una imagen parecida a una foto satelital (aproximada, no real).` : "") +
+    ` Las dos coinciden: el manglar está estable y lo que más cambia está en los bordes (caña, suelos).`;
+  $("aiTable").innerHTML = `<table class="ai-table"><tr><th>Clase</th><th>F1</th><th>Precisión</th><th>Exhaustividad</th></tr>` +
+    Object.entries(m.per_class).map(([c, v]) => `<tr><td>${c}</td><td>${v.f1}</td><td>${v.precision}</td><td>${v.recall}</td></tr>`).join("") +
+    `</table><p class="hint">U-Net con 10 canales temporales de NISAR (HH, HV). Etiquetas: ESA WorldCover 2021. Entrenada en ${MNET.train_sites.join(" + ")}, validada en ${MNET.val_site}. Mejor modelo tras ${MNET.minutes_trained} min en GPU.` +
+    (RFOTO ? ` Radar→foto: U-Net + PatchGAN (pix2pix), PSNR ${RFOTO.val_psnr_db} dB en el 20 % este nunca usado.` : "") + `</p>`;
+  $("aiPhotoGo").hidden = !RFOTO;
+  $("aiPhotoGo").onclick = () => { setMode("single"); $("layerPhotoBtn").click(); $("map").scrollIntoView({ behavior: "smooth", block: "center" }); };
+  $("aiCard").hidden = false;
+}
+
 function buildMlCard() {
   const v = ML.validation;
   const gain = Math.round((100 * (v.mean_f1 - v.mean_f1_rule)) / Math.max(v.mean_f1_rule, 1e-6));
@@ -697,7 +735,7 @@ $("play").onclick = () => {
   S = await getJSON(BASE + "/series.json");
   // control de calidad: fuera fechas sin contraste agua/vegetación o con menos del 90 % del recuadro cubierto
   const minCov = SITE.min_coverage ?? 90; // algunos sitios quedan siempre al borde de la pasada (mismo recorte en todas las fechas)
-  if (S && S.dates) S.dates = S.dates.filter((d) => d.qc !== false && (d.coverage_pct == null || d.coverage_pct >= minCov));
+  if (S && S.dates) S.dates = S.dates.filter((d) => d.qc !== false && (d.coverage_pct == null || d.coverage_pct + (d.time_filled_pct || 0) >= minCov));
   if (!S || !S.dates || !S.dates.length) { $("empty").hidden = false; return; }
   const [W, Sth, E, N] = S.bbox;
   bounds = L.latLngBounds([Sth, W], [N, E]);
@@ -720,6 +758,12 @@ $("play").onclick = () => {
   ECO = await getJSON(BASE + "/ecostress.json");
   ML = await getJSON(BASE + "/ml.json");
   if (ML) buildMlCard();
+  MNET = await getJSON(BASE + "/ref/mangrovenet.json");
+  RFOTO = await getJSON(BASE + "/ref/radarfoto.json");
+  if (RFOTO && !RFOTO.site_has_photos) RFOTO = null;   // Jiquilisco: la mitad este (otra órbita) sale mal; no se muestra hasta corregirla
+  document.querySelectorAll("#truthSeg .ai-only").forEach((b) => (b.hidden = !MNET));
+  $("layerPhotoBtn").hidden = !RFOTO;
+  if (MNET) buildAiCard();
   if (SITE.lake) {
     CLOUDS = await getJSON(BASE + "/clouds.json");
     ALERTS = await getJSON(BASE + "/alerts.json");
