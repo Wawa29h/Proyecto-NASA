@@ -77,7 +77,8 @@ map.on("move zoom resize", applyClip);
 })();
 
 // ---------- render ----------
-const splitMode = () => state.mode === "compare" || state.mode === "truth";
+const fullRef = () => state.mode === "truth" && state.ref === "gmw";   // vista de una sola capa (sin barra)
+const splitMode = () => state.mode === "compare" || (state.mode === "truth" && !fullRef());
 function nearestS2(date) {
   if (!REF || !REF.sentinel2.length) return null;
   const t = new Date(date).getTime();
@@ -97,10 +98,14 @@ function render() {
   $("ctlLayer").hidden = state.mode === "change";
   $("divider").hidden = !splitMode();
   $("tagA").hidden = $("tagB").hidden = !splitMode();
+  if (fullRef()) $("tagB").hidden = false;   // una sola etiqueta, a todo lo ancho
+  $("tagB").classList.toggle("full", fullRef());
+  const th = $("truthHint");
+  if (th) th.textContent = fullRef() ? "Una sola capa sobre el mapa satelital: el manglar de 1996 a 2020 y, encima, la presión de hoy. Aquí no hay barra para comparar." : "Izquierda: radar NISAR. Derecha: referencia independiente. Arrastra la barra blanca.";
 
   if (single) {
     const d = S.dates[state.idx];
-    ovA = overlay(urlFor(d), "paneA");
+    if (!fullRef()) ovA = overlay(urlFor(d), "paneA");   // en "Manglar 1996 → 2020" el radar crudo confunde: se deja el mapa satelital de fondo
     if (state.layer === "ml") { ovA.setOpacity(Math.min(state.opacity, 0.5)); if (state.mode === "single") ovChange = mlOverlay(d); else if (state.mode === "truth" && state.ref === "cloud") ovChange = mlOverlay(d, "paneA"); }
     if (prevA) {
       const target = ovA.options.opacity, cur = ovA;
@@ -111,7 +116,7 @@ function render() {
     $("dateLabel").textContent = fmtDate(d.date);
     $("dateSlider").value = state.idx;
     // de dónde viene cada pedazo: rayas grises = sin escaneo; celestes = rellenado con otra órbita
-    if (d.src) ovSrc = L.imageOverlay(P(d.src), bounds, { pane: "paneChange", opacity: 1, interactive: false }).addTo(map);
+    if (d.src && !fullRef()) ovSrc = L.imageOverlay(P(d.src), bounds, { pane: "paneChange", opacity: 1, interactive: false }).addTo(map);
     const fills = d.fill_from || [];
     const note = $("fillNote");
     if (d.coverage_pct != null && (d.coverage_pct < 99.5 || fills.length || d.edge_trim_km)) {
@@ -122,18 +127,24 @@ function render() {
         (d.edge_trim_km ? ` · borde con ruido recortado (${d.edge_trim_km} km)` : "");
     } else note.hidden = true;
     if (state.mode === "truth" && REF) {
-      $("tagA").textContent = "NISAR · " + fmtDate(d.date);
-      const extra = { gmw: GMW && [GMW.change_img, `Manglar ${GMW.from} → ${GMW.to}`, `<span style="color:#ff6b6b">■</span> perdido · <span style="color:#5aa0ff">■</span> ganado · <span style="color:#00cf75">■</span> se mantuvo. Se perdieron <b>${fmtInt(GMW.loss_km2 * 100)} ha</b> y aparecieron <b>${fmtInt(GMW.gain_km2 * 100)} ha</b> en 24 años.`],
-                      height: CARBON && [CARBON.height_img, "Altura de los árboles (NASA)", `Más verde claro = árboles más altos. Altura media <b>${CARBON.mean_height_m} m</b>, máxima ${CARBON.max_height_m} m.`],
-                      ponds: PONDS && [PONDS.img, "Estanques detectados por NISAR", `<span style="color:#ff9a1e">■</span> agua quieta y rectangular: <b>${PONDS.count}</b> estanques, <b>${fmtInt(PONDS.area_ha)} ha</b>.`],
-                      cane: CANE && [CANE.harvest_img, "Caña: mes de cosecha (fotos)", Object.entries(CANE.colors).map(([m, c]) => `<span style="color:${c}">■</span> ${m}`).join(" · ") + ` · <span style="color:#aaa">■</span> sin cosecha vista.` + (FIRES ? ` Puntos naranja: quemas (NASA FIRMS).` : "")],
-                      canenisar: CANE?.nisar && [CANE.nisar.img, `Caña cortada vista por NISAR (${fmtDate(CANE.nisar.from)} → ${fmtDate(CANE.nisar.to)})`, `<span style="color:#ff6348">■</span> la señal del radar cayó ≥ 3 dB: la caña perdió hojas y tallos. <b>${CANE.nisar.cut_km2} km²</b>; el <b>${Math.round(CANE.nisar.agree_with_s2_pct)} %</b> coincide con lo que ven las fotos.`] };
+      $("tagA").textContent = "Radar NISAR (NASA-ISRO) · " + fmtDate(d.date);
+      const gmwInfo = () => {
+        const pres = BURNS ? `<br>🔥 <b>Círculos naranja:</b> quemas de caña de 2025–2026 vistas por <b>Sentinel-2 (ESA)</b>; borde rojo = a menos de 1 km del manglar.` :
+                     PONDS ? `<br><span style="color:#ff9a1e">■</span> <b>Estanques</b> de camarón y sal encontrados por <b>NISAR</b> (${PONDS.count}, ${fmtInt(PONDS.area_ha)} ha).` : "";
+        return `<b>Manglar según el radar japonés (JAXA, banda L, 1996 → 2020):</b> <span style="color:#00cf75">■</span> <b>se mantiene</b> · <span style="color:#ff6b6b">■</span> <b>se perdió</b> (${fmtInt(GMW.loss_km2 * 100)} ha) · <span style="color:#5aa0ff">■</span> <b>nuevo</b> (${fmtInt(GMW.gain_km2 * 100)} ha).${pres}<br>` +
+          `<b>Conclusión:</b> en 24 años el manglar casi no cambió; la presión de hoy está alrededor, no adentro.`;
+      };
+      const extra = { gmw: GMW && [GMW.change_img, `Manglar 1996 → 2020 (JAXA) ${BURNS ? "+ quemas 2025–26 (Sentinel-2)" : PONDS ? "+ estanques (NISAR)" : ""}`, gmwInfo()],
+                      height: CARBON && [CARBON.height_img, "Altura de los árboles · NASA (Simard 2019)", `Más verde claro = árboles más altos. Altura media <b>${CARBON.mean_height_m} m</b>, máxima ${CARBON.max_height_m} m.`],
+                      ponds: PONDS && [PONDS.img, "Estanques · radar NISAR", `<span style="color:#ff9a1e">■</span> agua quieta y rectangular: <b>${PONDS.count}</b> estanques, <b>${fmtInt(PONDS.area_ha)} ha</b>.`],
+                      cane: CANE && [CANE.harvest_img, "Caña: mes de cosecha · fotos Sentinel-2 (ESA)", Object.entries(CANE.colors).map(([m, c]) => `<span style="color:${c}">■</span> ${m}`).join(" · ") + ` · <span style="color:#aaa">■</span> sin cosecha vista.` + (FIRES ? ` Puntos naranja: quemas (NASA FIRMS).` : "")],
+                      canenisar: CANE?.nisar && [CANE.nisar.img, `Caña cortada · radar NISAR (${fmtDate(CANE.nisar.from)} → ${fmtDate(CANE.nisar.to)})`, `<span style="color:#ff6348">■</span> la señal del radar cayó ≥ 3 dB: la caña perdió hojas y tallos. <b>${CANE.nisar.cut_km2} km²</b>; el <b>${Math.round(CANE.nisar.agree_with_s2_pct)} %</b> coincide con lo que ven las fotos.`] };
       if (BURNS) {
-        extra.burns = [BURNS.img_date, "Quemas de caña (fotos Sentinel-2)", `Color = fecha de la quema: <span style="color:#ffdc3c">■</span> noviembre → <span style="color:#d7140a">■</span> mayo. Los círculos son parcelas quemadas el mismo día; tócalos para ver la fecha y la distancia al manglar.`];
-        extra.burntype = [BURNS.img_type, "¿Quemada o cortada en verde?", `<span style="color:#e63946">■</span> quemada (${fmtInt(BURNS.burned_ha)} ha) · <span style="color:#2ecc71">■</span> cortada sin quemar (${fmtInt(BURNS.green_ha)} ha). El <b>${BURNS.burned_share_pct} %</b> de la cosecha vista fue con quema.`];
+        extra.burns = [BURNS.img_date, "Quemas de caña · fotos Sentinel-2 (ESA)", `Color = fecha de la quema: <span style="color:#ffdc3c">■</span> noviembre → <span style="color:#d7140a">■</span> mayo. Los círculos son parcelas quemadas el mismo día; tócalos para ver la fecha y la distancia al manglar.`];
+        extra.burntype = [BURNS.img_type, "¿Quemada o cortada en verde? · Sentinel-2 (ESA)", `<span style="color:#e63946">■</span> quemada (${fmtInt(BURNS.burned_ha)} ha) · <span style="color:#2ecc71">■</span> cortada sin quemar (${fmtInt(BURNS.green_ha)} ha). El <b>${BURNS.burned_share_pct} %</b> de la cosecha vista fue con quema.`];
       }
       if (fireLayer) { map.removeLayer(fireLayer); fireLayer = null; }
-      if (state.ref === "burns" && BURNS?.events?.length)
+      if ((state.ref === "burns" || state.ref === "gmw") && BURNS?.events?.length)
         fireLayer = L.layerGroup(BURNS.events.map((e) => L.circleMarker([e.lat, e.lon], { radius: Math.min(14, 3 + Math.sqrt(e.ha) * 1.5), color: e.km_to_mangrove < 1 ? "#ff3b30" : "#fff", weight: 2, fillColor: "#ff7a00", fillOpacity: 0.55, pane: "paneB" })
           .bindTooltip(`🔥 Quemada entre el ${fmtDate(e.from)} y el ${fmtDate(e.to)} · ${e.ha} ha · ${e.km_to_mangrove < 0.05 ? "pegada al" : e.km_to_mangrove + " km del"} manglar`))).addTo(map);
       else if (state.ref === "cane" && FIRES?.points?.length)
@@ -142,6 +153,7 @@ function render() {
       if (extra[state.ref]) {
         const [img, tag, info] = extra[state.ref];
         ovB = L.imageOverlay(P(img), bounds, { pane: "paneB", opacity: 1, interactive: false }).addTo(map);
+        if (state.ref === "gmw" && !BURNS && PONDS) ovChange = L.imageOverlay(P(PONDS.img), bounds, { pane: "paneB", opacity: 1, interactive: false }).addTo(map);
         $("tagB").textContent = tag;
         $("truthInfo").innerHTML = info;
       } else if (state.ref === "cloud" && CLOUDS?.wow) {
@@ -154,13 +166,13 @@ function render() {
         ovB = L.imageOverlay(P(s.img), bounds, { pane: "paneB", opacity: 1, interactive: false }).addTo(map);
         if (state.ref === "veg" && s.veg_img) ovChange = L.imageOverlay(P(s.veg_img), bounds, { pane: "paneB", opacity: 1, interactive: false }).addTo(map);
         const gap = Math.round(Math.abs(new Date(s.date) - new Date(d.date)) / 864e5);
-        $("tagB").textContent = (state.ref === "veg" ? "Plantas en Sentinel-2 · " : "Foto Sentinel-2 · ") + fmtDate(s.date);
+        $("tagB").textContent = (state.ref === "veg" ? "Plantas · foto Sentinel-2 (ESA) · " : "Foto Sentinel-2 (ESA) · ") + fmtDate(s.date);
         $("truthInfo").innerHTML = `Foto óptica más cercana: <b>${fmtDate(s.date)}</b> (${gap} días de diferencia). La foto solo sirve sin nubes; el radar ve siempre.` +
           (s.floatveg_km2 != null && SITE.lake ? `<br>Plantas sobre el agua en la foto (NDVI &gt; 0.3): <b>${s.floatveg_km2} km²</b> · NISAR ese día: <b>${d.floatveg_km2 ?? "—"} km²</b>` : "") +
           (s.cloud_water_pct > 30 ? `<br>⚠ ${s.cloud_water_pct}% del agua tapada por nubes en la foto.` : "");
       } else {
         ovB = L.imageOverlay(P(REF.worldcover.img), bounds, { pane: "paneB", opacity: 0.85, interactive: false }).addTo(map);
-        $("tagB").textContent = "Mapa ESA WorldCover 2021";
+        $("tagB").textContent = "Mapa de cobertura · ESA WorldCover 2021";
         const A = REF.worldcover.areas_km2;
         $("truthInfo").innerHTML = `Mapa oficial de cobertura a 10 m (2021). ` +
           (A.Manglar ? `Manglar: <b>${A.Manglar} km²</b>` : `Agua: <b>${A.Agua ?? "—"} km²</b>`) + " en el recuadro.";
