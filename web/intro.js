@@ -57,7 +57,6 @@
     globe = Globe({ animateIn: true })(document.getElementById("introGlobe"))
       .backgroundColor("rgba(0,0,0,0)")
       .globeImageUrl("https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg")
-      .bumpImageUrl("https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png")
       .showAtmosphere(true).atmosphereColor("#7fd8ff").atmosphereAltitude(0.2)
       .pathsData([]).pathPoints("pts").pathPointLat((p) => p[0]).pathPointLng((p) => p[1]).pathPointAlt((p) => p[2])
       .pathColor(() => ["rgba(20,155,165,0)", "rgba(20,155,165,.9)"]).pathStroke(1.4).pathTransitionDuration(0)
@@ -67,7 +66,8 @@
     globe.pointOfView({ lat: 8, lng: -70, altitude: 2.7 }, 0);
     addEventListener("resize", () => globe && globe.width(innerWidth).height(innerHeight));
     const nis = NISAR3D.build(THREE, globe.scene());
-    NISAR3D.highlightES(globe);            // El Salvador en alta resolución y con contorno brillante
+    globe.renderer().setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));   // más liviano en pantallas muy nítidas
+    NISAR3D.highlightES(globe, { tiles: false });   // contorno brillante de El Salvador; las fotos de alta resolución solo al acercarse
     let simT = Date.now(), last = performance.now(), frameN = 0, zooming = false;
     document.getElementById("introLoad").classList.add("off");
     const tick = (now) => {
@@ -91,7 +91,10 @@
       el.classList.add("going");
       globe.controls().autoRotate = false;
       globe.pointOfView({ ...ES, altitude: 1.1 }, 1300);                         // gira hacia El Salvador
-      setTimeout(() => globe.pointOfView({ lat: 13.6, lng: -89.6, altitude: 0.12 }, 1000), 1350);   // zoom rápido
+      setTimeout(() => {                                                          // zoom rápido, ahora sí con fotos satelitales
+        globe.globeTileEngineUrl((x, y, l) => `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${l}/${y}/${x}`);
+        globe.pointOfView({ lat: 13.6, lng: -89.6, altitude: 0.12 }, 1000);
+      }, 1350);
       setTimeout(finish, 2300);                                                   // fundido al mapa
     };
   })();

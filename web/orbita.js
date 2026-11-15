@@ -14,6 +14,10 @@
   const pad = (n) => String(n).padStart(2, "0");
   const localParts = (d) => { const t = new Date(d.getTime() + TZ * 3600e3); return { dia: DIAS[t.getUTCDay()], d: t.getUTCDate(), m: MESES[t.getUTCMonth()], hh: t.getUTCHours(), mm: t.getUTCMinutes() }; };
   const fmtLocal = (d) => { const p = localParts(d); const h12 = ((p.hh + 11) % 12) + 1; return `${p.dia} ${p.d} ${p.m}, ${h12}:${pad(p.mm)} ${p.hh < 12 ? "a.m." : "p.m."}`; };
+  // escribir en la página solo si el texto cambió: así el traductor del navegador (Chrome "Traducir") no se
+  // deshace cada medio segundo y la página queda traducida
+  const setText = (id, t) => { const e = $(id); if (e && e.dataset.v !== t) { e.dataset.v = t; e.textContent = t; } };
+  const setHTML = (id, h) => { const e = $(id); if (e && e.dataset.v !== h) { e.dataset.v = h; e.innerHTML = h; } };
   const fmtLocalS = (d) => { const p = localParts(d), s = new Date(d.getTime() + TZ * 3600e3).getUTCSeconds(); const h12 = ((p.hh + 11) % 12) + 1; return `${h12}:${pad(p.mm)}:${pad(s)} ${p.hh < 12 ? "a.m." : "p.m."}`; };
   const fmtDur = (ms) => { const s = Math.max(0, Math.round(ms / 1000)); const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60); return d ? `${d} d ${h} h` : h ? `${h} h ${m} min` : `${m} min ${s % 60} s`; };
 
@@ -130,7 +134,8 @@
   // speed: 1 = tiempo real; 0 = pausa; 60 = avance rápido automático (solo al saltar a una pasada)
   const Q = new URLSearchParams(location.search);
   const tQ = Q.get("t") ? new Date(Q.get("t")) : null, siteQ = SITES.find((s) => s.id === Q.get("site"));
-  let speed = 1, simT = Date.now(), lastReal = performance.now(), follow = false, autoRunEnd = null;
+  let speed = 1, simT = Date.now(), lastReal = performance.now(), follow = false, autoRunEnd = null, cycle = false, trail = [], lastTrail = 0, cycleStart = 0;
+  const CYCLE_SPEED = 600;   // 10 minutos de órbita por segundo: una vuelta completa (~98 min) en ~10 s
   let passCache = null;   // { from, byId }
   const toast = (html) => { const n = $("pinNote"); if (!html) { n.classList.remove("show"); n.textContent = ""; } else { n.innerHTML = html; n.classList.add("show"); } };
   if (tQ && !isNaN(tQ)) {
@@ -143,18 +148,42 @@
     toast(`🛰 Así estaba NISAR cuando tomó la imagen de <b>${site.name}</b> que ves en la app: <b>${fmtLocal(new Date(simT)).replace(/,.*/, "")} · ${fmtLocalS(new Date(simT))}</b> (hora de El Salvador)${p ? `, ${p.ascending ? "subiendo hacia el norte y mirando al oeste" : "bajando hacia el sur y mirando al este"}, a ${Math.round(p.cross)} km del sitio` : ""}. Está en pausa: pulsa <b>⟲ Al presente</b> para verlo en vivo.`);
     setTimeout(() => globe.pointOfView({ lat: 13.6, lng: -89.5, altitude: 1.1 }, 1500), 300);
   }
-  $("nowBtn").onclick = () => { simT = Date.now(); speed = 1; autoRunEnd = null; toast(null); passCache = null; };
-  $("followBtn").onclick = (e) => { follow = !follow; e.target.closest("button").classList.toggle("on", follow); if (follow) globe.controls().autoRotate = false; };
+  const ctl = globe.controls();
+  function setFollow(on) { follow = on; $("closeBtn").classList.toggle("on", on); }
+  function setCycle(on) {
+    cycle = on; $("cycleBtn").classList.toggle("on", on);
+    ctl.autoRotate = on; ctl.autoRotateSpeed = 0.5;
+    trail = []; lastTrail = 0; cycleStart = simT;
+    if (on) {
+      speed = CYCLE_SPEED; autoRunEnd = null; setFollow(false);
+      globe.pointOfView({ altitude: 2.6 }, 1200);
+      toast(`🔄 <b>El ciclo de NISAR, acelerado ×${CYCLE_SPEED}.</b> Cada vuelta dura 98 minutos y la Tierra gira debajo, por eso cada pasada cae más al oeste que la anterior. La línea turquesa va dejando el rastro: en <b>12 días (173 vueltas)</b> cubre todo el planeta y vuelve a empezar exactamente por el mismo camino. Arrastra el globo cuando quieras; vuelve a tocar <b>Ver el ciclo</b> para pararlo.`);
+    } else if (speed === CYCLE_SPEED) { speed = 1; toast(null); }
+  }
+  $("nowBtn").onclick = () => { setCycle(false); simT = Date.now(); speed = 1; autoRunEnd = null; toast(null); passCache = null; };
+  $("cycleBtn").onclick = () => setCycle(!cycle);
+  // más libre: si la persona arrastra el globo, la cámara deja de perseguir al satélite
+  ctl.addEventListener("start", () => { if (follow) setFollow(false); });
   $("nextBtn").onclick = () => {
     const n = allPasses().find((p) => p.t.getTime() > simT + 60e3); if (!n) return;
-    simT = n.t.getTime() - 3 * 60e3; speed = 60; autoRunEnd = n.t.getTime() + 2 * 60e3; follow = false; $("followBtn").classList.remove("on");
+    setCycle(false); simT = n.t.getTime() - 3 * 60e3; speed = 60; autoRunEnd = n.t.getTime() + 2 * 60e3; setFollow(false);
     globe.pointOfView({ lat: 13.6, lng: -89.3, altitude: 1.2 }, 1200);
     toast(`⏭ Adelantando el tiempo a la próxima pasada sobre <b>${n.siteName}</b>: <b>${fmtLocal(n.t)}</b>. El reloj corre ×60 y se detiene justo después.`);
   };
+  // la cámara se pone a un costado del satélite (no encima), así se ve el modelo 3D y su haz de lado
+  // punto en el suelo a 'km' del satélite, detrás de él y un poco a su derecha: desde ahí se ve el modelo y el haz delante
+  function camSpot(fr, km = 260) {
+    const brg = ((fr.heading + 160) * Math.PI) / 180, lat1 = (fr.lat * Math.PI) / 180, lon1 = (fr.lon * Math.PI) / 180, d = km / R;
+    const lat2 = Math.asin(Math.sin(lat1) * Math.cos(d) + Math.cos(lat1) * Math.sin(d) * Math.cos(brg));
+    const lon2 = lon1 + Math.atan2(Math.sin(brg) * Math.sin(d) * Math.cos(lat1), Math.cos(d) - Math.sin(lat1) * Math.sin(lat2));
+    return [(lat2 * 180) / Math.PI, ((((lon2 * 180) / Math.PI) + 540) % 360) - 180];
+  }
   $("closeBtn").onclick = () => {
+    if (follow) { setFollow(false); globe.pointOfView({ altitude: 1.6 }, 1200); return; }
     const fr = frame(new Date(simT)); if (!fr) return;
-    follow = true; $("followBtn").classList.add("on");
-    globe.pointOfView({ lat: fr.lat, lng: fr.lon, altitude: 0.45 }, 1500);
+    setCycle(false); setFollow(true);
+    const [la, lo] = camSpot(fr);
+    globe.pointOfView({ lat: la, lng: lo, altitude: 0.3 }, 1500);
   };
 
   // ---------- pin del usuario: clic en cualquier lugar del globo → cuándo lo verá NISAR ----------
@@ -215,7 +244,7 @@
       .pointAltitude((d) => (d.kind === "fire" ? d.alt : d.kind === "sat" ? d.alt : 0.004))
       .pointRadius((d) => (d.kind === "fire" ? 0.011 : 0.35));
     if (fireOn) {
-      follow = false; $("followBtn").classList.remove("on");
+      setFollow(false); setCycle(false);
       globe.pointOfView({ lat: 13.58, lng: -90.03, altitude: 0.06 }, 2200);
       const near = b.events.filter((e) => e.km_to_mangrove < 1).length;
       $("fireNote").innerHTML = `<b>${b.events.length}</b> quemas de caña en la zafra 2025–2026 junto al manglar de Barra de Santiago (detectadas con fotos Sentinel-2). <b style="color:#ff6b5b">${near}</b> a menos de 1 km del manglar. Más alta = más grande; más roja = más cerca del manglar.`;
@@ -254,7 +283,7 @@
       const rest = ps.slice(1, 3).map((q) => fmtLocal(q.t)).join(" · ");
       return `<div class="pass"><b>${s.name}</b><span class="when">en ${fmtDur(p.t - now)} · ${fmtLocal(p.t)}</span><div class="how">${hora} · ${dir}, ${mira}, a ${Math.round(p.cross)} km de su vertical</div>${rest ? `<div class="how">después: ${rest}</div>` : ""}</div>`;
     }).join("");
-    $("passes").innerHTML = html;
+    setHTML("passes", html);
   }
 
   // ---------- estela y franja (ligera: 1 punto por minuto, 4 líneas de franja) ----------
@@ -280,6 +309,7 @@
     split(past).forEach((pts) => paths.push({ pts, color: "#5f7a80", stroke: 0.6 }));
     split(fut).forEach((pts) => paths.push({ pts, color: "#149BA5", stroke: 1.1 }));
     swath.forEach((arr) => split(arr).forEach((pts) => paths.push({ pts, color: "rgba(255,138,0,0.35)", stroke: 1.8 })));
+    if (cycle && trail.length > 1) split(trail).forEach((pts) => paths.push({ pts, color: "rgba(80,235,220,0.8)", stroke: 0.6 }));
     globe.pathsData(paths);
   }
 
@@ -294,21 +324,23 @@
     if (fr) {
       if (sat3d) place3d(date, fr);
       else if (now - lastTextReal > 200) globe.pointsData([...fireData, { kind: "sat", lat: fr.lat, lon: fr.lon, alt: fr.h / R }]);
-      if (follow) globe.pointOfView({ lat: fr.lat, lng: fr.lon }, 0);
+      if (follow) { const [la, lo] = camSpot(fr); globe.pointOfView({ lat: la, lng: lo }, 0); }
+      if (cycle && simT - lastTrail > 120e3) { trail.push([fr.lat, fr.lon, 0.008]); lastTrail = simT; if (trail.length > 2400) trail.shift(); }
     }
     // textos: 4 veces por segundo basta, y así no se recalcula nada por cuadro
-    if (now - lastTextReal > 250) {
+    if (now - lastTextReal > 400) {
       lastTextReal = now; checkTiles();
       if (fr) {
         const ns = fr.lat >= 0 ? "N" : "S", ew = fr.lon >= 0 ? "E" : "O";
-        $("nowPos").textContent = `${Math.abs(fr.lat).toFixed(1)}° ${ns}, ${Math.abs(fr.lon).toFixed(1)}° ${ew}`;
-        $("nowSub").textContent = `${Math.round(fr.h)} km de altura · 7.5 km/s · ${fr.ascending ? "subiendo hacia el norte" : "bajando hacia el sur"} · mira a su izquierda (${fr.ascending ? "oeste" : "este"})`;
+        setText("nowPos", `${Math.abs(fr.lat).toFixed(1)}° ${ns}, ${Math.abs(fr.lon).toFixed(1)}° ${ew}`);
+        setText("nowSub", `${Math.round(fr.h)} km de altura · 7.5 km/s · ${fr.ascending ? "subiendo hacia el norte" : "bajando hacia el sur"} · mira a su izquierda (${fr.ascending ? "oeste" : "este"})`);
       }
-      $("nowClock").textContent = `${speed === 1 ? "Hora real" : speed === 0 ? "En pausa" : "Adelantando ×" + speed}: ${fmtLocal(date)} (El Salvador) · ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())} UTC`;
+      const lbl = cycle ? `Ciclo ×${CYCLE_SPEED} · vuelta ${(Math.floor((simT - cycleStart) / (98.4 * 60e3)) % 173) + 1} de 173` : speed === 1 ? "Hora real" : speed === 0 ? "En pausa" : "Adelantando ×" + speed;
+      setText("nowClock", `${lbl}: ${fmtLocal(date)} (El Salvador) · ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())} UTC`);
       renderPasses();
     }
     // estela: como mucho 3 veces por segundo, y solo si el reloj se movió al menos un minuto
-    if (now - lastPathsReal > 330 && Math.abs(simT - lastPathsSim) > 60e3) { buildPaths(date); lastPathsSim = simT; lastPathsReal = now; }
+    if (now - lastPathsReal > (cycle ? 500 : 330) && Math.abs(simT - lastPathsSim) > 60e3) { buildPaths(date); lastPathsSim = simT; lastPathsReal = now; }
   }
   // ---------- comprobación: predicción vs. imágenes reales que NISAR ya tomó ----------
   async function checkReal() {
