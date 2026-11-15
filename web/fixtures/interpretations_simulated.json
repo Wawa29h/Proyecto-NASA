@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0",
+  "data_status": "simulated",
+  "warning": "DATOS DE PRUEBA SIMULADOS: Diseñados exclusivamente para el desarrollo de la interfaz de usuario. No constituyen conclusiones científicas validadas ni alertas operativas.",
+  "sites": {
+    "barra": {
+      "rules": [
+        {
+          "id": "rule_flood_mangrove",
+          "name": "Variación estacional de inundación en manglar",
+          "conditions": { "delta_db": 3.0, "season": "wet" },
+          "explanation_public": "Durante la época de lluvias, la entrada de agua dulce eleva el nivel bajo los árboles de manglar, generando el fenómeno de 'doble rebote' radar que hace brillar la señal.",
+          "explanation_scientific": "Aumento de retrodispersión HH debido a la reflexión de doble rebote agua-tronco en zonas de bosque de manglar inundado bajo el dosel.",
+          "limitations": [
+            "Requiere verificación con máscara de manglar oficial (GMW o WorldCover).",
+            "La lluvia local acumulada debe corroborar el incremento hídrico."
+          ]
+        }
+      ],
+      "comparisons": [
+        {
+          "before_id": "2025-12-13_A134",
+          "after_id": "2026-09-15_A134",
+          "status": "supported",
+          "observed_change": {
+            "variable": "floodveg_km2",
+            "delta_km2": 3.2,
+            "unit": "km2"
+          },
+          "hypotheses": [
+            {
+              "type": "seasonal_flood",
+              "confidence": "media (simulada)",
+              "summary": "Inundación estacional por incremento de caudales de los ríos Paz y Cara Sucia.",
+              "evidence": "Aumento simultáneo de precipitaciones registradas en NASA POWER / Open-Meteo."
+            }
+          ],
+          "limitations": [
+            "Dato de prueba simulado para la interfaz visual.",
+            "Pendiente de validación por el equipo científico de segundo año."
+          ]
+        }
+      ]
+    },
+    "jiquilisco": {
+      "rules": [],
+      "comparisons": [
+        {
+          "before_id": "2025-12-13_A134",
+          "after_id": "2026-10-21_A134",
+          "status": "not_comparable",
+          "observed_change": null,
+          "hypotheses": [],
+          "limitations": [
+            "Las observaciones tienen diferente cobertura espacial del barrido radar (56.8% vs 87.2%).",
+            "La fecha posterior incluye un 30.5% de datos de otra órbita con 5 días de desfase temporal.",
+            "No se deben comparar hectáreas brutas sin una máscara común de cobertura válida."
+          ]
+        }
+      ]
+    },
+    "cerron": {
+      "rules": [],
+      "comparisons": [
+        {
+          "before_id": "2025-12-25_A134",
+          "after_id": "2026-09-15_A134",
+          "status": "supported",
+          "observed_change": {
+            "variable": "ml_veg_km2",
+            "delta_km2": 9.4,
+            "unit": "km2"
+          },
+          "hypotheses": [
+            {
+              "type": "plant_bloom",
+              "confidence": "alta según IA (simulada)",
+              "summary": "Proliferación de plantas sobre el agua durante el pico de la temporada de lluvias.",
+              "evidence": "F1 medio de 0.54 en el modelo Random Forest validado contra Sentinel-2."
+            }
+          ],
+          "limitations": [
+            "La retrodispersión radar identifica plantas pero no clasifica especies botánicas (ej. lirio vs otras macrófitas sin validación en campo).",
+            "Diferencia de 2 a 7 días entre la pasada radar y las fotos ópticas de entrenamiento."
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -75,30 +75,11 @@
   </div>
 </div>
 
-
-<section class="science-banner tech" aria-label="Presentación del modo científico">
-  <div class="science-banner__content">
-    <p class="eyebrow">MANGLO · panel científico · NISAR</p>
-    <h2>Explora los cambios del agua y del manglar con herramientas científicas interactivas</h2>
-    <p>Esta vista reúne mapas radar, comparaciones por fecha, validación con otras misiones, alertas y análisis detallado para comprender mejor lo que está ocurriendo en cada sitio.</p>
-    <div class="science-banner__chips">
-      <span>Mapas radar</span>
-      <span>Comparación temporal</span>
-      <span>Series científicas</span>
-      <span>Exportación CSV / PNG</span>
-    </div>
-  </div>
-  <div class="science-banner__art">
-    <img src="img/diseno-cientifico/banner-manglar-nisar.webp" alt="Ilustración de un satélite radar observando un ecosistema de manglares desde el espacio" width="1672" height="940" decoding="async">
-  </div>
-  <a href="#scienceSection" class="scroll-cue" aria-label="Ir al análisis y las gráficas">
-    <span>Desliza para ver las gráficas</span>
-    <i>↓</i>
-  </a>
-</section>
-
 <main class="layout">
   <section class="mapwrap">
+    <div class="map-mini-legend" id="mapLegend" hidden aria-label="Cómo leer los colores del radar">
+      <span><i style="background:#b6e25a"></i>plantas</span><span><i style="background:#9a6fd0"></i>suelo pelado</span><span><i style="background:#1b2430;border:1px solid #567"></i>agua</span>
+    </div>
     <div id="map"></div>
     <div id="divider" hidden><span></span></div>
     <div class="maptag left" id="tagA" hidden></div>
@@ -174,6 +155,7 @@
         <button data-ref="gmw" class="mg-only" hidden>Manglar 1996 → 2020 + presión de hoy</button>
         <button data-ref="height" class="mg-only" hidden>Altura del manglar</button>
         <button data-ref="ponds" class="mg-only" hidden>Estanques</button>
+        <button data-ref="ai" class="ai-only" hidden>🤖 IA: mapa del radar</button>
         <button data-ref="cane" class="cane-only" hidden>Caña: mes de cosecha</button>
         <button data-ref="canenisar" class="cane-only" hidden>Caña: cosecha vista por radar</button>
         <button data-ref="burns" class="burn-only" hidden>🔥 Quemas: cuándo</button>
@@ -190,6 +172,9 @@
       <div class="presets">
         <button class="chip" id="presetSeason">Seca vs lluviosa</button>
       </div>
+      <div class="explain" id="pairExplain" hidden></div>
+      <button class="btn explain-go" id="goChange" hidden>¿Qué cambió de verdad? Verlo pintado →</button>
+      <div id="comparabilityWarning" class="alert-box warning-box" hidden aria-live="polite"></div>
       <div id="changeOpts" hidden>
         <label class="inline">Umbral <input type="range" id="thr" min="1" max="8" step="0.5" value="3"> <b id="thrVal">3 dB</b></label>
         <div class="legend">
@@ -200,12 +185,18 @@
       </div>
     </div>
 
+    <div class="card" id="interpCard" hidden>
+      <h3 data-simple="¿Por qué pudo ocurrir este cambio?" data-sci="Evaluación de hipótesis de cambio">¿Por qué pudo ocurrir este cambio?</h3>
+      <div id="interpContent" class="interp-box probe"></div>
+    </div>
+
     <div class="card" id="ctlLayer">
       <h3 data-simple="Capa" data-sci="Capas NISAR">Capa</h3>
       <div class="seg" id="layerSeg">
         <button data-layer="rgb" class="on">Falso color</button>
         <button data-layer="cls">Agua / manglar inundado</button>
         <button data-layer="ml" id="layerMlBtn" hidden>IA: plantas</button>
+        <button data-layer="photo" id="layerPhotoBtn" hidden>📷 Como foto (IA)</button>
       </div>
       <label class="inline tech">Opacidad <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.85"></label>
       <div class="legend simple-only" id="legendRgbSimple">
@@ -225,19 +216,28 @@
         <span><i style="background:#3cdc5a"></i>Plantas sobre el agua (posible lirio)</span>
         <span><i style="background:#14325a"></i>Mar</span>
       </div>
+      <div class="legend photo-note" id="legendPhoto" hidden>
+        <span>⚠ <b>Reconstrucción por IA, no es una foto real.</b> Una red neuronal convierte el radar de ese día en una imagen parecida a una foto satelital. Sirve para ver formas (agua, manglar, parcelas) aunque esté nublado, no para medir colores.</span>
+      </div>
       <div class="legend" id="legendMl" hidden>
         <span><i style="background:#ffd600"></i>Plantas sobre el agua según NISAR + IA (más intenso = más seguro)</span>
       </div>
     </div>
 
-    <div class="card" id="rhythmCard">
-      <h3 data-simple="El ritmo del estero" data-sci="Indicadores del área de estudio">El ritmo del estero</h3>
+    <button class="more-toggle simple-only" id="moreToggle" type="button" aria-expanded="false"><span>Ver más hallazgos</span><small>caña, carbono, IA, 30 años…</small><i>↓</i></button>
+
+    <div class="card more-card" id="rhythmCard">
+      <h3 data-simple="El pulso del estero" data-sci="Indicadores del área de estudio">El pulso del estero</h3>
       <div class="kpis" id="kpis"></div>
-      <canvas id="chart" height="190"></canvas>
+      <canvas id="chart" height="190" aria-label="Gráfica de series temporales de agua y vegetación observadas por NISAR"></canvas>
+      <details class="sr-data-details">
+        <summary class="sr-toggle-btn">Ver datos en tabla accesible</summary>
+        <div class="sr-table-container" id="chartAccessibleTable"></div>
+      </details>
       <p class="hint">Barras: lluvia de 12 días antes de cada pasada (Open-Meteo). Líneas: áreas medidas por NISAR.</p>
     </div>
 
-    <div class="card" id="lakeCard" hidden>
+    <div class="card more-card" id="lakeCard" hidden>
       <h3>El embalse visto por 5 misiones</h3>
       <canvas id="lakeVegChart" height="170"></canvas>
       <p class="hint">Plantas sobre el agua: NISAR (radar, cada 12 días, con nubes o sin ellas) vs Sentinel-2 (foto, solo días despejados).</p>
@@ -246,8 +246,8 @@
       <div class="kpis" id="lakeKpis"></div>
     </div>
 
-    <div class="card" id="caneCard" hidden>
-      <h3>La caña alrededor del manglar</h3>
+    <div class="card more-card" id="caneCard" hidden>
+      <h3>La presión de al lado: la caña</h3>
       <p class="hint" style="margin-top:0">El manglar está estable, pero tiene presión al lado: cañales que se cosechan y se queman en la zafra (noviembre–mayo). Así se vigila esa presión año con año.</p>
       <div class="kpis" id="caneKpis"></div>
       <canvas id="caneChart" height="150"></canvas>
@@ -272,8 +272,8 @@
       <p class="hint">Cultivos según el mapa ESA (en esta planicie son sobre todo caña). Cosecha: caída fuerte del verdor en las fotos Sentinel-2 y de la señal del radar NISAR.</p>
     </div>
 
-    <div class="card" id="histCard" hidden>
-      <h3>30 años de manglar con el mismo tipo de radar</h3>
+    <div class="card more-card" id="histCard" hidden>
+      <h3>30 años, el mismo manglar</h3>
       <p class="hint" style="margin-top:0">Antes de NISAR, satélites japoneses con radar en banda L (el mismo tipo) mapearon los manglares del mundo desde 1996. Unimos ese registro con NISAR.</p>
       <canvas id="histChart" height="160"></canvas>
       <div class="kpis" id="histKpis"></div>
@@ -281,15 +281,15 @@
       <p class="hint">Fuente: Global Mangrove Watch v3 (JAXA, 1996–2020) y NISAR (2025–2026).</p>
     </div>
 
-    <div class="card" id="carbonCard" hidden>
-      <h3>Carbono azul: lo que guarda el manglar</h3>
+    <div class="card more-card" id="carbonCard" hidden>
+      <h3>Carbono azul</h3>
       <div class="bignum" id="carbonBig"></div>
       <div class="kpis" id="carbonKpis"></div>
       <button class="btn" data-goref="height">Ver la altura de los árboles →</button>
       <p class="hint" id="carbonHint"></p>
     </div>
 
-    <div class="card" id="pondsCard" hidden>
+    <div class="card more-card" id="pondsCard" hidden>
       <h3>Estanques junto al manglar</h3>
       <p class="hint" style="margin-top:0">El radar encuentra agua quieta con forma <b>rectangular</b> (la naturaleza no hace rectángulos): camaroneras y salineras. Es lo que el ser humano construye junto al manglar.</p>
       <div class="kpis" id="pondsKpis"></div>
@@ -297,7 +297,7 @@
       <p class="hint">Mínimo detectado: estanques pegados entre sí, separados por bordos de menos de 20 m, el radar los ve como una sola mancha y no los cuenta.</p>
     </div>
 
-    <div class="card" id="mangCard" hidden>
+    <div class="card more-card" id="mangCard" hidden>
       <h3>Dos manglares, mismo radar</h3>
       <p class="hint" style="margin-top:0">Barra de Santiago y la Bahía de Jiquilisco vistos por NISAR en las mismas 13 fechas. La señal HV mide la estructura del bosque: si se tala, cae de golpe.</p>
       <canvas id="mangChart" height="170"></canvas>
@@ -305,12 +305,21 @@
       <p class="hint"><b>Lectura:</b> los dos manglares suben juntos 3–4 dB en lluvias (hojas y suelo mojados: es natural) y la pérdida es casi cero. Están estables este año: buena noticia para el ecosistema y una línea base para detectar talas futuras. Las amenazas al manglar son lentas y se verán con varios años de NISAR.</p>
     </div>
 
-    <div class="card" id="mlCard" hidden>
+    <div class="card more-card" id="mlCard" hidden>
       <h3 data-simple="IA: el radar aprende de la foto" data-sci="Clasificación mediante inteligencia artificial">IA: el radar aprende de la foto</h3>
       <p class="hint" style="margin-top:0">Los días despejados, Sentinel-2 marca dónde hay plantas sobre el agua. Con esas "respuestas" entrenamos un modelo (Random Forest) que aprende cómo se ven esas plantas en el radar NISAR. Así se detectan también en días nublados.</p>
       <div class="kpis" id="mlKpis"></div>
       <canvas id="mlChart" class="tech" height="150"></canvas>
       <p class="hint tech" id="mlHint"></p>
+    </div>
+
+    <div class="card more-card" id="aiCard" hidden>
+      <h3 data-simple="IA: el radar aprende a ver el manglar" data-sci="Redes neuronales entrenadas con NISAR">IA: el radar aprende a ver el manglar</h3>
+      <p class="hint" style="margin-top:0">Entrenamos dos redes neuronales solo con el radar NISAR. Aprendieron en otros lugares y aquí las ponemos a prueba.</p>
+      <div class="kpis" id="aiKpis"></div>
+      <div class="ai-btns"><button class="btn" data-goref="ai">Ver el mapa de la IA →</button><button class="btn" id="aiPhotoGo" hidden>Ver el radar como foto →</button></div>
+      <p class="hint" id="aiHint"></p>
+      <div class="tech" id="aiTable"></div>
     </div>
 
     <div class="card tech" id="wqCard" hidden>
@@ -326,13 +335,13 @@
       <div class="kpis" id="valKpis"></div>
     </div>
 
-    <div class="card" id="probeCard">
+    <div class="card more-card" id="probeCard">
       <h3 data-simple="Toca un punto del mapa" data-sci="Análisis por punto">Toca un punto del mapa</h3>
       <div id="probe" class="probe">Toca el estero, el manglar o un cultivo y verás su señal de radar en cada fecha.</div>
       <canvas id="probeChart" height="140" hidden></canvas>
     </div>
 
-    <details class="card about">
+    <details class="card about more-card">
       <summary data-simple="¿Qué estoy viendo?" data-sci="Metodología y fundamentos científicos">¿Qué estoy viendo?</summary>
       <p><b>NISAR</b> (NASA + ISRO) es un radar: manda su propia energía de microondas, así que ve de día, de noche y con nubes. Pasa por aquí cada 12 días.</p>
       <p>La <b>banda L</b> (24 cm) atraviesa las copas y llega a los troncos y al agua. Lo que regresa depende de la <b>rugosidad</b> y de la <b>humedad</b> (constante dieléctrica).</p>

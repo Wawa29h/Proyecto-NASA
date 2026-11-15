@@ -1,0 +1,16 @@
+# MANGLO · scripts de procesamiento (Python 3.12)
+# La app web (carpeta web/) no necesita nada de esto: es HTML/JS estático.
+h5py>=3.16
+earthaccess>=0.19
+fsspec>=2026.9
+pyproj>=3.8
+numpy>=2.5
+pillow>=13.0
+scipy>=1.18
+rasterio>=1.5
+pyshp>=3.1
+scikit-learn>=1.9
+joblib>=1.6
+# Redes neuronales (MangroveNet y radar→foto). Con GPU NVIDIA serie 50 instalar la versión CUDA 12.8:
+#   python -m pip install torch --index-url https://download.pytorch.org/whl/cu128
+torch>=2.11

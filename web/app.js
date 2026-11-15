@@ -5,7 +5,8 @@ let SITE = null, BASE = "data";
 // rutas guardadas como "data/x.png" o "ref/x.png" -> carpeta del sitio
 const P = (p) => (p ? BASE + "/" + p.replace(/^data\//, "") : p);
 const getJSON = async (p) => { try { const r = await fetch(p, { cache: "no-store" }); return r.ok ? await r.json() : null; } catch { return null; } };
-let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null, CLOUDS = null, ALERTS = null;
+let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null, CLOUDS = null, ALERTS = null, INTERP = null;
+let MNET = null, RFOTO = null;   // IAs entrenadas: MangroveNet (mapa) y radar→foto
 let GMW = null, CARBON = null, PONDS = null, CANE = null, FIRES = null, fireLayer = null, BURNS = null;
 const fmtInt = (n) => Math.round(n).toLocaleString("es-SV");
 const mlFor = (d) => ML?.dates.find((m) => m.id === d.id);
@@ -41,7 +42,8 @@ function clearOverlays() {
   [ovA, ovB, ovChange, ovSrc, gapNote].forEach((o) => o && map.removeLayer(o));
   ovA = ovB = ovChange = ovSrc = gapNote = null;
 }
-const urlFor = (d) => P(state.layer === "cls" ? d.cls : d.rgb);
+const photoFor = (d) => RFOTO?.dates?.find((x) => x.date === d.date);
+const urlFor = (d) => P(state.layer === "cls" ? d.cls : state.layer === "photo" && photoFor(d) ? photoFor(d).img : d.rgb);
 // capa IA: falso color atenuado debajo + plantas detectadas por el modelo encima
 function mlOverlay(d, pane = "paneChange") {
   const m = mlFor(d);
@@ -115,8 +117,10 @@ function render() {
     }
     $("dateLabel").textContent = fmtDate(d.date);
     $("dateSlider").value = state.idx;
-    // de dónde viene cada pedazo: rayas grises = sin escaneo; celestes = rellenado con otra órbita
-    if (d.coverage_pct != null && d.coverage_pct < 90 && !fullRef()) {
+    $("dateSlider").setAttribute("aria-valuenow", state.idx);
+    $("dateSlider").setAttribute("aria-valuetext", fmtDate(d.date) + (d.qc === false ? " (QC rechazado)" : ""));
+    // de dónde viene cada pedazo: rayas grises = sin escaneo; celestes = otra órbita; moradas = aproximado de otra fecha
+    if (d.coverage_pct != null && d.coverage_pct + (d.time_filled_pct || 0) < 90 && !fullRef()) {
       const b = bounds, lat = (b.getNorth() + b.getSouth()) / 2, lon = b.getEast() - (b.getEast() - b.getWest()) * 0.2;
       const later = S.dates.find((x) => x.qc && (x.coverage_pct ?? 100) >= 99);
       gapNote = L.marker([lat, lon], { interactive: false, icon: L.divIcon({ className: "gapnote", iconSize: [230, 0], iconAnchor: [115, 0],
@@ -125,15 +129,16 @@ function render() {
     if (d.src && !fullRef()) ovSrc = L.imageOverlay(P(d.src), bounds, { pane: "paneChange", opacity: 1, interactive: false }).addTo(map);
     const fills = d.fill_from || [];
     const note = $("fillNote");
-    if (d.coverage_pct != null && (d.coverage_pct < 99.5 || fills.length || d.edge_trim_km)) {
+    if (d.coverage_pct != null && (d.coverage_pct < 99.5 || fills.length || d.time_filled_pct || d.edge_trim_km)) {
       note.hidden = false;
       note.innerHTML = `Cobertura <b>${Math.round(d.coverage_pct)} %</b>` +
         (fills.length ? ` · <span class="c-fill">▨ ${fills.map((f) => `${f.pct} % de la órbita ${f.track} ${f.direction === "DESCENDING" ? "descendente" : "ascendente"} (${f.gap_days} días)`).join(", ")}</span>` : "") +
-        (d.coverage_pct < 99.5 ? ` · <span class="c-gap">▨ sin escaneo${fills.length ? "" : ": no había otra órbita cerca"}</span>` : "") +
+        (d.time_filled_pct ? ` · <span class="c-time">▨ ${d.time_filled_pct} % aproximado con la pasada del ${(d.time_fill_from || []).map((f) => fmtDate(f.date)).join(", ")}</span>` : "") +
+        (d.coverage_pct + (d.time_filled_pct || 0) < 99.5 ? ` · <span class="c-gap">▨ sin escaneo${fills.length || d.time_filled_pct ? "" : ": no había otra órbita cerca"}</span>` : "") +
         (d.edge_trim_km ? ` · borde con ruido recortado (${d.edge_trim_km} km)` : "");
     } else note.hidden = true;
     if (state.mode === "truth" && REF) {
-      $("tagA").textContent = "Radar NISAR (NASA-ISRO) · " + fmtDate(d.date);
+      $("tagA").textContent = (state.layer === "photo" && photoFor(d) ? "Radar NISAR convertido en foto por IA (aproximado) · " : "Radar NISAR (NASA-ISRO) · ") + fmtDate(d.date);
       const gmwInfo = () => {
         const pres = BURNS ? `<br>🔥 <b>Círculos naranja:</b> quemas de caña de 2025–2026 vistas por <b>Sentinel-2 (ESA)</b>; borde rojo = a menos de 1 km del manglar.` :
                      PONDS ? `<br><span style="color:#ff9a1e">■</span> <b>Estanques</b> de camarón y sal encontrados por <b>NISAR</b> (${PONDS.count}, ${fmtInt(PONDS.area_ha)} ha).` : "";
@@ -142,6 +147,7 @@ function render() {
       };
       const extra = { gmw: GMW && [GMW.change_img, `Manglar 1996 → 2020 (JAXA) ${BURNS ? "+ quemas 2025–26 (Sentinel-2)" : PONDS ? "+ estanques (NISAR)" : ""}`, gmwInfo()],
                       height: CARBON && [CARBON.height_img, "Altura de los árboles · NASA (Simard 2019)", `Más verde claro = árboles más altos. Altura media <b>${CARBON.mean_height_m} m</b>, máxima ${CARBON.max_height_m} m.`],
+                      ai: MNET && ["ref/mangrovenet.png", "Mapa hecho por IA solo con radar NISAR · MangroveNet", aiInfo()],
                       ponds: PONDS && [PONDS.img, "Estanques · radar NISAR", `<span style="color:#ff9a1e">■</span> agua quieta y rectangular: <b>${PONDS.count}</b> estanques, <b>${fmtInt(PONDS.area_ha)} ha</b>.`],
                       cane: CANE && [CANE.harvest_img, "Caña: mes de cosecha · fotos Sentinel-2 (ESA)", Object.entries(CANE.colors).map(([m, c]) => `<span style="color:${c}">■</span> ${m}`).join(" · ") + ` · <span style="color:#aaa">■</span> sin cosecha vista.` + (FIRES ? ` Puntos naranja: quemas (NASA FIRMS).` : "")],
                       canenisar: CANE?.nisar && [CANE.nisar.img, `Caña cortada · radar NISAR (${fmtDate(CANE.nisar.from)} → ${fmtDate(CANE.nisar.to)})`, `<span style="color:#ff6348">■</span> la señal del radar cayó ≥ 3 dB: la caña perdió hojas y tallos. <b>${CANE.nisar.cut_km2} km²</b>; el <b>${Math.round(CANE.nisar.agree_with_s2_pct)} %</b> coincide con lo que ven las fotos.`] };
@@ -189,15 +195,33 @@ function render() {
     const A = S.dates[state.a], B = S.dates[state.b];
     ovA = overlay(urlFor(A), "paneA");
     ovB = overlay(urlFor(B), "paneB");
-    $("tagA").textContent = "Antes · " + fmtDate(A.date);
-    $("tagB").textContent = "Después · " + fmtDate(B.date);
+    $("tagA").textContent = seasonOf(A.date) + " · " + fmtDate(A.date);
+    $("tagB").textContent = seasonOf(B.date) + " · " + fmtDate(B.date);
   } else {
     renderChange();
+  }
+
+  const isPair = state.mode === "compare" || state.mode === "change";
+  const interpCard = $("interpCard");
+  const warnEl = $("comparabilityWarning");
+  if (isPair && S && S.dates) {
+    const A = S.dates[state.a], B = S.dates[state.b];
+    if (A && B) {
+      updateComparabilityWarning(A, B);
+      updateInterpretation(A, B);
+    }
+  } else {
+    if (interpCard) interpCard.hidden = true;
+    if (warnEl) warnEl.hidden = true;
   }
   applyClip();
   $("legendRgb").hidden = state.layer !== "rgb" && state.layer !== "ml";
   $("legendCls").hidden = state.layer !== "cls";
   $("legendMl").hidden = state.layer !== "ml";
+  $("legendPhoto").hidden = state.layer !== "photo";
+  $("mapLegend").hidden = !(state.mode === "single" || state.mode === "compare") || state.layer !== "rgb";
+  $("pairExplain").hidden = $("goChange").hidden = state.mode !== "compare";
+  if (state.mode === "compare") $("pairExplain").innerHTML = explainPair(S.dates[state.a], S.dates[state.b]);
   highlightChart();
   if (prevA && !ovA) map.removeLayer(prevA);
   window.onRender && window.onRender();
@@ -260,6 +284,79 @@ function pxKm2() {
 }
 const kpi = (v, l) => `<div class="kpi"><b>${v}</b><span>${l}</span></div>`;
 
+function updateComparabilityWarning(A, B) {
+  const el = $("comparabilityWarning");
+  if (!el) return;
+  const covA = A.coverage_pct ?? 100;
+  const covB = B.coverage_pct ?? 100;
+  const fillsA = A.fill_from || [];
+  const fillsB = B.fill_from || [];
+  const diffCov = Math.abs(covA - covB);
+  const issues = [];
+
+  if (diffCov >= 8) {
+    issues.push(`Diferencia de cobertura del barrido radar: <b>${Math.round(covA)}%</b> (${fmtDate(A.date)}) vs <b>${Math.round(covB)}%</b> (${fmtDate(B.date)}).`);
+  }
+  if (fillsA.length || fillsB.length) {
+    issues.push(`Una o ambas observaciones incorporan rellenos orbitales con desfase temporal (no simultáneos).`);
+  }
+
+  if (issues.length) {
+    el.hidden = false;
+    el.innerHTML = `⚠ <b>Soporte espacial no homogéneo:</b> ${issues.join(" ")} Los cambios calculados en km² brutos no representan un cambio físico absoluto de toda la cuenca sin una máscara común.`;
+  } else {
+    el.hidden = true;
+  }
+}
+
+function updateInterpretation(A, B) {
+  const card = $("interpCard");
+  const box = $("interpContent");
+  if (!card || !box) return;
+
+  const siteInterp = INTERP?.sites ? INTERP.sites[SITE.id] : null;
+  const pairInterp = siteInterp?.comparisons?.find((c) => c.before_id === A.id && c.after_id === B.id);
+  const isSimulated = INTERP?.data_status === "simulated";
+
+  card.hidden = false;
+
+  if (pairInterp) {
+    const badge = isSimulated ? `<span class="badge-simulated">Datos simulados (prueba)</span><br>` : "";
+    if (pairInterp.status === "not_comparable") {
+      box.innerHTML = badge +
+        `<b>Resultado no comparable directamente:</b><br>` +
+        `Las observaciones del <b>${fmtDate(A.date)}</b> y <b>${fmtDate(B.date)}</b> no comparten el mismo soporte espacial o temporal.<br>` +
+        (pairInterp.limitations?.length ? `<p class="hint" style="margin-top:4px">${pairInterp.limitations.map((l) => "• " + l).join("<br>")}</p>` : "");
+      return;
+    }
+
+    if (pairInterp.status === "supported" && pairInterp.hypotheses?.length) {
+      const hyposHtml = pairInterp.hypotheses.map((h) =>
+        `<div class="interp-hypo">` +
+        `<b>${h.summary}</b><br>` +
+        (h.evidence ? `<span>Evidencia: ${h.evidence}</span><br>` : "") +
+        (h.confidence ? `<small style="color:var(--muted)">Confianza: ${h.confidence}</small>` : "") +
+        `</div>`
+      ).join("");
+
+      box.innerHTML = badge +
+        (pairInterp.observed_change ? `<span>Cambio observado: <b>${pairInterp.observed_change.delta_km2} ${pairInterp.observed_change.unit}</b> en ${pairInterp.observed_change.variable}</span><br>` : "") +
+        hyposHtml +
+        (pairInterp.limitations?.length ? `<p class="hint" style="margin-top:4px">${pairInterp.limitations.map((l) => "• " + l).join("<br>")}</p>` : "");
+      return;
+    }
+  }
+
+  // Si no hay hipótesis precalculadas:
+  const covA = A.coverage_pct ?? 100, covB = B.coverage_pct ?? 100;
+  if (Math.abs(covA - covB) > 10) {
+    box.innerHTML = `<b>No comparable:</b> La cobertura del barrido difiere significativamente entre ${fmtDate(A.date)} (${Math.round(covA)}%) y ${fmtDate(B.date)} (${Math.round(covB)}%). Se requiere una máscara común aprobada por el equipo científico.`;
+  } else {
+    box.innerHTML = `<b>Información científica pendiente:</b> No hay evidencia suficiente para proponer una explicación causal automática entre el <b>${fmtDate(A.date)}</b> y el <b>${fmtDate(B.date)}</b>.<br>` +
+      `<p class="hint" style="margin-top:4px">Las variaciones de retrodispersión radar pueden obedecer a múltiples variables (humedad del dosel, nivel de marea, rugosidad superficial o fenología vegetal). Pendiente de reglas validadas.</p>`;
+  }
+}
+
 // ---------- lluvia (Open-Meteo, sin llave) ----------
 async function loadRain() {
   RAINJ = await getJSON(BASE + "/rain.json");
@@ -309,6 +406,19 @@ function buildChart() {
       onClick: (_, els) => { if (els.length) { state.idx = els[0].index; setMode("single"); } },
     },
   });
+
+  const tbl = $("chartAccessibleTable");
+  if (tbl) {
+    const rainName = RAINJ ? "Lluvia (mm)" : "Lluvia (Open-Meteo mm)";
+    const vegName = SITE.labels.veg;
+    const waterName = SITE.labels.water;
+    const rowsHtml = S.dates.map((d) => {
+      const rVal = rain12(d.date);
+      const vVal = SITE.lake ? d.floatveg_km2 : d.floodveg_km2;
+      return `<tr><td>${fmtDate(d.date)}</td><td>${rVal ?? "—"}</td><td>${d.water_km2 != null ? d.water_km2.toFixed(2) : "—"}</td><td>${vVal != null ? vVal.toFixed(2) : "—"}</td></tr>`;
+    }).join("");
+    tbl.innerHTML = `<table class="sr-table" aria-label="Tabla accesible de observaciones temporales"><thead><tr><th scope="col">Fecha</th><th scope="col">${rainName}</th><th scope="col">${waterName}</th><th scope="col">${vegName}</th></tr></thead><tbody>${rowsHtml}</tbody></table>`;
+  }
 }
 function buildValChart() {
   const colors = { Manglar: "#00cf75", Bosque: "#2e7d32", Cultivo: "#f096ff", Pasto: "#ffe14c", Agua: "#3d8bfd" };
@@ -376,6 +486,70 @@ function buildLakeCard() {
     (ecoDay.length ? kpi(`${Math.min(...ecoDay.map((o) => o.water_c)).toFixed(0)}–${Math.max(...ecoDay.map((o) => o.water_c)).toFixed(0)} °C`, "agua de día (ECOSTRESS)") : "");
   $("lakeCard").hidden = false;
 }
+// ---------- "Antes / después" explicado en lenguaje simple ----------
+const isRainy = (iso) => { const m = +iso.slice(5, 7); return m >= 5 && m <= 10; };   // El Salvador: lluvias de mayo a octubre
+const seasonOf = (iso) => (isRainy(iso) ? "Época de lluvias" : "Época seca");
+function explainPair(A, B) {
+  if (!A || !B) return "";
+  const sameSeason = isRainy(A.date) === isRainy(B.date);
+  const km = (x) => (x == null ? "—" : (+x).toFixed(1).replace(".0", ""));
+  const trend = (a, b, up, down) => (b - a > 0.15 * Math.max(a, 0.5) ? up : a - b > 0.15 * Math.max(a, 0.5) ? down : "casi igual");
+  let out = `<p class="explain-h">${sameSeason ? `Las dos fechas son de la <b>${seasonOf(A.date).toLowerCase().replace("época de ", "época de ")}</b>` : `<b>${seasonOf(A.date)}</b> contra <b>${seasonOf(B.date).toLowerCase()}</b>`}</p>`;
+  if (SITE.lake) {
+    out += `<p>💧 <b>Agua del embalse:</b> ${km(A.water_km2)} → ${km(B.water_km2)} km² (${trend(A.water_km2, B.water_km2, "subió: llovió o la represa guardó agua", "bajó: la represa usó agua para generar luz")}).</p>`;
+    out += `<p>🌿 <b>Plantas sobre el agua</b> (verde encima del agua, posible lirio): ${km(A.floatveg_km2)} → ${km(B.floatveg_km2)} km².</p>`;
+    out += `<p class="explain-note">${sameSeason ? "En la misma época el embalse debería verse parecido: un cambio grande de lirio sí es para avisar." : "Entre seca y lluvias es normal que el embalse cambie mucho de tamaño."}</p>`;
+    return out;
+  }
+  out += sameSeason
+    ? `<p>🟪 El paisaje debería verse parecido. Si una mancha <b>dentro del manglar</b> pasa de verde a morado, eso sí sería para revisar (posible tala).</p>`
+    : `<p>🟪→🟩 Las parcelas que pasan de <b>morado a verde</b> (o al revés) son sobre todo <b>caña</b>: se corta en la zafra (noviembre a mayo) y vuelve a crecer con la lluvia. <b>Es normal.</b></p>`;
+  const mg = MANG && MANG[{ barra: "Barra de Santiago", jiquilisco: "Bahia de Jiquilisco" }[SITE.id]];
+  const hv = (d) => mg?.dates.find((r) => r.date === d.date)?.hv_mangrove;
+  if (mg && hv(A) != null && hv(B) != null) {
+    const dd = hv(B) - hv(A);
+    out += `<p>🌳 <b>El manglar</b> (junto al estero) ${Math.abs(dd) < 1 ? "<b>casi no cambió</b>." : dd > 0 ? `se ve más brillante: con la lluvia las hojas y el suelo mojados rebotan más el radar. <b>Es natural</b>, no es que creciera.` : `se ve un poco más apagado: hojas y suelo más secos. <b>Es natural.</b>`} En todo el año perdió solo <b>${Math.round(mg.loss_km2 * 100)} ha</b>: está estable.</p>`;
+  }
+  const part = [A, B].filter((d) => (d.coverage_pct ?? 100) + (d.time_filled_pct || 0) < 90);
+  out += `<p>💧 <b>Agua del estero:</b> ${km(A.water_km2)} → ${km(B.water_km2)} km².` +
+    (part.length ? ` <span class="explain-warn">⚠ El ${part.map((d) => fmtDate(d.date)).join(" y el ")} el radar solo vio el ${Math.round(part[0].coverage_pct)} % del recuadro: ese número sale más bajo de lo real.</span>` : "") + `</p>`;
+  if (A.ocean_km2) out += `<p class="explain-note">El mar cambia de color por el <b>viento y las olas</b>, no porque el agua sea distinta.</p>`;
+  return out;
+}
+
+// ---------- IAs entrenadas con NISAR (MangroveNet y radar→foto) ----------
+const pctTxt = (x) => Math.round(x * 100) + " %";
+function aiInfo() {
+  const m = MNET.metrics_vs_worldcover, mg = m.per_class.manglar;
+  const leg = MNET.classes.map((c, i) => `<span style="color:${MNET.colors[i]}">■</span> ${c}`).join(" · ");
+  const test = MNET.role === "prueba" || MNET.role === "validación";
+  return `${leg}<br>` + (test
+    ? `<b>Esta IA nunca vio este lugar:</b> aprendió en ${MNET.train_sites.map((s) => s === "jiquilisco" ? "Jiquilisco" : "Cerrón Grande").join(" y ")} y aquí la probamos. `
+    : `<b>Aquí la IA aprendió</b> (no es una prueba independiente: la prueba es Barra de Santiago). `) +
+    (mg ? `Reconoce el manglar con <b>${pctTxt(mg.f1)}</b> de acierto y mide <b>${MNET.mangrove_km2_pred} km²</b> (el mapa de la ESA dice ${MNET.mangrove_km2_worldcover} km²).` :
+          `Aquí no hay manglar y la IA no inventó ninguno (${MNET.mangrove_km2_pred} km²).`) +
+    `<br>Cambia a "Mapa ESA WorldCover" para compararlos.`;
+}
+function buildAiCard() {
+  const m = MNET.metrics_vs_worldcover, mg = m.per_class.manglar;
+  const test = MNET.role === "prueba" || MNET.role === "validación";
+  $("aiKpis").innerHTML =
+    (mg ? kpi(pctTxt(mg.f1), `acierto reconociendo el manglar${test ? " en un lugar que la IA nunca vio" : " (aquí aprendió; la prueba real es Barra)"}`) +
+          kpi(`${MNET.mangrove_km2_pred} km²`, `de manglar según la IA (ESA: ${MNET.mangrove_km2_worldcover} km²)`) : "") +
+    kpi(pctTxt(m.accuracy), "del mapa clasificado igual que la ESA") +
+    (RFOTO ? kpi(`${RFOTO.val_error_0_255}/255`, `error del radar→foto en la zona no usada para entrenar (pintar el color medio: ${RFOTO.baseline_mean_color_error})`) : "");
+  $("aiHint").innerHTML = `<b>1. MangroveNet</b> dibuja el mapa de agua, manglar, árboles y caña usando solo radar: así se puede vigilar cada 12 días aunque esté nublado.` +
+    (RFOTO ? ` <b>2. Radar → foto</b> convierte cada pasada en una imagen parecida a una foto satelital (aproximada, no real).` : "") +
+    ` Las dos coinciden: el manglar está estable y lo que más cambia está en los bordes (caña, suelos).`;
+  $("aiTable").innerHTML = `<table class="ai-table"><tr><th>Clase</th><th>F1</th><th>Precisión</th><th>Exhaustividad</th></tr>` +
+    Object.entries(m.per_class).map(([c, v]) => `<tr><td>${c}</td><td>${v.f1}</td><td>${v.precision}</td><td>${v.recall}</td></tr>`).join("") +
+    `</table><p class="hint">U-Net con 10 canales temporales de NISAR (HH, HV). Etiquetas: ESA WorldCover 2021. Entrenada en ${MNET.train_sites.join(" + ")} (sin su franja este, que sirvió para elegir el modelo); ${MNET.val_site} solo se usó como prueba final. Mejor modelo tras ${MNET.minutes_trained} min en GPU.` +
+    (RFOTO ? ` Radar→foto: U-Net + PatchGAN (pix2pix), PSNR ${RFOTO.val_psnr_db} dB en el 20 % este no usado para entrenar (también sirvió para elegir el modelo: algo optimista).` : "") + `</p>`;
+  $("aiPhotoGo").hidden = !RFOTO;
+  $("aiPhotoGo").onclick = () => { setMode("single"); $("layerPhotoBtn").click(); $("map").scrollIntoView({ behavior: "smooth", block: "center" }); };
+  $("aiCard").hidden = false;
+}
+
 function buildMlCard() {
   const v = ML.validation;
   const gain = Math.round((100 * (v.mean_f1 - v.mean_f1_rule)) / Math.max(v.mean_f1_rule, 1e-6));
@@ -417,11 +591,12 @@ function buildMangCard() {
   tsChart($("mangChart"), names.map((n, i) => ({
     label: n, data: MANG[n].dates.map((r) => ({ x: T(r.date), y: r.hv_mangrove })), color: colors[i % 3], yAxisID: "h",
   })), [{ id: "h", title: "HV del manglar (dB)" }]);
-  $("mangTable").innerHTML = `<table class="mtable"><tr><th></th>${names.map((n) => `<th>${n.replace("Bahia", "Bahía")}</th>`).join("")}</tr>` +
-    `<tr><td>Manglar (mapa ESA)</td>${names.map((n) => `<td>${MANG[n].mangrove_km2} km²</td>`).join("")}</tr>` +
-    `<tr><td><b>Pérdida en el año</b></td>${names.map((n) => `<td><b>${(MANG[n].loss_km2 * 100).toFixed(0)} ha (${MANG[n].loss_pct}%)</b></td>`).join("")}</tr>` +
-    `<tr><td>Subida de HV seca → lluvias</td>${names.map((n) => `<td>${MANG[n].hv_range_db} dB</td>`).join("")}</tr>` +
-    `<tr><td>Manglar con agua debajo</td>${names.map((n) => `<td>${MANG[n].flooded_range_pct[0]}–${MANG[n].flooded_range_pct[1]} %</td>`).join("")}</tr></table>`;
+  $("mangTable").innerHTML = `<table class="mtable" aria-label="Tabla comparativa de manglares"><thead><tr><th scope="col">Indicador</th>${names.map((n) => `<th scope="col">${n.replace("Bahia", "Bahía")}</th>`).join("")}</tr></thead><tbody>` +
+    `<tr><th scope="row">Manglar (mapa ESA)</th>${names.map((n) => `<td>${MANG[n].mangrove_km2} km²</td>`).join("")}</tr>` +
+    `<tr><th scope="row"><b>Pérdida en el año *</b></th>${names.map((n) => `<td><b>${(MANG[n].loss_km2 * 100).toFixed(0)} ha (${MANG[n].loss_pct}%)</b></td>`).join("")}</tr>` +
+    `<tr><th scope="row">Rango de HV observado en el año</th>${names.map((n) => `<td>${MANG[n].hv_range_db} dB</td>`).join("")}</tr>` +
+    `<tr><th scope="row">Manglar con agua debajo</th>${names.map((n) => `<td>${MANG[n].flooded_range_pct[0]}–${MANG[n].flooded_range_pct[1]} %</td>`).join("")}</tr></tbody></table>` +
+    `<p class="hint" style="margin-top:6px;font-size:11px;color:var(--muted)">* Nota científica: La cifra reportada como 'pérdida' responde al umbral de caída radar (&lt; -3 dB en media de 3 fechas); es un indicador de variación de retrodispersión, no una comprobación de tala física sin verificación en campo.</p>`;
   $("mangCard").hidden = false;
 }
 function buildCaneCard() {
@@ -584,13 +759,21 @@ function highlightChart() {
   chart.update();
 }
 function setKpis() {
-  const w = S.dates.map((d) => d.water_km2), f = S.dates.map((d) => d.floodveg_km2);
-  const iMax = f.indexOf(Math.max(...f)), iMin = f.indexOf(Math.min(...f));
+  const w = S.dates.map((d) => d.water_km2);
+  const f = S.dates.map((d) => (SITE.lake ? d.floatveg_km2 : d.floodveg_km2));
+  const wOk = w.filter((x) => x != null);
+  const fOk = f.filter((x) => x != null);
+  const vegLabel = SITE.lake ? "plantas en agua" : "veg. inundada";
+  if (!wOk.length || !fOk.length) {
+    $("kpis").innerHTML = kpi(S.dates.length, "pasadas NISAR") + kpi("—", "observaciones válidas");
+    return;
+  }
+  const iMax = f.indexOf(Math.max(...fOk)), iMin = f.indexOf(Math.min(...fOk));
   $("kpis").innerHTML =
     kpi(S.dates.length, "pasadas NISAR") +
-    kpi(`${Math.min(...w).toFixed(1)}–${Math.max(...w).toFixed(1)}`, "km² de agua abierta") +
-    kpi(f[iMax].toFixed(1) + " km²", "máx. veg. inundada · " + fmtDate(S.dates[iMax].date)) +
-    kpi(f[iMin].toFixed(1) + " km²", "mín. veg. inundada · " + fmtDate(S.dates[iMin].date));
+    kpi(`${Math.min(...wOk).toFixed(1)}–${Math.max(...wOk).toFixed(1)}`, "km² de agua abierta") +
+    kpi(f[iMax].toFixed(1) + " km²", `máx. ${vegLabel} · ` + fmtDate(S.dates[iMax].date)) +
+    kpi(f[iMin].toFixed(1) + " km²", `mín. ${vegLabel} · ` + fmtDate(S.dates[iMin].date));
 }
 
 // ---------- sonda de un punto ----------
@@ -623,13 +806,13 @@ map.on("click", async (e) => {
   });
   const cur = state.mode === "single" ? state.idx : state.b;
   if (probeMarker) map.removeLayer(probeMarker);
-  probeMarker = L.circleMarker(e.latlng, { radius: 7, color: "#fff", weight: 2, fillColor: "#2fd6a3", fillOpacity: 1 }).addTo(map);
+  probeMarker = L.circleMarker(e.latlng, { radius: 7, color: "#fff", weight: 2, fillColor: "#149BA5", fillOpacity: 1 }).addTo(map);
   const ok = vals.filter((v) => v !== null);
   $("probe").innerHTML = `<b>${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}</b><br>
     ${fmtDate(S.dates[cur].date)}: <b>${vals[cur] ?? "—"} dB</b> · ${interpret(vals[cur])}<br>
     Rango en el año: ${ok.length ? Math.min(...ok) + " a " + Math.max(...ok) + " dB" : "—"}`;
   $("probeChart").hidden = false;
-  const data = { labels: S.dates.map((d) => fmtDate(d.date)), datasets: [{ label: "HH (dB)", data: vals, borderColor: "#2fd6a3", tension: 0.3, pointRadius: 2 }] };
+  const data = { labels: S.dates.map((d) => fmtDate(d.date)), datasets: [{ label: "HH (dB)", data: vals, borderColor: "#149BA5", tension: 0.3, pointRadius: 2 }] };
   if (probeChart) { probeChart.data = data; probeChart.update(); }
   else probeChart = new Chart($("probeChart"), {
     type: "line", data,
@@ -641,7 +824,11 @@ map.on("click", async (e) => {
 // ---------- controles ----------
 function setMode(m) {
   state.mode = m;
-  document.querySelectorAll(".modes button").forEach((b) => b.classList.toggle("on", b.dataset.mode === m));
+  document.querySelectorAll(".modes button").forEach((b) => {
+    const active = b.dataset.mode === m;
+    b.classList.toggle("on", active);
+    b.setAttribute("aria-selected", active ? "true" : "false");
+  });
   stopPlay();
   if (typeof stopZafra === "function") stopZafra(false);
   if (m !== "truth" && fireLayer) { map.removeLayer(fireLayer); fireLayer = null; }   // las llamas solo en "Radar vs foto"
@@ -663,6 +850,7 @@ $("opacity").oninput = (e) => { state.opacity = +e.target.value; [ovA, ovB].forE
 $("selA").onchange = (e) => { state.a = +e.target.value; render(); };
 $("selB").onchange = (e) => { state.b = +e.target.value; render(); };
 $("thr").oninput = (e) => { $("thrVal").textContent = e.target.value + " dB"; renderChange(); };
+$("goChange").onclick = () => setMode("change");
 $("presetSeason").onclick = () => {
   // fecha más seca (menos veg. inundada) vs más húmeda; en embalse: menos vs más plantas
   const f = S.dates.map((d) => (SITE.lake ? d.floatveg_km2 ?? 0 : d.floodveg_km2));
@@ -697,14 +885,14 @@ $("play").onclick = () => {
   S = await getJSON(BASE + "/series.json");
   // control de calidad: fuera fechas sin contraste agua/vegetación o con menos del 90 % del recuadro cubierto
   const minCov = SITE.min_coverage ?? 90; // algunos sitios quedan siempre al borde de la pasada (mismo recorte en todas las fechas)
-  if (S && S.dates) S.dates = S.dates.filter((d) => d.qc !== false && (d.coverage_pct == null || d.coverage_pct >= minCov));
+  if (S && S.dates) S.dates = S.dates.filter((d) => d.qc !== false && (d.coverage_pct == null || d.coverage_pct + (d.time_filled_pct || 0) >= minCov));
   if (!S || !S.dates || !S.dates.length) { $("empty").hidden = false; return; }
   const [W, Sth, E, N] = S.bbox;
   bounds = L.latLngBounds([Sth, W], [N, E]);
   map.invalidateSize();
   map.fitBounds(bounds, { padding: [10, 10] });
   setTimeout(() => { map.invalidateSize(); map.fitBounds(bounds, { padding: [10, 10], animate: false }); }, 400);
-  L.rectangle(bounds, { color: "#2fd6a3", weight: 1, fill: false, dashArray: "4 4", interactive: false }).addTo(map);
+  L.rectangle(bounds, { color: "#149BA5", weight: 1, fill: false, dashArray: "4 4", interactive: false }).addTo(map);
 
   const n = S.dates.length;
   $("dateSlider").max = n - 1;
@@ -713,13 +901,26 @@ $("play").onclick = () => {
   $("selA").innerHTML = $("selB").innerHTML = opts;
   state.idx = n - 1; state.a = 0; state.b = n - 1;
   $("selA").value = 0; $("selB").value = n - 1;
+  $("dateSlider").setAttribute("aria-label", "Línea temporal de observaciones radar NISAR");
+  $("siteSel").setAttribute("aria-label", "Seleccionar región de estudio");
+  $("selA").setAttribute("aria-label", "Fecha inicial para comparación");
+  $("selB").setAttribute("aria-label", "Fecha posterior para comparación");
+  $("thr").setAttribute("aria-label", "Umbral de cambio en decibelios");
+  $("opacity").setAttribute("aria-label", "Opacidad de la capa radar");
 
+  INTERP = (await getJSON(BASE + "/interpretations.json")) || (await getJSON("fixtures/interpretations_simulated.json"));
   REF = await getJSON(BASE + "/ref/reference.json");
   VAL = await getJSON(BASE + "/ref/validation.json");
   SWOT = await getJSON(BASE + "/swot.json");
   ECO = await getJSON(BASE + "/ecostress.json");
   ML = await getJSON(BASE + "/ml.json");
   if (ML) buildMlCard();
+  MNET = await getJSON(BASE + "/ref/mangrovenet.json");
+  RFOTO = await getJSON(BASE + "/ref/radarfoto.json");
+  if (RFOTO && !RFOTO.site_has_photos) RFOTO = null;   // Jiquilisco: la mitad este (otra órbita) sale mal; no se muestra hasta corregirla
+  document.querySelectorAll("#truthSeg .ai-only").forEach((b) => (b.hidden = !MNET));
+  $("layerPhotoBtn").hidden = !RFOTO;
+  if (MNET) buildAiCard();
   if (SITE.lake) {
     CLOUDS = await getJSON(BASE + "/clouds.json");
     ALERTS = await getJSON(BASE + "/alerts.json");

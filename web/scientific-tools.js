@@ -60,7 +60,7 @@
   // Mantener el mismo criterio de filtrado que usa app.js al cargar series.json
   // (cobertura mínima por sitio: Jiquilisco queda siempre al borde de la pasada).
   function usable(row, minCov = 90) {
-    return row.qc !== false && (row.coverage_pct == null || row.coverage_pct >= minCov);
+    return row.qc !== false && (row.coverage_pct == null || row.coverage_pct + (row.time_filled_pct || 0) >= minCov);
   }
 
   async function readJSON(path) {
@@ -91,6 +91,7 @@
         ["orbita_track", (r) => r.track],
         ["frame", (r) => r.frame],
         ["cobertura_porcentaje", (r) => r.coverage_pct],
+        ["aproximado_otra_fecha_porcentaje", (r) => r.time_filled_pct || 0],
         ["area_valida_km2", (r) => r.valid_km2],
         ["agua_abierta_km2", (r) => r.water_km2],
         ["vegetacion_inundada_km2", (r) => r.floodveg_km2],
@@ -99,6 +100,8 @@
         ["hh_promedio_db", (r) => r.hh_mean_db],
         ["hv_promedio_db", (r) => r.hv_mean_db],
         ["control_calidad", (r) => r.qc],
+        ["porcentaje_rellenado", (r) => r.filled_pct ?? ""],
+        ["motivo_rechazo_qc", (r) => r.qc_reason ?? ""],
         ["escena_nisar", (r) => r.scene]
       ];
       // BOM UTF-8 y punto y coma para lectura sencilla en Excel en español.

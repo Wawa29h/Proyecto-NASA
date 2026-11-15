@@ -1,0 +1,73 @@
+{
+ "model": "MangroveNet (U-Net, 10 canales NISAR HH/HV temporales)",
+ "role": "prueba",
+ "selection": "mejor modelo elegido con la franja este (20 %) de jiquilisco y cerron; Barra solo se midió al final",
+ "train_sites": [
+  "jiquilisco",
+  "cerron"
+ ],
+ "val_site": "barra",
+ "labels": "ESA WorldCover 2021",
+ "classes": [
+  "agua",
+  "manglar",
+  "árboles",
+  "cultivo",
+  "pasto/arbusto",
+  "suelo/urbano"
+ ],
+ "colors": [
+  "#1e88e5",
+  "#00965a",
+  "#78c850",
+  "#f0c83c",
+  "#beaa78",
+  "#c85046"
+ ],
+ "metrics_vs_worldcover": {
+  "accuracy": 0.808,
+  "per_class": {
+   "agua": {
+    "f1": 0.992,
+    "iou": 0.983,
+    "precision": 0.985,
+    "recall": 0.998
+   },
+   "manglar": {
+    "f1": 0.816,
+    "iou": 0.69,
+    "precision": 0.839,
+    "recall": 0.795
+   },
+   "árboles": {
+    "f1": 0.705,
+    "iou": 0.545,
+    "precision": 0.723,
+    "recall": 0.689
+   },
+   "cultivo": {
+    "f1": 0.49,
+    "iou": 0.324,
+    "precision": 0.568,
+    "recall": 0.431
+   },
+   "pasto/arbusto": {
+    "f1": 0.739,
+    "iou": 0.586,
+    "precision": 0.699,
+    "recall": 0.783
+   },
+   "suelo/urbano": {
+    "f1": 0.364,
+    "iou": 0.222,
+    "precision": 0.421,
+    "recall": 0.321
+   }
+  },
+  "macro_f1": 0.6843
+ },
+ "mangrove_km2_pred": 23.13,
+ "mangrove_km2_worldcover": 24.44,
+ "minutes_trained": 15.0,
+ "steps": 8102
+}

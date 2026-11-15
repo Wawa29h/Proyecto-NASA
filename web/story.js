@@ -13,7 +13,7 @@
   // Modo científico (idea de Keylen, rama feature/modo-cientifico): títulos científicos, título
   // "MANGLO | Modo Científico" y las tarjetas de análisis pasan a la cuadrícula "Análisis científico detallado"
   // debajo del mapa, con exportación de datos (CSV) y gráficas (PNG). Al apagarlo todo vuelve a su lugar.
-  const SCI_CARDS = ["rhythmCard", "caneCard", "histCard", "carbonCard", "pondsCard", "mangCard", "lakeCard", "mlCard", "wqCard", "valCard", "probeCard"];
+  const SCI_CARDS = ["rhythmCard", "caneCard", "histCard", "carbonCard", "pondsCard", "mangCard", "lakeCard", "mlCard", "aiCard", "wqCard", "valCard", "probeCard", "interpCard"];
   const homes = {};
   function placeScienceCards(on) {
     const grid = $("analysisGrid");
@@ -33,6 +33,17 @@
   const setExpert = (on) => { document.body.classList.toggle("expert", on); sw.checked = on; store.set("expert", on ? "1" : "0"); placeScienceCards(on); };
   setExpert(store.get("expert") === "1");
   sw.onchange = () => setExpert(sw.checked);
+
+  // ---------- primera vista simple: los hallazgos extra quedan plegados tras "Ver más" ----------
+  const moreBtn = $("moreToggle");
+  function setMore(on) {
+    document.body.classList.toggle("show-more", on);
+    if (!moreBtn) return;
+    moreBtn.setAttribute("aria-expanded", on ? "true" : "false");
+    moreBtn.querySelector("span").textContent = on ? "Ver menos" : "Ver más hallazgos";
+    moreBtn.querySelector("i").textContent = on ? "↑" : "↓";
+  }
+  if (moreBtn) moreBtn.onclick = () => setMore(!document.body.classList.contains("show-more"));
 
   // ---------- números que cuentan solos ----------
   function countUp(el, ms = 900) {
@@ -129,6 +140,7 @@
   function focusCard(id) {
     const el = $(id);
     if (!el || el.hidden) return;
+    if (el.classList.contains("more-card")) setMore(true);   // el recorrido abre los hallazgos plegados
     el.classList.add("in");
     el.scrollIntoView({ behavior: "smooth", block: "center" });
     el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
@@ -319,7 +331,7 @@
 
   // ---------- alerta de lirio por zonas ----------
   let zoneLayers = {};
-  const levelColor = { alto: "#ff6b5b", medio: "#ffc542", bajo: "#2fd6a3" };
+  const levelColor = { alto: "#ff6b5b", medio: "#ffc542", bajo: "#149BA5" };
   function drawZones() {
     if (!ALERTS) return;
     ALERTS.zones.forEach((z) => {

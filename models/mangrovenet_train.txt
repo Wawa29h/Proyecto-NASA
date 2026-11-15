@@ -1,0 +1,48 @@
+dispositivo: NVIDIA GeForce RTX 5070 Ti Laptop GPU
+  barra: 722x1000 px, etiquetados 100%
+  jiquilisco: 889x2222 px, etiquetados 100%
+  cerron: 1111x1889 px, etiquetados 100%
+paso    200 |   0.6 min | loss 0.848 | franja apartada: exactitud 0.552  F1 manglar 0.903  F1 medio 0.584  <- mejor, guardado
+paso    400 |   1.0 min | loss 0.639 | franja apartada: exactitud 0.561  F1 manglar 0.925  F1 medio 0.608  <- mejor, guardado
+paso    600 |   1.3 min | loss 0.573 | franja apartada: exactitud 0.678  F1 manglar 0.859  F1 medio 0.660  <- mejor, guardado
+paso    800 |   1.7 min | loss 0.542 | franja apartada: exactitud 0.730  F1 manglar 0.888  F1 medio 0.688  <- mejor, guardado
+paso   1000 |   2.1 min | loss 0.504 | franja apartada: exactitud 0.751  F1 manglar 0.933  F1 medio 0.710  <- mejor, guardado
+paso   1200 |   2.4 min | loss 0.490 | franja apartada: exactitud 0.720  F1 manglar 0.877  F1 medio 0.682
+paso   1400 |   2.8 min | loss 0.464 | franja apartada: exactitud 0.722  F1 manglar 0.926  F1 medio 0.705
+paso   1600 |   3.2 min | loss 0.451 | franja apartada: exactitud 0.712  F1 manglar 0.908  F1 medio 0.697
+paso   1800 |   3.5 min | loss 0.465 | franja apartada: exactitud 0.709  F1 manglar 0.925  F1 medio 0.672
+paso   2000 |   3.9 min | loss 0.440 | franja apartada: exactitud 0.742  F1 manglar 0.926  F1 medio 0.713  <- mejor, guardado
+paso   2200 |   4.3 min | loss 0.426 | franja apartada: exactitud 0.744  F1 manglar 0.939  F1 medio 0.717  <- mejor, guardado
+paso   2400 |   4.6 min | loss 0.428 | franja apartada: exactitud 0.751  F1 manglar 0.934  F1 medio 0.724  <- mejor, guardado
+paso   2600 |   5.0 min | loss 0.428 | franja apartada: exactitud 0.758  F1 manglar 0.942  F1 medio 0.729  <- mejor, guardado
+paso   2800 |   5.4 min | loss 0.433 | franja apartada: exactitud 0.739  F1 manglar 0.940  F1 medio 0.716
+paso   3000 |   5.7 min | loss 0.441 | franja apartada: exactitud 0.753  F1 manglar 0.938  F1 medio 0.723
+paso   3200 |   6.1 min | loss 0.415 | franja apartada: exactitud 0.758  F1 manglar 0.921  F1 medio 0.730  <- mejor, guardado
+paso   3400 |   6.5 min | loss 0.404 | franja apartada: exactitud 0.679  F1 manglar 0.940  F1 medio 0.665
+paso   3600 |   6.8 min | loss 0.401 | franja apartada: exactitud 0.740  F1 manglar 0.886  F1 medio 0.715
+paso   3800 |   7.2 min | loss 0.403 | franja apartada: exactitud 0.752  F1 manglar 0.944  F1 medio 0.723
+paso   4000 |   7.6 min | loss 0.392 | franja apartada: exactitud 0.758  F1 manglar 0.885  F1 medio 0.727
+paso   4200 |   7.9 min | loss 0.390 | franja apartada: exactitud 0.733  F1 manglar 0.929  F1 medio 0.714
+paso   4400 |   8.3 min | loss 0.386 | franja apartada: exactitud 0.741  F1 manglar 0.942  F1 medio 0.718
+paso   4600 |   8.6 min | loss 0.386 | franja apartada: exactitud 0.754  F1 manglar 0.943  F1 medio 0.721
+paso   4800 |   9.0 min | loss 0.377 | franja apartada: exactitud 0.755  F1 manglar 0.925  F1 medio 0.724
+paso   5000 |   9.3 min | loss 0.377 | franja apartada: exactitud 0.746  F1 manglar 0.939  F1 medio 0.720
+paso   5200 |   9.7 min | loss 0.375 | franja apartada: exactitud 0.753  F1 manglar 0.931  F1 medio 0.723
+paso   5400 |  10.1 min | loss 0.381 | franja apartada: exactitud 0.756  F1 manglar 0.940  F1 medio 0.727
+paso   5600 |  10.4 min | loss 0.372 | franja apartada: exactitud 0.753  F1 manglar 0.930  F1 medio 0.728
+paso   5800 |  10.8 min | loss 0.366 | franja apartada: exactitud 0.743  F1 manglar 0.938  F1 medio 0.714
+paso   6000 |  11.2 min | loss 0.363 | franja apartada: exactitud 0.746  F1 manglar 0.911  F1 medio 0.718
+paso   6200 |  11.5 min | loss 0.365 | franja apartada: exactitud 0.755  F1 manglar 0.926  F1 medio 0.722
+paso   6400 |  11.9 min | loss 0.363 | franja apartada: exactitud 0.750  F1 manglar 0.925  F1 medio 0.724
+paso   6600 |  12.3 min | loss 0.363 | franja apartada: exactitud 0.754  F1 manglar 0.937  F1 medio 0.733  <- mejor, guardado
+paso   6800 |  12.6 min | loss 0.356 | franja apartada: exactitud 0.754  F1 manglar 0.927  F1 medio 0.729
+paso   7000 |  13.0 min | loss 0.357 | franja apartada: exactitud 0.754  F1 manglar 0.930  F1 medio 0.726
+paso   7200 |  13.3 min | loss 0.355 | franja apartada: exactitud 0.756  F1 manglar 0.928  F1 medio 0.730
+paso   7400 |  13.7 min | loss 0.355 | franja apartada: exactitud 0.751  F1 manglar 0.926  F1 medio 0.728
+paso   7600 |  14.1 min | loss 0.356 | franja apartada: exactitud 0.752  F1 manglar 0.929  F1 medio 0.729
+paso   7800 |  14.4 min | loss 0.352 | franja apartada: exactitud 0.751  F1 manglar 0.928  F1 medio 0.726
+paso   8000 |  14.8 min | loss 0.348 | franja apartada: exactitud 0.751  F1 manglar 0.924  F1 medio 0.727
+barra (prueba): exactitud 0.808 | F1 manglar 0.816 | manglar 23.13 km2 (WorldCover 24.44)
+jiquilisco (entrenamiento): exactitud 0.872 | F1 manglar 0.958 | manglar 180.64 km2 (WorldCover 175.49)
+cerron (entrenamiento): exactitud 0.764 | F1 manglar - | manglar 0.28 km2 (WorldCover 0.0)
+listo: C:\Users\wawa\nisar-barra-santiago\models\mangrovenet_log.csv

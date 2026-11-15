@@ -1,0 +1,79 @@
+dispositivo: NVIDIA GeForce RTX 5070 Ti Laptop GPU
+  barra: 10 pares radar-foto: 2025-12-25~2025-12-29, 2026-01-06~2025-12-29, 2026-01-18~2026-01-18, 2026-07-05~2026-06-22, 2026-07-17~2026-07-22, 2026-08-10~2026-08-11, 2026-08-22~2026-08-11, 2026-09-03~2026-09-10, 2026-09-15~2026-09-10, 2026-10-21~2026-10-27
+  cerron: 11 pares radar-foto: 2025-12-25~2025-12-29, 2026-01-06~2026-01-08, 2026-01-18~2026-01-08, 2026-07-05~2026-07-07, 2026-07-17~2026-07-07, 2026-08-10~2026-08-13, 2026-08-22~2026-08-13, 2026-09-03~2026-09-10, 2026-09-15~2026-09-10, 2026-10-21~2026-10-27, 2026-11-02~2026-10-27
+paso    300 |   1.2 min | error entrenando  20.2 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 22.3 dB  <- mejor, guardado
+paso    600 |   2.5 min | error entrenando  14.1 | franja nunca vista: error  13.0/255 (adivinar color medio:  16.9) PSNR 22.1 dB
+paso    900 |   3.8 min | error entrenando  13.1 | franja nunca vista: error  13.1/255 (adivinar color medio:  16.9) PSNR 21.7 dB
+paso   1200 |   5.0 min | error entrenando  12.8 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 21.9 dB
+paso   1500 |   6.1 min | error entrenando  12.3 | franja nunca vista: error  12.0/255 (adivinar color medio:  16.9) PSNR 22.4 dB  <- mejor, guardado
+paso   1800 |   7.4 min | error entrenando  12.3 | franja nunca vista: error  11.8/255 (adivinar color medio:  16.9) PSNR 22.5 dB  <- mejor, guardado
+paso   2100 |   8.6 min | error entrenando  11.9 | franja nunca vista: error  12.1/255 (adivinar color medio:  16.9) PSNR 22.3 dB
+paso   2400 |   9.8 min | error entrenando  11.8 | franja nunca vista: error  12.3/255 (adivinar color medio:  16.9) PSNR 22.5 dB
+paso   2700 |  10.8 min | error entrenando  11.6 | franja nunca vista: error  12.1/255 (adivinar color medio:  16.9) PSNR 22.5 dB
+paso   3000 |  11.9 min | error entrenando  11.5 | franja nunca vista: error  11.5/255 (adivinar color medio:  16.9) PSNR 22.7 dB  <- mejor, guardado
+paso   3300 |  13.0 min | error entrenando  11.5 | franja nunca vista: error  11.6/255 (adivinar color medio:  16.9) PSNR 22.5 dB
+paso   3600 |  14.2 min | error entrenando  11.5 | franja nunca vista: error  13.2/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso   3900 |  15.6 min | error entrenando  12.4 | franja nunca vista: error  23.8/255 (adivinar color medio:  16.9) PSNR 17.1 dB  [GAN]
+paso   4200 |  16.9 min | error entrenando  13.1 | franja nunca vista: error  14.0/255 (adivinar color medio:  16.9) PSNR 21.2 dB  [GAN]
+paso   4500 |  18.1 min | error entrenando  13.4 | franja nunca vista: error  14.9/255 (adivinar color medio:  16.9) PSNR 20.6 dB  [GAN]
+paso   4800 |  19.4 min | error entrenando  13.2 | franja nunca vista: error  14.0/255 (adivinar color medio:  16.9) PSNR 21.2 dB  [GAN]
+paso   5100 |  20.6 min | error entrenando  13.2 | franja nunca vista: error  13.3/255 (adivinar color medio:  16.9) PSNR 21.5 dB  [GAN]
+paso   5400 |  21.9 min | error entrenando  13.1 | franja nunca vista: error  13.9/255 (adivinar color medio:  16.9) PSNR 20.9 dB  [GAN]
+paso   5700 |  23.1 min | error entrenando  12.9 | franja nunca vista: error  14.7/255 (adivinar color medio:  16.9) PSNR 21.1 dB  [GAN]
+paso   6000 |  24.4 min | error entrenando  12.8 | franja nunca vista: error  13.5/255 (adivinar color medio:  16.9) PSNR 21.7 dB  [GAN]
+paso   6300 |  25.6 min | error entrenando  13.0 | franja nunca vista: error  25.3/255 (adivinar color medio:  16.9) PSNR 17.9 dB  [GAN]
+paso   6600 |  26.9 min | error entrenando  12.6 | franja nunca vista: error  13.2/255 (adivinar color medio:  16.9) PSNR 21.6 dB  [GAN]
+paso   6900 |  28.1 min | error entrenando  12.7 | franja nunca vista: error  13.9/255 (adivinar color medio:  16.9) PSNR 21.4 dB  [GAN]
+paso   7200 |  29.4 min | error entrenando  12.3 | franja nunca vista: error  13.2/255 (adivinar color medio:  16.9) PSNR 21.3 dB  [GAN]
+paso   7500 |  30.6 min | error entrenando  12.4 | franja nunca vista: error  13.1/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso   7800 |  31.8 min | error entrenando  12.3 | franja nunca vista: error  13.6/255 (adivinar color medio:  16.9) PSNR 21.4 dB  [GAN]
+paso   8100 |  33.1 min | error entrenando  12.2 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso   8400 |  34.4 min | error entrenando  11.8 | franja nunca vista: error  14.0/255 (adivinar color medio:  16.9) PSNR 21.5 dB  [GAN]
+paso   8700 |  35.6 min | error entrenando  11.9 | franja nunca vista: error  13.8/255 (adivinar color medio:  16.9) PSNR 21.4 dB  [GAN]
+paso   9000 |  36.9 min | error entrenando  12.0 | franja nunca vista: error  14.3/255 (adivinar color medio:  16.9) PSNR 20.9 dB  [GAN]
+paso   9300 |  38.1 min | error entrenando  11.8 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso   9600 |  39.4 min | error entrenando  11.8 | franja nunca vista: error  14.2/255 (adivinar color medio:  16.9) PSNR 21.5 dB  [GAN]
+paso   9900 |  40.6 min | error entrenando  11.7 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 21.9 dB  [GAN]
+paso  10200 |  41.9 min | error entrenando  11.6 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso  10500 |  43.1 min | error entrenando  11.7 | franja nunca vista: error  15.2/255 (adivinar color medio:  16.9) PSNR 21.1 dB  [GAN]
+paso  10800 |  44.4 min | error entrenando  11.4 | franja nunca vista: error  13.7/255 (adivinar color medio:  16.9) PSNR 21.3 dB  [GAN]
+paso  11100 |  45.6 min | error entrenando  11.6 | franja nunca vista: error  13.9/255 (adivinar color medio:  16.9) PSNR 21.4 dB  [GAN]
+paso  11400 |  46.8 min | error entrenando  11.5 | franja nunca vista: error  12.9/255 (adivinar color medio:  16.9) PSNR 21.7 dB  [GAN]
+paso  11700 |  48.1 min | error entrenando  11.2 | franja nunca vista: error  13.3/255 (adivinar color medio:  16.9) PSNR 21.5 dB  [GAN]
+paso  12000 |  49.4 min | error entrenando  11.2 | franja nunca vista: error  12.9/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso  12300 |  50.6 min | error entrenando  11.2 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 21.9 dB  [GAN]
+paso  12600 |  51.8 min | error entrenando  11.0 | franja nunca vista: error  13.2/255 (adivinar color medio:  16.9) PSNR 21.9 dB  [GAN]
+paso  12900 |  53.1 min | error entrenando  11.0 | franja nunca vista: error  12.8/255 (adivinar color medio:  16.9) PSNR 21.9 dB  [GAN]
+paso  13200 |  54.3 min | error entrenando  11.0 | franja nunca vista: error  12.6/255 (adivinar color medio:  16.9) PSNR 22.1 dB  [GAN]
+paso  13500 |  55.6 min | error entrenando  10.8 | franja nunca vista: error  13.2/255 (adivinar color medio:  16.9) PSNR 21.6 dB  [GAN]
+paso  13800 |  56.8 min | error entrenando  10.9 | franja nunca vista: error  13.1/255 (adivinar color medio:  16.9) PSNR 21.7 dB  [GAN]
+paso  14100 |  58.1 min | error entrenando  10.8 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso  14400 |  59.3 min | error entrenando  10.8 | franja nunca vista: error  13.4/255 (adivinar color medio:  16.9) PSNR 21.7 dB  [GAN]
+paso  14700 |  60.6 min | error entrenando  10.6 | franja nunca vista: error  14.3/255 (adivinar color medio:  16.9) PSNR 20.9 dB  [GAN]
+paso  15000 |  61.9 min | error entrenando  10.6 | franja nunca vista: error  13.0/255 (adivinar color medio:  16.9) PSNR 21.7 dB  [GAN]
+paso  15300 |  63.1 min | error entrenando  10.5 | franja nunca vista: error  12.9/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso  15600 |  64.3 min | error entrenando  10.5 | franja nunca vista: error  13.0/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso  15900 |  65.6 min | error entrenando  10.3 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso  16200 |  66.8 min | error entrenando  10.4 | franja nunca vista: error  13.1/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso  16500 |  68.1 min | error entrenando  10.3 | franja nunca vista: error  13.2/255 (adivinar color medio:  16.9) PSNR 21.7 dB  [GAN]
+paso  16800 |  69.3 min | error entrenando  10.4 | franja nunca vista: error  12.9/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso  17100 |  70.5 min | error entrenando  10.4 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso  17400 |  71.8 min | error entrenando  10.2 | franja nunca vista: error  13.4/255 (adivinar color medio:  16.9) PSNR 21.6 dB  [GAN]
+paso  17700 |  73.0 min | error entrenando  10.2 | franja nunca vista: error  13.0/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso  18000 |  74.3 min | error entrenando  10.2 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso  18300 |  75.5 min | error entrenando  10.0 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso  18600 |  76.8 min | error entrenando  10.0 | franja nunca vista: error  12.9/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso  18900 |  78.0 min | error entrenando  10.2 | franja nunca vista: error  12.8/255 (adivinar color medio:  16.9) PSNR 21.9 dB  [GAN]
+paso  19200 |  79.3 min | error entrenando  10.1 | franja nunca vista: error  13.4/255 (adivinar color medio:  16.9) PSNR 21.5 dB  [GAN]
+paso  19500 |  80.5 min | error entrenando  10.1 | franja nunca vista: error  13.0/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso  19800 |  81.8 min | error entrenando   9.9 | franja nunca vista: error  12.8/255 (adivinar color medio:  16.9) PSNR 21.9 dB  [GAN]
+paso  20100 |  83.0 min | error entrenando   9.9 | franja nunca vista: error  12.8/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso  20400 |  84.2 min | error entrenando   9.9 | franja nunca vista: error  12.9/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso  20700 |  85.5 min | error entrenando  10.0 | franja nunca vista: error  12.8/255 (adivinar color medio:  16.9) PSNR 22.0 dB  [GAN]
+paso  21000 |  86.7 min | error entrenando   9.9 | franja nunca vista: error  12.7/255 (adivinar color medio:  16.9) PSNR 21.9 dB  [GAN]
+paso  21300 |  88.0 min | error entrenando   9.9 | franja nunca vista: error  12.9/255 (adivinar color medio:  16.9) PSNR 21.8 dB  [GAN]
+paso  21600 |  89.2 min | error entrenando   9.9 | franja nunca vista: error  12.8/255 (adivinar color medio:  16.9) PSNR 21.9 dB  [GAN]
+mejor modelo: error 11.5/255 en la franja nunca vista (color medio: 16.9), PSNR 22.7 dB
+  barra: 13 imágenes
+  jiquilisco: 13 imágenes
+  cerron: 14 imágenes
