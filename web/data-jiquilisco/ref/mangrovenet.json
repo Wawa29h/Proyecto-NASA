@@ -1,6 +1,7 @@
 {
  "model": "MangroveNet (U-Net, 10 canales NISAR HH/HV temporales)",
  "role": "entrenamiento",
+ "selection": "mejor modelo elegido con la franja este (20 %) de jiquilisco y cerron; Barra solo se midió al final",
  "train_sites": [
   "jiquilisco",
   "cerron"
@@ -24,50 +25,49 @@
   "#c85046"
  ],
  "metrics_vs_worldcover": {
-  "accuracy": 0.8497,
+  "accuracy": 0.8717,
   "per_class": {
    "agua": {
-    "f1": 0.976,
-    "iou": 0.953,
-    "precision": 0.985,
-    "recall": 0.967
+    "f1": 0.983,
+    "iou": 0.967,
+    "precision": 0.983,
+    "recall": 0.983
    },
    "manglar": {
-    "f1": 0.943,
-    "iou": 0.892,
-    "precision": 0.914,
-    "recall": 0.973
+    "f1": 0.958,
+    "iou": 0.92,
+    "precision": 0.945,
+    "recall": 0.972
    },
    "árboles": {
-    "f1": 0.773,
-    "iou": 0.629,
-    "precision": 0.767,
-    "recall": 0.778
+    "f1": 0.807,
+    "iou": 0.676,
+    "precision": 0.799,
+    "recall": 0.814
    },
    "cultivo": {
-    "f1": 0.776,
-    "iou": 0.633,
-    "precision": 0.777,
-    "recall": 0.774
+    "f1": 0.789,
+    "iou": 0.651,
+    "precision": 0.751,
+    "recall": 0.831
    },
    "pasto/arbusto": {
-    "f1": 0.72,
-    "iou": 0.562,
-    "precision": 0.772,
-    "recall": 0.674
+    "f1": 0.746,
+    "iou": 0.595,
+    "precision": 0.796,
+    "recall": 0.702
    },
    "suelo/urbano": {
-    "f1": 0.383,
-    "iou": 0.237,
-    "precision": 0.268,
-    "recall": 0.672
+    "f1": 0.532,
+    "iou": 0.362,
+    "precision": 0.467,
+    "recall": 0.617
    }
   },
-  "macro_f1": 0.7616
+  "macro_f1": 0.8024
  },
- "mangrove_km2_pred": 186.85,
+ "mangrove_km2_pred": 180.64,
  "mangrove_km2_worldcover": 175.49,
- "minutes_trained": 6.1,
- "steps": 3200,
- "note": "mejor modelo según la validación en Barra (de 47 min de entrenamiento)"
+ "minutes_trained": 15.0,
+ "steps": 8102
 }

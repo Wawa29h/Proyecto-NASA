@@ -6,7 +6,9 @@ Si la red aprende a sacar el mapa de cobertura desde el radar, MANGLO puede vigi
 Entradas por píxel (de todas las pasadas NISAR del sitio): media, desviación, percentil 10 y 90 de HH y HV,
 media de HH-HV y % de pasadas con dato  -> 10 canales.
 Etiquetas: ESA WorldCover 2021 (10 m) agrupado en 6 clases.
-Entrena en Jiquilisco + Cerrón Grande y se VALIDA en Barra de Santiago (un sitio que nunca vio): así medimos si generaliza.
+Entrena en Jiquilisco + Cerrón Grande (sin su franja este). El mejor modelo se ELIGE con esa franja apartada,
+y al final se PRUEBA una sola vez en Barra de Santiago, que no se usa para nada durante el entrenamiento.
+Así el número de Barra no está inflado por haber elegido el modelo con él.
 
 Uso:
   python scripts/train_mangrovenet.py --minutes 2      # prueba corta
@@ -26,7 +28,8 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITES = {"barra": "web/data", "jiquilisco": "web/data-jiquilisco", "cerron": "web/data-cerron"}
-TRAIN, VAL = ["jiquilisco", "cerron"], "barra"
+TRAIN, VAL = ["jiquilisco", "cerron"], "barra"   # VAL = sitio de PRUEBA: solo se mide al final, nunca para elegir el modelo
+SEL_FRAC = 0.2   # franja este de cada sitio de entrenamiento: no se entrena con ella; sirve para elegir el mejor modelo
 CLASSES = ["agua", "manglar", "árboles", "cultivo", "pasto/arbusto", "suelo/urbano"]
 COLORS = [(30, 136, 229), (0, 150, 90), (120, 200, 80), (240, 200, 60), (190, 170, 120), (200, 80, 70)]
 WC2CLS = {80: 0, 95: 1, 10: 2, 40: 3, 20: 4, 30: 4, 90: 4, 50: 5, 60: 5}
@@ -154,7 +157,7 @@ def main():
     os.makedirs(os.path.join(ROOT, "models"), exist_ok=True)
     log_p = os.path.join(ROOT, "models", "mangrovenet_log.csv")
     log = open(os.devnull if a.predict_only else log_p, "w", encoding="utf-8")
-    log.write("paso,minuto,loss,val_accuracy,val_macro_f1,val_manglar_f1,val_agua_f1\n")
+    log.write("paso,minuto,loss,sel_accuracy,sel_macro_f1,sel_manglar_f1,sel_agua_f1\n")
     best, t0, step, run_loss = -1, time.time(), 0, []
     P = a.patch
 
@@ -163,7 +166,7 @@ def main():
         for _ in range(a.batch):
             X, Y, _ = data[TRAIN[rng.integers(len(TRAIN))]]
             for _try in range(10):
-                y0, x0 = rng.integers(0, Y.shape[0] - P), rng.integers(0, Y.shape[1] - P)
+                y0, x0 = rng.integers(0, Y.shape[0] - P), rng.integers(0, int(Y.shape[1] * (1 - SEL_FRAC)) - P)
                 yy = Y[y0:y0 + P, x0:x0 + P]
                 if (yy != IGNORE).mean() > 0.5:
                     break
@@ -177,7 +180,16 @@ def main():
             ys.append(np.ascontiguousarray(yy))
         return torch.from_numpy(np.stack(xs)).to(dev), torch.from_numpy(np.stack(ys)).long().to(dev)
 
-    Xv, Yv, _ = data[VAL]
+    def select_score():
+        """F1 medio en las franjas este apartadas de los sitios de entrenamiento (nunca se entrena con ellas)."""
+        preds, ys = [], []
+        for s_ in TRAIN:
+            X, Y, _ = data[s_]
+            c0 = int(Y.shape[1] * (1 - SEL_FRAC))
+            m0 = max(0, c0 - 64)                         # margen para que la red vea contexto
+            preds.append(predict(model, X[:, :, m0:], dev).argmax(0)[:, c0 - m0:].ravel())
+            ys.append(Y[:, c0:].ravel())
+        return metrics(np.concatenate(preds), np.concatenate(ys))
     while not a.predict_only and time.time() - t0 < total_s:
         model.train()
         frac = (time.time() - t0) / total_s
@@ -192,7 +204,7 @@ def main():
         run_loss.append(loss.item())
         step += 1
         if step % a.eval_every == 0:
-            m = metrics(predict(model, Xv, dev).argmax(0), Yv)
+            m = select_score()
             pc = m["per_class"]
             mins = (time.time() - t0) / 60
             log.write(f"{step},{mins:.1f},{np.mean(run_loss):.4f},{m['accuracy']},{m['macro_f1']},"
@@ -203,7 +215,7 @@ def main():
                 best = m["macro_f1"]
                 torch.save(model.state_dict(), os.path.join(ROOT, "models", "mangrovenet.pt"))
                 tag = "  <- mejor, guardado"
-            print(f"paso {step:6d} | {mins:5.1f} min | loss {np.mean(run_loss):.3f} | Barra (nunca vista): "
+            print(f"paso {step:6d} | {mins:5.1f} min | loss {np.mean(run_loss):.3f} | franja apartada: "
                   f"exactitud {m['accuracy']:.3f}  F1 manglar {pc['manglar']['f1']:.3f}  F1 medio {m['macro_f1']:.3f}{tag}", flush=True)
             run_loss = []
     log.close()
@@ -227,7 +239,8 @@ def main():
         if bbox:
             lat = np.radians((bbox[1] + bbox[3]) / 2)
             px_km2 = (bbox[2] - bbox[0]) * 111.32 * np.cos(lat) * (bbox[3] - bbox[1]) * 110.57 / pred.size
-        info = {"model": "MangroveNet (U-Net, 10 canales NISAR HH/HV temporales)", "role": "validación" if s == VAL else "entrenamiento",
+        info = {"model": "MangroveNet (U-Net, 10 canales NISAR HH/HV temporales)", "role": "prueba" if s == VAL else "entrenamiento",
+                "selection": "mejor modelo elegido con la franja este (20 %) de " + " y ".join(TRAIN) + "; Barra solo se midió al final",
                 "train_sites": TRAIN, "val_site": VAL, "labels": "ESA WorldCover 2021", "classes": CLASSES,
                 "colors": ["#%02x%02x%02x" % c for c in COLORS], "metrics_vs_worldcover": m,
                 "mangrove_km2_pred": round(float(((pred == 1) & valid).sum() * px_km2), 2) if px_km2 else None,

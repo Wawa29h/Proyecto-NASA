@@ -420,7 +420,7 @@ const pctTxt = (x) => Math.round(x * 100) + " %";
 function aiInfo() {
   const m = MNET.metrics_vs_worldcover, mg = m.per_class.manglar;
   const leg = MNET.classes.map((c, i) => `<span style="color:${MNET.colors[i]}">■</span> ${c}`).join(" · ");
-  const test = MNET.role === "validación";
+  const test = MNET.role === "prueba" || MNET.role === "validación";
   return `${leg}<br>` + (test
     ? `<b>Esta IA nunca vio este lugar:</b> aprendió en ${MNET.train_sites.map((s) => s === "jiquilisco" ? "Jiquilisco" : "Cerrón Grande").join(" y ")} y aquí la probamos. `
     : `<b>Aquí la IA aprendió</b> (no es una prueba independiente: la prueba es Barra de Santiago). `) +
@@ -430,19 +430,19 @@ function aiInfo() {
 }
 function buildAiCard() {
   const m = MNET.metrics_vs_worldcover, mg = m.per_class.manglar;
-  const test = MNET.role === "validación";
+  const test = MNET.role === "prueba" || MNET.role === "validación";
   $("aiKpis").innerHTML =
     (mg ? kpi(pctTxt(mg.f1), `acierto reconociendo el manglar${test ? " en un lugar que la IA nunca vio" : " (aquí aprendió; la prueba real es Barra)"}`) +
           kpi(`${MNET.mangrove_km2_pred} km²`, `de manglar según la IA (ESA: ${MNET.mangrove_km2_worldcover} km²)`) : "") +
     kpi(pctTxt(m.accuracy), "del mapa clasificado igual que la ESA") +
-    (RFOTO ? kpi(`${RFOTO.val_error_0_255}/255`, `error del radar→foto en zona nunca vista (adivinar el color medio: ${RFOTO.baseline_mean_color_error})`) : "");
+    (RFOTO ? kpi(`${RFOTO.val_error_0_255}/255`, `error del radar→foto en la zona no usada para entrenar (pintar el color medio: ${RFOTO.baseline_mean_color_error})`) : "");
   $("aiHint").innerHTML = `<b>1. MangroveNet</b> dibuja el mapa de agua, manglar, árboles y caña usando solo radar: así se puede vigilar cada 12 días aunque esté nublado.` +
     (RFOTO ? ` <b>2. Radar → foto</b> convierte cada pasada en una imagen parecida a una foto satelital (aproximada, no real).` : "") +
     ` Las dos coinciden: el manglar está estable y lo que más cambia está en los bordes (caña, suelos).`;
   $("aiTable").innerHTML = `<table class="ai-table"><tr><th>Clase</th><th>F1</th><th>Precisión</th><th>Exhaustividad</th></tr>` +
     Object.entries(m.per_class).map(([c, v]) => `<tr><td>${c}</td><td>${v.f1}</td><td>${v.precision}</td><td>${v.recall}</td></tr>`).join("") +
-    `</table><p class="hint">U-Net con 10 canales temporales de NISAR (HH, HV). Etiquetas: ESA WorldCover 2021. Entrenada en ${MNET.train_sites.join(" + ")}, validada en ${MNET.val_site}. Mejor modelo tras ${MNET.minutes_trained} min en GPU.` +
-    (RFOTO ? ` Radar→foto: U-Net + PatchGAN (pix2pix), PSNR ${RFOTO.val_psnr_db} dB en el 20 % este nunca usado.` : "") + `</p>`;
+    `</table><p class="hint">U-Net con 10 canales temporales de NISAR (HH, HV). Etiquetas: ESA WorldCover 2021. Entrenada en ${MNET.train_sites.join(" + ")} (sin su franja este, que sirvió para elegir el modelo); ${MNET.val_site} solo se usó como prueba final. Mejor modelo tras ${MNET.minutes_trained} min en GPU.` +
+    (RFOTO ? ` Radar→foto: U-Net + PatchGAN (pix2pix), PSNR ${RFOTO.val_psnr_db} dB en el 20 % este no usado para entrenar (también sirvió para elegir el modelo: algo optimista).` : "") + `</p>`;
   $("aiPhotoGo").hidden = !RFOTO;
   $("aiPhotoGo").onclick = () => { setMode("single"); $("layerPhotoBtn").click(); $("map").scrollIntoView({ behavior: "smooth", block: "center" }); };
   $("aiCard").hidden = false;

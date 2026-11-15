@@ -1,13 +1,20 @@
-# Latido del Manglar / Pulso del Embalse — NASA Space Apps 2026
+# MANGLO — NASA Space Apps 2026 · Reto NISAR
 
-App web interactiva que usa radar **NISAR** (NASA-ISRO, banda L) como eje, junto con otras misiones de
-NASA y ESA, para ver cómo cambian dos ecosistemas de agua de **El Salvador** a lo largo de un año
-(dic-2025 → nov-2026), separando el ritmo natural de la presión humana.
+**Demo:** https://wawa29h.github.io/Proyecto-NASA/  ·  directo a un sitio: `?site=barra`, `?site=jiquilisco`, `?site=cerron`
+
+App web interactiva que usa el radar **NISAR** (NASA-ISRO, banda L) como eje, junto con otras misiones de
+NASA y ESA, para vigilar los **manglares de El Salvador** a lo largo de un año (dic-2025 → nov-2026):
+separa el ritmo natural (lluvias) de la presión humana (caña, quemas, estanques). Tiene un modo sencillo
+para cualquier persona y un **modo científico** con métricas, validación y exportación CSV/PNG.
+
+**Mensaje principal:** el manglar está estable (30 años de radar banda L lo confirman), la presión está
+alrededor, y NISAR lo puede vigilar cada 12 días aunque esté nublado.
 
 | Sitio | Qué se estudia | Misiones |
 |---|---|---|
-| **Barra de Santiago** (Ahuachapán, sitio Ramsar) | Estero, manglar inundado, cultivos de caña alrededor | NISAR, Sentinel-2, ESA WorldCover, lluvia NASA |
-| **Embalse Cerrón Grande** (Chalatenango/Cabañas) | Agua abierta vs plantas (lirio y orilla expuesta), nivel, temperatura, color del agua | NISAR, **SWOT**, **ECOSTRESS**, lluvia NASA (GPM/POWER), Sentinel-2, WorldCover |
+| **Barra de Santiago** (Ahuachapán, sitio Ramsar) · sitio principal | Estero, manglar, caña y quemas alrededor | NISAR, Sentinel-2, ESA WorldCover, Global Mangrove Watch (JAXA), biomasa NASA, ECOSTRESS, lluvia NASA |
+| **Bahía de Jiquilisco** (Usulután) · comparación | El manglar más grande del país, estanques de camarón y sal | NISAR (2 órbitas), Sentinel-2, WorldCover, Global Mangrove Watch, biomasa NASA |
+| **Embalse Cerrón Grande** (Chalatenango/Cabañas) · anexo | Agua abierta vs lirio, nivel, temperatura, color del agua | NISAR, **SWOT**, **ECOSTRESS**, lluvia NASA (GPM/POWER), Sentinel-2, WorldCover |
 
 ## Fuentes de datos
 
@@ -24,7 +31,7 @@ NASA y ESA, para ver cómo cambian dos ecosistemas de agua de **El Salvador** a 
 ## Cómo correrlo
 
 ```bash
-python -m pip install h5py earthaccess pyproj numpy pillow scipy rasterio pyshp
+python -m pip install -r requirements.txt               # ver nota de torch dentro del archivo
 python scripts/search_granules.py                       # lista de granulos NISAR (sin login)
 
 # Barra de Santiago
@@ -59,6 +66,12 @@ python scripts/cane.py                     # caña: donde, a que distancia del m
 python scripts/fetch_ecostress.py --site barra   # temperatura manglar vs cañal
 python scripts/fetch_firms.py              # quemas NASA FIRMS (necesita llave gratuita en FIRMS_MAP_KEY o ~/.firms_key)
 
+# Huecos sin escaneo + redes neuronales (GPU recomendada)
+python scripts/fill_gaps.py --site jiquilisco          # rellena huecos con la fecha valida mas cercana (luego --reclassify)
+python scripts/train_mangrovenet.py --minutes 15       # MangroveNet: mapa de cobertura solo con radar
+python scripts/train_mangrovenet.py --predict-only     # rehacer los mapas con el modelo guardado
+python scripts/train_radar2photo.py --minutes 90       # radar -> imagen aproximada tipo Sentinel-2
+
 python -m http.server 5560 --directory web             # abrir http://localhost:5560  (?site=cerron)
 ```
 
@@ -88,7 +101,43 @@ sin eso, `fetch_rain.py` usa NASA POWER y lo indica en la app.
 6. **Validación** (Barra): NISAR detecta ~85–91 % del agua del estero del mapa ESA, y 60–93 % de lo que
    NISAR llama agua cae en agua/manglar del mapa, en época seca y lluviosa.
 
-## IA: "el radar aprende de la foto" (Cerrón Grande)
+## Huecos sin escaneo
+
+`scripts/fill_gaps.py`: en fechas con al menos 50 % escaneado de verdad, cada píxel sin dato se rellena con la
+fecha válida más cercana (máx. 120 días), corrigiendo la diferencia de brillo **por tipo de cobertura**
+(WorldCover). Esos píxeles quedan marcados con rayas moradas y la app dice "X % aproximado con la pasada del…".
+`coverage_pct` sigue siendo la cobertura escaneada real. En Jiquilisco (dic–ene) casi no se puede rellenar: esa
+parte nunca la escanea la órbita principal.
+
+## IA 1: MangroveNet — mapa de cobertura solo con radar
+
+- **Objetivo**: que NISAR dibuje el mapa de agua, manglar, árboles, cultivo, pasto y suelo sin depender de fotos.
+- **Modelo**: U-Net (PyTorch) con 10 canales por píxel calculados de todas las pasadas: media, desviación,
+  percentiles 10/90 de HH y HV, media de HH−HV y fracción de pasadas con dato.
+- **Etiquetas**: ESA WorldCover 2021 agrupado en 6 clases.
+- **Validación honesta**: entrena en Jiquilisco + Cerrón **sin su franja este (20 %)**; el mejor modelo se elige
+  con esa franja apartada. **Barra de Santiago no se usa durante el entrenamiento** y se mide una sola vez al
+  final. (Una versión anterior elegía el modelo con Barra y reportaba Barra: el número salía inflado.)
+- **Resultado en Barra (prueba, medida una sola vez)**: manglar con **F1 0,82** (precisión y exhaustividad
+  parecidas), **81 %** del mapa igual que WorldCover, y **23,1 km²** de manglar contra 24,4 km² del mapa ESA.
+  Por clase: agua 0,99 · manglar 0,82 · pasto/arbusto 0,74 · árboles 0,71 · cultivo 0,49 · suelo/urbano 0,36.
+  Coincide con el resto del análisis: el manglar se reconoce bien y lo más difícil es lo que cambia a su alrededor.
+- Archivos: `web/<sitio>/ref/mangrovenet.png|json`, `models/mangrovenet.pt`, `models/mangrovenet_log.csv`.
+- **Límites**: las etiquetas son de 2021 y a 10 m; un solo año de NISAR. Las clases caña y suelo/urbano son las
+  más débiles (cambian mucho o son pequeñas).
+
+## IA 2: radar → imagen aproximada
+
+- **Objetivo**: mostrar cómo se vería el paisaje en días nublados, cuando la foto óptica no sirve.
+- **Modelo**: U-Net + PatchGAN (estilo pix2pix). Pares: cada pasada NISAR con la foto Sentinel-2 más cercana
+  (≤ 15 días): 10 en Barra y 11 en Cerrón.
+- **Resultado**: error medio 11,5/255 en la franja este (20 %) que no se usó para entrenar, contra 16,9 de
+  "pintar el color medio". Esa franja también se usó para elegir el modelo, así que el número es algo optimista.
+- **Es una reconstrucción, no una foto**: acierta la forma (costa, estero, manchas de manglar, parcelas) pero no
+  el color fino. La app la marca siempre como "aproximada". Solo se muestra en Barra y Cerrón: en Jiquilisco la
+  mitad que viene de otra órbita sale mal.
+
+## IA 3: "el radar aprende de la foto" (Cerrón Grande)
 
 - **Objetivo**: detectar plantas sobre el agua (lirio, vegetación flotante) con NISAR también en días nublados.
 - **Respuestas (etiquetas)**: Sentinel-2 en días despejados, NDVI > 0.3 dentro del agua permanente (WorldCover).
