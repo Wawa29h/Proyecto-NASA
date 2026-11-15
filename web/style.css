@@ -200,3 +200,4 @@ body{display:flex;flex-direction:column;min-height:100%}
 .burnrow b{font-variant-numeric:tabular-nums}
 .burnrow .near{color:#ff6b5b;font-weight:600}
 .maptag.right.full{left:56px;right:auto;max-width:calc(100% - 70px)}
+a.btn{text-decoration:none;display:inline-flex;align-items:center}

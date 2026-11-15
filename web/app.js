@@ -628,6 +628,7 @@ $("play").onclick = () => {
   BASE = SITE.base;
   $("siteSel").innerHTML = sites.map((s) => `<option value="${s.id}" ${s.id === SITE.id ? "selected" : ""}>${s.name}</option>`).join("");
   $("siteSel").onchange = (e) => { location.search = "?site=" + e.target.value; };
+  $("btn3d").href = "respira.html?site=" + SITE.id;   // el 3D del sitio que está abierto
   $("siteTitle").textContent = SITE.title;
   $("siteSub").textContent = SITE.subtitle;
   document.title = SITE.title + " · NISAR";

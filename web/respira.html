@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MANGLO · El manglar respira</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1416;--panel:#111d20;--card:#152428;--line:#24393e;--text:#e7f1ef;--muted:#93aaa6;--accent:#2fd6a3;--accent2:#ff8a00}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 Inter,system-ui,sans-serif;overflow:hidden}
+#c{position:fixed;inset:0;display:block}
+.hud{position:fixed;pointer-events:none}
+.hud>*{pointer-events:auto}
+.title{top:16px;left:18px;max-width:440px}
+.title .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.title h1{margin:0;font-size:22px;font-weight:700;letter-spacing:.3px}
+.title h1 small{color:var(--accent);font-weight:600;margin-right:8px}
+.title p{margin:6px 0 0;color:#c9d8d5;font-size:13px}
+.title h1,.title p,.hint{text-shadow:0 1px 3px rgba(0,0,0,.95),0 0 14px rgba(0,0,0,.8)}
+select{background:#1d3237;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-weight:600;font-size:13px}
+.side{top:16px;right:16px;width:250px;display:flex;flex-direction:column;gap:8px}
+.card{background:rgba(21,36,40,.86);border:1px solid var(--line);border-radius:12px;padding:10px 12px;backdrop-filter:blur(6px)}
+.card h3{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{flex:1;background:none;border:0;color:var(--muted);padding:6px 4px;border-radius:8px;cursor:pointer;font:inherit;font-weight:500;font-size:12px}
+.seg button.on{background:var(--accent);color:#04231a}
+label{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0;color:var(--muted);font-size:12px}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.btn{background:#1d3237;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px 10px;cursor:pointer;font:inherit;font-size:12px}
+.btn:hover{border-color:var(--accent)}
+.btn.on{border-color:var(--accent);color:var(--accent)}
+.legend div{display:flex;align-items:center;gap:8px;font-size:12px;margin:3px 0}
+.sw{width:14px;height:14px;border-radius:3px;flex:none}
+.bottom{left:50%;bottom:18px;transform:translateX(-50%);width:min(780px,calc(100% - 32px))}
+.bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;row-gap:8px;background:rgba(17,29,32,.9);border:1px solid var(--line);border-radius:14px;padding:12px 16px;backdrop-filter:blur(8px)}
+.play{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#04231a;border:0;font-size:18px;cursor:pointer;flex:none}
+.tl{flex:1 1 180px;min-width:150px}
+.tl input{width:100%}
+.ticks{position:relative;height:14px;color:var(--muted);font-size:10px}
+.ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ticks i{position:absolute;top:0;width:2px;height:6px;background:var(--muted);transform:translateX(-50%)}
+.gap{position:absolute;top:0;height:6px;background:repeating-linear-gradient(90deg,#4a5a5e 0 3px,transparent 3px 6px);border-radius:2px}
+.date{min-width:150px}
+.date b{display:block;font-size:20px;font-weight:700;line-height:1.1}
+.date span{display:block;color:var(--muted);font-size:12px}
+.chip{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;background:#1d3237;color:var(--accent)}
+.chip.dry{color:var(--accent2)}
+.stats{display:flex;gap:14px;min-width:250px}
+.stat b{display:block;font-size:18px;font-weight:700}
+.stat span{color:var(--muted);font-size:11px}
+.breath{height:5px;background:#1d3237;border-radius:3px;margin-top:4px;overflow:hidden}
+.breath i{display:block;height:100%;background:var(--accent);width:40%;transition:width .3s}
+#load{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:9;transition:opacity .6s}
+#load.off{opacity:0;pointer-events:none;visibility:hidden;transition:opacity .6s,visibility 0s .6s}
+#load div{text-align:center;color:var(--muted)}
+#load b{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
+.hint{position:fixed;left:18px;bottom:112px;color:var(--muted);font-size:12px;max-width:340px;pointer-events:none}
+.hint b{color:var(--text)}
+@media (max-width:820px){.side{display:none}.title h1{font-size:18px}.stats{display:none}.hint{display:none}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="load"><div><b id="loadTitle">Cargando…</b><span id="loadTxt">radar NISAR</span></div></div>
+
+<div class="hud title">
+  <div class="row">
+    <h1><small>MANGLO</small><span id="titleTxt">El manglar respira</span></h1>
+    <select id="siteSel" title="Cambiar de sitio">
+      <option value="barra">Barra de Santiago</option>
+      <option value="jiquilisco">Bahía de Jiquilisco</option>
+      <option value="cerron">Embalse Cerrón Grande</option>
+    </select>
+  </div>
+  <p id="subTxt">Cada punto del terreno sube según la fuerza con que el radar NISAR rebota en él.</p>
+</div>
+
+<div class="hud side">
+  <div class="card">
+    <h3>Color del terreno</h3>
+    <div class="seg" id="modeSeg">
+      <button data-m="0" class="on">Radar</button>
+      <button data-m="1" id="photoBtn">Foto</button>
+      <button data-m="2">Mapa ESA</button>
+    </div>
+    <div class="legend" id="legend" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <h3>Vista</h3>
+    <label>Relieve <span id="zVal">×1.0</span></label>
+    <input type="range" id="zRange" min="0.2" max="2.5" step="0.1" value="1">
+    <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+      <button class="btn on" id="orbitBtn">Girar solo</button>
+      <button class="btn" id="soundBtn">🔇 Sonido</button>
+      <button class="btn on" id="layerBtn">Capa</button>
+    </div>
+  </div>
+  <div class="card" id="perf" style="font-size:11px;color:var(--muted)">—</div>
+</div>
+
+<div class="hint" id="hintTxt"></div>
+
+<div class="hud bottom">
+  <div class="bar">
+    <button class="play" id="play">▶</button>
+    <div class="tl">
+      <input type="range" id="time" min="0" max="1000" value="0">
+      <div class="ticks" id="ticks"></div>
+    </div>
+    <div class="date"><b id="dateTxt">—</b><span id="passTxt">pasada NISAR</span><span class="chip" id="season">—</span></div>
+    <div class="stats">
+      <div class="stat"><b id="hvTxt">—</b><span id="hvSub">eco del radar (HV)</span><div class="breath"><i id="breath"></i></div></div>
+      <div class="stat"><b id="stat2Val">—</b><span id="stat2Sub"></span></div>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module" src="respira.js"></script>
+</body>
+</html>
