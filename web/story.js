@@ -13,7 +13,7 @@
   // Modo científico (idea de Keylen, rama feature/modo-cientifico): títulos científicos, título
   // "MANGLO | Modo Científico" y las tarjetas de análisis pasan a la cuadrícula "Análisis científico detallado"
   // debajo del mapa, con exportación de datos (CSV) y gráficas (PNG). Al apagarlo todo vuelve a su lugar.
-  const SCI_CARDS = ["rhythmCard", "caneCard", "histCard", "carbonCard", "pondsCard", "mangCard", "lakeCard", "mlCard", "wqCard", "valCard", "probeCard"];
+  const SCI_CARDS = ["rhythmCard", "caneCard", "histCard", "carbonCard", "pondsCard", "mangCard", "lakeCard", "mlCard", "wqCard", "valCard", "probeCard", "interpCard"];
   const homes = {};
   function placeScienceCards(on) {
     const grid = $("analysisGrid");
@@ -319,7 +319,7 @@
 
   // ---------- alerta de lirio por zonas ----------
   let zoneLayers = {};
-  const levelColor = { alto: "#ff6b5b", medio: "#ffc542", bajo: "#2fd6a3" };
+  const levelColor = { alto: "#ff6b5b", medio: "#ffc542", bajo: "#149BA5" };
   function drawZones() {
     if (!ALERTS) return;
     ALERTS.zones.forEach((z) => {

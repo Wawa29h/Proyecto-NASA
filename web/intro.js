@@ -60,7 +60,7 @@
       .bumpImageUrl("https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png")
       .showAtmosphere(true).atmosphereColor("#7fd8ff").atmosphereAltitude(0.2)
       .pathsData([]).pathPoints("pts").pathPointLat((p) => p[0]).pathPointLng((p) => p[1]).pathPointAlt((p) => p[2])
-      .pathColor(() => ["rgba(47,214,163,0)", "rgba(47,214,163,.9)"]).pathStroke(1.4).pathTransitionDuration(0)
+      .pathColor(() => ["rgba(20,155,165,0)", "rgba(20,155,165,.9)"]).pathStroke(1.4).pathTransitionDuration(0)
       .width(innerWidth).height(innerHeight);
     globe.controls().enableZoom = false;
     globe.controls().autoRotate = true; globe.controls().autoRotateSpeed = 0.5;

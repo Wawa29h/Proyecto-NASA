@@ -34,8 +34,8 @@ const SITES = {
   cerron: {
     name: "Embalse Cerrón Grande", title: "El embalse sube y baja", lat: 14.03, base: "data-cerron/", layer: 3,
     photo: "ref/s2_2026-01-08.jpg", extra: "swot.json", layerBtn: "🌿 Lirio",
-    sub: "La lámina de agua sube y baja con los metros reales que midió el satélite SWOT. Encima, el lirio acuático aparece como balsas verdes donde el radar lo ve flotar.",
-    hint: "<b>Qué mirar:</b> de noviembre a mayo el agua baja unos 9 metros (lo midió SWOT) y la orilla queda como lodo. Las balsas verdes son lirio flotante: crece en lluvias y las corrientes lo arrastran. Las lomas de alrededor casi no cambian.",
+    sub: "Representación visual 3D: el nivel de agua interpola observaciones validadas de SWOT (calidad filtrada <= 1). El relieve simula la intensidad de retrodispersión radar, no elevación topográfica del terreno.",
+    hint: "<b>Qué mirar:</b> variación del nivel del agua registrada por SWOT y zonas de plantas flotantes sobre el agua detectadas por radar. Las elevaciones visuales reflejan rugosidad y doble rebote del radar, no altimetría física.",
     legend: [["#0b3d6b", "Agua del embalse"], ["#8c7355", "Orilla que quedó seca"], ["#5ae05a", "Lirio flotante (radar)"], ["#c64fb5", "Vegetación inundada"], ["#7bbf5a", "Lomas y cultivos"]],
     dryLabel: "Época seca",
   },
@@ -58,7 +58,7 @@ const [series, extra, extra2] = await Promise.all([fetchJ("series.json"), SITE.e
 const dates = series.dates.filter((d) => d.qc && (d.coverage_pct == null || d.coverage_pct >= 50)); // solo pasadas buenas y completas
 const D = dates.map((d) => dayOf(d.date));
 const events = SITE.layer === 1 ? extra.events.map((e) => ({ ...e, day: dayOf(e.date) })).sort((a, b) => a.day - b.day) : [];
-const swot = SITE.layer === 3 ? extra.observations.map((o) => ({ day: dayOf(o.date), m: o.wse_m })).sort((a, b) => a.day - b.day) : [];
+const swot = SITE.layer === 3 && extra?.observations ? extra.observations.filter((o) => o.quality <= 1).map((o) => ({ day: dayOf(o.date), m: o.wse_m })).sort((a, b) => a.day - b.day) : [];
 const LEVEL_MIN = 232.7, LEVEL_MAX = 241.95;              // metros SWOT (mínimo en mayo, máximo en noviembre)
 function levelAt(day) {
   if (!swot.length) return 0;
