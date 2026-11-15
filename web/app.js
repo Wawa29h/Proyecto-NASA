@@ -32,14 +32,14 @@ map.createPane("paneA"); map.createPane("paneB"); map.createPane("paneChange");
 ["paneA", "paneB", "paneChange"].forEach((p) => (map.getPane(p).style.zIndex = 410));
 map.getPane("paneB").style.zIndex = 411;
 
-let ovA = null, ovB = null, ovChange = null, ovSrc = null, probeMarker = null;
+let ovA = null, ovB = null, ovChange = null, ovSrc = null, probeMarker = null, gapNote = null;
 
 function overlay(url, pane) {
   return L.imageOverlay(url, bounds, { pane, opacity: state.opacity, interactive: false }).addTo(map);
 }
 function clearOverlays() {
-  [ovA, ovB, ovChange, ovSrc].forEach((o) => o && map.removeLayer(o));
-  ovA = ovB = ovChange = ovSrc = null;
+  [ovA, ovB, ovChange, ovSrc, gapNote].forEach((o) => o && map.removeLayer(o));
+  ovA = ovB = ovChange = ovSrc = gapNote = null;
 }
 const urlFor = (d) => P(state.layer === "cls" ? d.cls : d.rgb);
 // capa IA: falso color atenuado debajo + plantas detectadas por el modelo encima
@@ -116,6 +116,12 @@ function render() {
     $("dateLabel").textContent = fmtDate(d.date);
     $("dateSlider").value = state.idx;
     // de dónde viene cada pedazo: rayas grises = sin escaneo; celestes = rellenado con otra órbita
+    if (d.coverage_pct != null && d.coverage_pct < 90 && !fullRef()) {
+      const b = bounds, lat = (b.getNorth() + b.getSouth()) / 2, lon = b.getEast() - (b.getEast() - b.getWest()) * 0.2;
+      const later = S.dates.find((x) => x.qc && (x.coverage_pct ?? 100) >= 99);
+      gapNote = L.marker([lat, lon], { interactive: false, icon: L.divIcon({ className: "gapnote", iconSize: [230, 0], iconAnchor: [115, 0],
+        html: `<b>Aquí el radar no pasó este día.</b> Esta parte queda fuera del barrido de la órbita ${d.track}.${later ? ` Otra órbita la cubre desde ${fmtDate(later.date)}.` : ""}` }) }).addTo(map);
+    }
     if (d.src && !fullRef()) ovSrc = L.imageOverlay(P(d.src), bounds, { pane: "paneChange", opacity: 1, interactive: false }).addTo(map);
     const fills = d.fill_from || [];
     const note = $("fillNote");
