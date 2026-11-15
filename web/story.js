@@ -81,13 +81,10 @@
       ? [[rain ? rain.covered_pct + " %" : "—", "de las fotos de época de lluvias salen con el embalse tapado por nubes (en verano: " + (CLOUDS?.seasons?.seca?.covered_pct ?? "—") + " %)"],
          [rain ? rain.longest_gap_days + " días" : "—", "seguidos sin una foto despejada en lluvias. El radar pasa igual, llueva o no"],
          [f.plants ? "×" + f.plants.ratio.toFixed(1) : "—", "más lirio en lluvias que en verano (radar + inteligencia artificial)"]]
-      : SITE.id === "jiquilisco"
-      ? [[f.mangrove ? f.mangrove.toFixed(0) + " km²" : "—", "de manglar: el más grande de El Salvador (mapa ESA)"],
-         [f.loss != null ? f.loss.toFixed(2) + " %" : "—", "del manglar perdió señal en el año: está estable"],
-         [String(S.dates.length), "pasadas del radar en un año, con nubes o sin ellas"]]
-      : [[f.valid ? f.valid.toFixed(0) + " %" : "—", "del agua del estero que marca el mapa oficial la detecta NISAR"],
-         [f.mangrove ? f.mangrove.toFixed(0) + " km²" : "—", "de manglar protegido en la zona (Ramsar)"],
-         [String(S.dates.length), "pasadas del radar en un año, con nubes o sin ellas"]];
+      : [[GMW ? `${Object.keys(GMW.years).length > 1 ? (new Date().getFullYear() - GMW.from) : 30} años` : "—", "de vigilancia del manglar con radar en banda L (JAXA + NISAR)"],
+         [CARBON ? (CARBON.co2_t >= 1e6 ? (CARBON.co2_t / 1e6).toFixed(1) + " Mt" : Math.round(CARBON.co2_t / 1000) + " mil t") : "—", "de CO₂ guardadas solo en sus árboles (carbono azul)"],
+         SITE.id === "jiquilisco" && PONDS ? [String(PONDS.count), "estanques rectangulares junto al manglar, vistos por el radar"]
+           : [f.valid ? f.valid.toFixed(0) + " %" : "—", "del agua del estero que marca el mapa oficial la detecta NISAR"]];
     $("heroStats").innerHTML = st.map(([v, l]) => `<div class="hstat"><b>${v}</b><span>${l}</span></div>`).join("");
     document.querySelectorAll(".site-card").forEach((c) => c.classList.toggle("current", c.dataset.site === SITE.id));
     countAll($("heroStats"));
@@ -148,15 +145,19 @@
     if (SITE.id === "jiquilisco") return [
       { t: "Bahía de Jiquilisco: el manglar más grande", x: `Una bahía de Usulután con <b>${f.mangrove ? f.mangrove.toFixed(0) : "~177"} km²</b> de manglar (siete veces Barra de Santiago). Lo oscuro es agua de la bahía; lo verde, el manglar. NISAR cubre unas tres cuartas partes del recuadro.`, go: { date: "2026-01-18" } },
       { t: "¿Dónde está el manglar?", x: "El mapa oficial de la ESA marca el manglar en verde menta. Arrastra la barra blanca para comparar con lo que ve el radar.", go: { mode: "truth", ref: "wc", date: "2026-01-18" } },
-      { t: "En lluvias el manglar 'brilla' más", x: `La señal HV del manglar sube unos <b>${f.hvRise ? f.hvRise.toFixed(1) : "4"} dB</b> de verano a lluvias, igual que en Barra de Santiago. Son hojas y suelo mojados: un ritmo <b>natural</b>, no un cambio del bosque.`, go: { date: "2026-09-27", card: "mangCard" } },
-      { t: "Sin pérdida de manglar este año", x: `Solo el <b>${f.loss != null ? f.loss.toFixed(2) : "0.02"} %</b> del manglar perdió señal de forma persistente: está estable. Es la línea base para detectar talas o camaroneras nuevas en los próximos años.`, go: { mode: "change", card: "mangCard" } },
+      { t: "30 años de vigilancia", x: GMW ? `Satélites japoneses con el mismo tipo de radar mapearon este manglar desde ${GMW.from}: pasó de <b>${GMW.years[GMW.from]} km²</b> a <b>${GMW.years[GMW.to]} km²</b> en ${GMW.to}. Se ha sostenido, pero se perdieron <b>${Math.round(GMW.loss_km2 * 100)} ha</b> en algunos puntos (en rojo).` : "El manglar se ha mantenido estable.", go: { mode: "truth", ref: "gmw", date: "2026-01-18", card: "histCard" } },
+      { t: "Lo que construye el ser humano", x: PONDS ? `El radar encontró <b>${PONDS.count} estanques rectangulares</b> (${Math.round(PONDS.area_ha)} ha): camaroneras y salineras. ${PONDS.gmw_loss_near_ponds_ha ? `<b>${Math.round(PONDS.gmw_loss_near_ponds_ha)} ha</b> del manglar perdido desde 1996 están a menos de 300 m de un estanque.` : ""}` : "Camaroneras y salineras junto al manglar.", go: { mode: "truth", ref: "ponds", date: "2026-09-15", fly: [[13.29, -88.62], 13], card: "pondsCard" } },
+      { t: "Por qué cuidarlo: carbono azul", x: CARBON ? `Sus árboles guardan unas <b>${(CARBON.co2_t / 1e6).toFixed(1)} millones de toneladas de CO₂</b>: lo que emiten <b>${Math.round(CARBON.cars_year_equiv / 1000)} mil carros</b> en un año. Y el suelo guarda varias veces más.` : "El manglar guarda mucho carbono.", go: { mode: "truth", ref: "height", card: "carbonCard" } },
+      { t: "Sin pérdida este año", x: `Con NISAR, solo el <b>${f.loss != null ? f.loss.toFixed(2) : "0.02"} %</b> del manglar perdió señal en 2025–2026. La subida de señal en lluvias es natural (hojas y suelo mojados). Ahora el radar lo vigila cada 12 días para detectar a tiempo cualquier tala o estanque nuevo.`, go: { date: "2026-09-27", card: "mangCard" } },
       { t: "Mira el embalse", x: "Donde sí hay cambios grandes es en el embalse Cerrón Grande: el nivel baja metros y aparecen plantas flotantes.", go: {}, next: { label: "Ver Cerrón Grande →", site: "cerron" } },
     ];
     return [
       { t: "Barra de Santiago: manglar y estero", x: "Un humedal Ramsar en Ahuachapán, junto al mar. El canal oscuro es el <b>estero</b>; lo verde es el <b>manglar</b>; los cuadritos de arriba son <b>cultivos de caña</b>.", go: { date: "2025-12-25" } },
       { t: "¿El radar dice la verdad?", x: `Comparamos NISAR con el mapa oficial de cobertura de la ESA. NISAR encontró el <b>${f.valid ? f.valid.toFixed(0) : "~90"} %</b> del agua del estero que marca el mapa, en época seca y en lluvias.`, go: { mode: "truth", ref: "wc", date: "2026-01-18", card: "valCard" } },
       { t: "El manglar se moja en lluvias", x: "En <b style='color:#e05ad0'>rosado</b>, manglar con agua debajo: la señal rebota en el agua y en los troncos (doble rebote). En la época lluviosa esa área crece.", go: { layer: "cls", date: "2026-09-03", fly: [[13.705, -90.02], 13] } },
-      { t: "Un manglar estable", x: "En un año la señal del manglar casi no cambió: es una <b>buena noticia</b>. Las amenazas reales (tala, camaroneras, caña) son lentas y se verán con varios años de NISAR.", go: { date: "2026-10-21", card: "mangCard" } },
+      { t: "30 años de un manglar estable", x: GMW ? `Desde ${GMW.from}, satélites japoneses con el mismo tipo de radar lo han mapeado: <b>${GMW.years[GMW.from]} km²</b> entonces, <b>${GMW.years[GMW.to]} km²</b> en ${GMW.to}. Y NISAR confirma que en 2025–2026 sigue estable: una <b>buena noticia</b>.` : "En un año la señal del manglar casi no cambió: es una <b>buena noticia</b>.", go: { mode: "truth", ref: "gmw", date: "2026-01-18", card: "histCard" } },
+      { t: "La presión de al lado: la caña", x: CANE ? `Hay <b>${CANE.crop_km2} km²</b> de cultivos (sobre todo caña) y el <b>${Math.round((100 * (CANE.by_distance_km2["0-1 km"] || 0)) / CANE.crop_km2)} %</b> está a menos de 1 km del manglar. Los colores muestran <b>en qué mes de la zafra se cosechó</b> cada parcela. El radar NISAR también ve el corte, aunque esté nublado: coincide con las fotos en un <b>${CANE.nisar ? Math.round(CANE.nisar.agree_with_s2_pct) : 75} %</b>.` : "Cañales alrededor del manglar.", go: { mode: "truth", ref: "cane", date: "2026-01-18", card: "caneCard" } },
+      { t: "Carbono azul", x: CARBON ? `Sus árboles guardan unas <b>${Math.round(CARBON.co2_t / 1000)} mil toneladas de CO₂</b>, lo que emiten <b>${Math.round(CARBON.cars_year_equiv / 1000)} mil carros</b> en un año, y el suelo guarda varias veces más. Por eso vale la pena vigilarlo.` : "El manglar guarda mucho carbono.", go: { mode: "truth", ref: "height", card: "carbonCard" } },
       { t: "Comparado con Jiquilisco", x: "La Bahía de Jiquilisco, el manglar más grande del país, se comporta igual: misma subida natural en lluvias y pérdida casi cero. Dos manglares sanos este año.", go: { card: "mangCard" }, next: { label: "Ver Jiquilisco →", site: "jiquilisco" } },
     ];
   }
@@ -329,6 +330,9 @@
     catch { const s = getSelection(), rg = document.createRange(); rg.selectNodeContents($("alertMsg")); s.removeAllRanges(); s.addRange(rg); $("alertCopied").textContent = "Selecciona y copia (Ctrl+C)"; }
     setTimeout(() => ($("alertCopied").textContent = ""), 2500);
   };
+
+  // botones "Ver ... →" de las tarjetas del manglar: abren esa vista en el mapa (radar a la izquierda)
+  document.querySelectorAll("[data-goref]").forEach((b) => (b.onclick = () => go({ mode: "truth", ref: b.dataset.goref, date: S.dates[state.idx]?.date })));
 
   // ---------- ganchos de app.js ----------
   window.onRender = () => { updateSema(); moveNow(); updateAlert(); };

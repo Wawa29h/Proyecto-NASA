@@ -192,3 +192,5 @@ body{display:flex;flex-direction:column;min-height:100%}
 .az .up{color:#ff8a65}.az .down{color:#2fd6a3}.az .eq{color:var(--muted)}
 .alertmsg{white-space:pre-wrap;background:#0a1416;border:1px dashed var(--line);border-radius:10px;padding:10px;font:12px/1.5 ui-monospace,Consolas,monospace;color:#cfe0dc;margin:0 0 8px;max-height:190px;overflow:auto}
 .zone-label{background:rgba(10,20,22,.85);border:1px solid var(--line);color:#fff;border-radius:8px;padding:2px 8px;font:600 11px Inter,system-ui,sans-serif;white-space:nowrap}
+.bignum{font-size:28px;font-weight:700;color:var(--accent);line-height:1.15;margin:4px 0 8px}
+.bignum small{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:4px}

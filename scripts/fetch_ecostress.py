@@ -22,7 +22,7 @@ from rasterio.windows import from_bounds
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITES = {
     "cerron": {"out": "web/data-cerron", "bbox": (-89.27, 13.93, -88.93, 14.13)},
-    "barra": {"out": "web/data", "bbox": (-90.13, 13.66, -89.95, 13.79)},
+    "barra": {"out": "web/data", "bbox": (-90.13, 13.66, -89.95, 13.79), "main": "mangrove"},
 }
 UTC_OFFSET = -6  # El Salvador
 
@@ -65,7 +65,9 @@ def lake_mask(site):
     codes = np.array(Image.open(p))
     water = ndimage.binary_erosion(codes == 80, iterations=4)   # ~80 m hacia adentro
     land = ndimage.binary_erosion(np.isin(codes, [10, 20, 30, 40]), iterations=4)
-    return water, land
+    mangrove = ndimage.binary_erosion(codes == 95, iterations=3)
+    crop = ndimage.binary_erosion(codes == 40, iterations=3)    # cultivos (en la costa de Ahuachapan: cana)
+    return water, land, mangrove, crop
 
 
 def main():
@@ -83,7 +85,8 @@ def main():
     fs = ea.get_fsspec_https_session()
     grans = ea.search_data(short_name="ECO_L2T_LSTE", version="002", bounding_box=site["bbox"], temporal=(a.start, a.end))
     print(f"{len(grans)} pasadas ECOSTRESS", flush=True)
-    wmask, lmask = lake_mask(site)
+    wmask, lmask, mmask, cmask = lake_mask(site)
+    main_mask = mmask if site.get("main") == "mangrove" else wmask  # zona que debe verse sin nubes
     obs = []
     for k, g in enumerate(grans):
         links = g.data_links()
@@ -96,8 +99,8 @@ def main():
             continue
         try:
             lst = read_grid(fs, lst_u, site["bbox"], Resampling.nearest, np.nan)
-            if np.isfinite(lst[wmask]).mean() < 0.3:
-                obs.append({"granule": gid, "skip": "sin cobertura sobre el agua"})
+            if np.isfinite(lst[main_mask]).mean() < 0.3:
+                obs.append({"granule": gid, "skip": "sin cobertura sobre la zona"})
                 continue
             cloud = read_grid(fs, lst_u.replace("_LST.tif", "_cloud.tif"), site["bbox"], Resampling.nearest, 255)
         except Exception as e:
@@ -114,7 +117,9 @@ def main():
         o = {"granule": gid, "local_time": t.isoformat(timespec="minutes"), "date": t.date().isoformat(),
              "day": 9 <= t.hour < 16, "water_px": int(w.sum()), "water_total_px": int(water.sum()),
              "water_c": round(float(np.median(lst[w])) - 273.15, 2) if w.sum() > 200 else None,
-             "land_c": round(float(np.median(lst[land])) - 273.15, 2) if land.sum() > 200 else None}
+             "land_c": round(float(np.median(lst[land])) - 273.15, 2) if land.sum() > 200 else None,
+             "mangrove_c": round(float(np.median(lst[ok & mmask])) - 273.15, 2) if (ok & mmask).sum() > 200 else None,
+             "crop_c": round(float(np.median(lst[ok & cmask])) - 273.15, 2) if (ok & cmask).sum() > 200 else None}
         obs.append(o)
         if k % 10 == 0:
             json.dump({"source": "NASA ECOSTRESS L2T LSTE v002 (70 m)", "bbox": site["bbox"], "observations": obs},
@@ -124,7 +129,7 @@ def main():
     obs.sort(key=lambda o: o["local_time"])
     json.dump({"source": "NASA ECOSTRESS L2T LSTE v002 (70 m)", "bbox": site["bbox"], "observations": obs},
               open(out_path, "w"), indent=1)
-    good = [o for o in obs if o["water_c"] is not None]
+    good = [o for o in obs if o["water_c"] is not None or o.get("mangrove_c") is not None]
     print(f"listo: {len(obs)} pasadas, {len(good)} con agua sin nubes -> {out_path}")
 
 

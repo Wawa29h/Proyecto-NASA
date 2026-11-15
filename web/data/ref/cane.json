@@ -1,0 +1,76 @@
+{
+ "note": "Cultivos del mapa ESA WorldCover 2021; en la planicie costera de Ahuachapán son sobre todo caña.",
+ "crop_km2": 18.7,
+ "mangrove_km2": 24.6,
+ "by_distance_km2": {
+  "0-1 km": 7.5,
+  "1-3 km": 6.98,
+  "3-5 km": 4.19,
+  "5-+ km": 0.02
+ },
+ "s2_scenes": {
+  "2025-11": {
+   "date": "2025-11-21",
+   "clear_over_crops_pct": 100.0
+  },
+  "2025-12": {
+   "date": "2025-12-29",
+   "clear_over_crops_pct": 100.0
+  },
+  "2026-01": {
+   "date": "2026-01-08",
+   "clear_over_crops_pct": 100.0
+  },
+  "2026-02": {
+   "date": "2026-02-12",
+   "clear_over_crops_pct": 100.0
+  },
+  "2026-03": {
+   "date": "2026-03-24",
+   "clear_over_crops_pct": 100.0
+  },
+  "2026-04": {
+   "date": "2026-04-13",
+   "clear_over_crops_pct": 100.0
+  },
+  "2026-05": {
+   "date": "2026-05-13",
+   "clear_over_crops_pct": 100.0
+  }
+ },
+ "harvest_by_month_km2": {
+  "diciembre": 3.99,
+  "enero": 0.81,
+  "febrero": 3.13,
+  "marzo": 2.66,
+  "abril": 1.26,
+  "mayo": 0.18
+ },
+ "harvest_near_mangrove_km2": {
+  "diciembre": 1.06,
+  "enero": 0.29,
+  "febrero": 1.47,
+  "marzo": 1.24,
+  "abril": 1.01,
+  "mayo": 0.09
+ },
+ "harvested_pct": 64.3,
+ "harvested_within_1km_km2": 5.17,
+ "harvest_img": "ref/cane_harvest.png",
+ "colors": {
+  "diciembre": "#ff6348",
+  "enero": "#ff9f43",
+  "febrero": "#feca57",
+  "marzo": "#1dd1a1",
+  "abril": "#54a0ff",
+  "mayo": "#a55eea"
+ },
+ "nisar": {
+  "from": "2025-12-13",
+  "to": "2026-01-18",
+  "cut_km2": 3.95,
+  "cut_within_1km_km2": 1.56,
+  "agree_with_s2_pct": 74.6,
+  "img": "ref/cane_nisar.png"
+ }
+}

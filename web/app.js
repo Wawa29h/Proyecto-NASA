@@ -6,6 +6,8 @@ let SITE = null, BASE = "data";
 const P = (p) => (p ? BASE + "/" + p.replace(/^data\//, "") : p);
 const getJSON = async (p) => { try { const r = await fetch(p, { cache: "no-store" }); return r.ok ? await r.json() : null; } catch { return null; } };
 let SWOT = null, ECO = null, RAINJ = null, ML = null, MANG = null, CLOUDS = null, ALERTS = null;
+let GMW = null, CARBON = null, PONDS = null, CANE = null, FIRES = null, fireLayer = null;
+const fmtInt = (n) => Math.round(n).toLocaleString("es-SV");
 const mlFor = (d) => ML?.dates.find((m) => m.id === d.id);
 const fmtDate = (s) => new Date(s + "T12:00:00").toLocaleDateString("es-SV", { day: "numeric", month: "short", year: "numeric" });
 
@@ -121,7 +123,21 @@ function render() {
     } else note.hidden = true;
     if (state.mode === "truth" && REF) {
       $("tagA").textContent = "NISAR · " + fmtDate(d.date);
-      if (state.ref === "cloud" && CLOUDS?.wow) {
+      const extra = { gmw: GMW && [GMW.change_img, `Manglar ${GMW.from} → ${GMW.to}`, `<span style="color:#ff6b6b">■</span> perdido · <span style="color:#5aa0ff">■</span> ganado · <span style="color:#00cf75">■</span> se mantuvo. Se perdieron <b>${fmtInt(GMW.loss_km2 * 100)} ha</b> y aparecieron <b>${fmtInt(GMW.gain_km2 * 100)} ha</b> en 24 años.`],
+                      height: CARBON && [CARBON.height_img, "Altura de los árboles (NASA)", `Más verde claro = árboles más altos. Altura media <b>${CARBON.mean_height_m} m</b>, máxima ${CARBON.max_height_m} m.`],
+                      ponds: PONDS && [PONDS.img, "Estanques detectados por NISAR", `<span style="color:#ff9a1e">■</span> agua quieta y rectangular: <b>${PONDS.count}</b> estanques, <b>${fmtInt(PONDS.area_ha)} ha</b>.`],
+                      cane: CANE && [CANE.harvest_img, "Caña: mes de cosecha (fotos)", Object.entries(CANE.colors).map(([m, c]) => `<span style="color:${c}">■</span> ${m}`).join(" · ") + ` · <span style="color:#aaa">■</span> sin cosecha vista.` + (FIRES ? ` Puntos naranja: quemas (NASA FIRMS).` : "")],
+                      canenisar: CANE?.nisar && [CANE.nisar.img, `Caña cortada vista por NISAR (${fmtDate(CANE.nisar.from)} → ${fmtDate(CANE.nisar.to)})`, `<span style="color:#ff6348">■</span> la señal del radar cayó ≥ 3 dB: la caña perdió hojas y tallos. <b>${CANE.nisar.cut_km2} km²</b>; el <b>${Math.round(CANE.nisar.agree_with_s2_pct)} %</b> coincide con lo que ven las fotos.`] };
+      if (fireLayer) { map.removeLayer(fireLayer); fireLayer = null; }
+      if (state.ref === "cane" && FIRES?.points?.length)
+        fireLayer = L.layerGroup(FIRES.points.map((p) => L.circleMarker([p.lat, p.lon], { radius: 4, color: "#fff", weight: 1, fillColor: "#ff7a00", fillOpacity: 0.9, pane: "paneB" })
+          .bindTooltip(`Quema ${fmtDate(p.date)} · ${p.km_to_mangrove} km del manglar`))).addTo(map);
+      if (extra[state.ref]) {
+        const [img, tag, info] = extra[state.ref];
+        ovB = L.imageOverlay(P(img), bounds, { pane: "paneB", opacity: 1, interactive: false }).addTo(map);
+        $("tagB").textContent = tag;
+        $("truthInfo").innerHTML = info;
+      } else if (state.ref === "cloud" && CLOUDS?.wow) {
         const w = CLOUDS.wow;
         ovB = L.imageOverlay(P(w.photo), bounds, { pane: "paneB", opacity: 1, interactive: false }).addTo(map);
         $("tagB").textContent = `Foto del ${fmtDate(w.photo_date)} · ${w.cloud_pct} % nubes`;
@@ -383,6 +399,70 @@ function buildMangCard() {
     `<tr><td>Manglar con agua debajo</td>${names.map((n) => `<td>${MANG[n].flooded_range_pct[0]}–${MANG[n].flooded_range_pct[1]} %</td>`).join("")}</tr></table>`;
   $("mangCard").hidden = false;
 }
+function buildCaneCard() {
+  const near = CANE.by_distance_km2["0-1 km"] ?? 0;
+  $("caneKpis").innerHTML =
+    kpi(`${CANE.crop_km2} km²`, "de cultivos (sobre todo caña) alrededor del manglar") +
+    kpi(`${Math.round((100 * near) / CANE.crop_km2)} %`, `de esos cultivos está a menos de 1 km del manglar (${near} km²)`) +
+    kpi(`${CANE.harvested_pct} %`, "de los cultivos se cosechó en la zafra 2025–2026") +
+    (CANE.nisar ? kpi(`${Math.round(CANE.nisar.agree_with_s2_pct)} %`, "de lo que el radar vio cortado coincide con las fotos") : "");
+  const months = Object.keys(CANE.harvest_by_month_km2);
+  new Chart($("caneChart"), {
+    type: "bar",
+    data: { labels: months, datasets: [
+      { label: "km² cosechados", data: months.map((m) => CANE.harvest_by_month_km2[m]), backgroundColor: months.map((m) => CANE.colors[m]) },
+      { label: "a menos de 1 km del manglar", data: months.map((m) => CANE.harvest_near_mangrove_km2[m]), backgroundColor: "rgba(255,255,255,.35)" },
+    ] },
+    options: { animation: false, plugins: { legend: { labels: { color: "#c8d8d5", boxWidth: 10, font: { size: 11 } } } },
+      scales: { x: { ticks: tick, grid: { display: false } }, y: { ticks: tick, grid: { color: gridColor }, title: { display: true, text: "km²", color: "#93aaa6" } } } },
+  });
+  $("fireBox").innerHTML = FIRES
+    ? `🔥 <b>${FIRES.count}</b> puntos de quema detectados por NASA FIRMS (${fmtDate(FIRES.from)} – ${fmtDate(FIRES.to)}); <b>${FIRES.near_mangrove["<1 km"]}</b> a menos de 1 km del manglar y ${FIRES.near_mangrove["<3 km"]} a menos de 3 km.`
+    : `🔥 Quemas (NASA FIRMS): el script está listo; falta la llave gratuita de FIRMS para bajar los puntos de fuego.`;
+  const eco = (ECO?.observations || []).filter((o) => o.day && o.mangrove_c != null && o.crop_c != null);
+  if (eco.length) {
+    const diff = eco.reduce((s, o) => s + (o.crop_c - o.mangrove_c), 0) / eco.length;
+    $("caneTemp").innerHTML = `🌡️ De día, el cañal está en promedio <b>${diff.toFixed(1)} °C más caliente</b> que el manglar (${eco.length} pasadas de NASA ECOSTRESS). El manglar refresca la zona.`;
+  } else $("caneTemp").innerHTML = "🌡️ Temperatura manglar vs cañal (NASA ECOSTRESS): en proceso.";
+  $("caneCard").hidden = false;
+}
+function buildMangroveExtras() {
+  if (GMW) {
+    const yrs = Object.keys(GMW.years);
+    const nisarYear = MANG && Object.values(MANG).find((v, i) => Object.keys(MANG)[i].toLowerCase().includes(SITE.id === "jiquilisco" ? "jiquilisco" : "barra"));
+    tsChart($("histChart"), [
+      { label: "Manglar (radar JAXA, km²)", data: yrs.map((y) => ({ x: T(`${y}-07-01`), y: GMW.years[y] })), color: "#00cf75", yAxisID: "a" },
+    ], [{ id: "a", title: "km²" }]);
+    const c = Chart.getChart("histChart");
+    c.options.scales.a.min = Math.floor(Math.min(...yrs.map((y) => GMW.years[y])) * 0.9);
+    c.options.scales.x.ticks.callback = (v) => new Date(v).getFullYear();
+    c.update();
+    const first = GMW.years[yrs[0]], last = GMW.years[yrs[yrs.length - 1]];
+    $("histKpis").innerHTML =
+      kpi(`${((100 * (last - first)) / first).toFixed(1)} %`, `cambio del área ${GMW.from}–${GMW.to}: el manglar se ha sostenido`) +
+      kpi(`${fmtInt(GMW.loss_km2 * 100)} ha`, `perdidas en algunos lugares (y ${fmtInt(GMW.gain_km2 * 100)} ha ganadas en otros)`) +
+      (nisarYear ? kpi(`${nisarYear.loss_pct} %`, "pérdida vista por NISAR en 2025–2026: sigue estable") : "");
+    $("histCard").hidden = false;
+  }
+  if (CARBON) {
+    $("carbonBig").innerHTML = `${fmtInt(CARBON.co2_t)} t de CO₂<small>guardadas en los árboles de ${fmtInt(CARBON.area_ha)} ha de manglar</small>`;
+    $("carbonKpis").innerHTML =
+      kpi(fmtInt(CARBON.cars_year_equiv), "carros circulando un año emiten lo mismo") +
+      kpi(`${CARBON.co2_per_ha_t} t`, "de CO₂ por hectárea, solo en los árboles") +
+      kpi(`${CARBON.mean_height_m} m`, `altura media de los árboles (máx. ${CARBON.max_height_m} m)`) +
+      kpi("×3–5", "más carbono guarda el suelo del manglar (no incluido aquí)");
+    $("carbonHint").textContent = "Fuente: mapa de biomasa y altura de manglares de NASA (Simard et al. 2019, ORNL DAAC). Cálculo: biomasa de árboles + raíces × 0,47 de carbono × 3,67. El suelo no se cuenta, así que el valor real es mayor.";
+    $("carbonCard").hidden = false;
+  }
+  if (PONDS && PONDS.count > 0) {
+    $("pondsKpis").innerHTML =
+      kpi(PONDS.count, "estanques rectangulares detectados") +
+      kpi(`${fmtInt(PONDS.area_ha)} ha`, "de estanques en total") +
+      kpi(`${fmtInt(PONDS.near_mangrove_ha)} ha`, "a menos de 1 km del manglar") +
+      (PONDS.gmw_loss_near_ponds_ha != null ? kpi(`${fmtInt(PONDS.gmw_loss_near_ponds_ha)} ha`, "del manglar perdido desde 1996 está a menos de 300 m de un estanque") : "");
+    $("pondsCard").hidden = false;
+  }
+}
 function buildWqCard() {
   const s2 = (REF?.sentinel2 || []).filter((s) => s.ndci != null && s.cloud_water_pct < 40);
   if (!s2.length) return;
@@ -547,7 +627,18 @@ $("play").onclick = () => {
   else $("legendWc").innerHTML = Object.values(REF.worldcover.legend).map((c) => `<span><i style="background:${c.color}"></i>${c.name}</span>`).join("");
   if (VAL && !SITE.lake) buildValChart();
   if (SITE.lake) buildLakeCard();
-  if (SITE.mangrove) { MANG = await getJSON("mangrove_comparison.json"); if (MANG) buildMangCard(); }
+  if (SITE.mangrove) {
+    MANG = await getJSON("mangrove_comparison.json"); if (MANG) buildMangCard();
+    GMW = await getJSON(BASE + "/ref/gmw.json");
+    CARBON = await getJSON(BASE + "/ref/carbon.json");
+    PONDS = await getJSON(BASE + "/ref/ponds.json");
+    CANE = await getJSON(BASE + "/ref/cane.json");
+    FIRES = await getJSON(BASE + "/ref/fires.json");
+    document.querySelectorAll("#truthSeg .cane-only").forEach((b) => (b.hidden = !(b.dataset.ref === "cane" ? CANE : CANE?.nisar)));
+    if (CANE) buildCaneCard();
+    document.querySelectorAll("#truthSeg .mg-only").forEach((b) => (b.hidden = !({ gmw: GMW, height: CARBON, ponds: PONDS }[b.dataset.ref])));
+    buildMangroveExtras();
+  }
   buildWqCard();
 
   setKpis();

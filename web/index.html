@@ -134,6 +134,11 @@
         <button data-ref="wc">Mapa ESA WorldCover</button>
         <button data-ref="veg" id="refVegBtn" hidden>Plantas (Sentinel-2)</button>
         <button data-ref="cloud" id="refCloudBtn" hidden>☁ Día nublado</button>
+        <button data-ref="gmw" class="mg-only" hidden>Manglar 1996 → 2020</button>
+        <button data-ref="height" class="mg-only" hidden>Altura del manglar</button>
+        <button data-ref="ponds" class="mg-only" hidden>Estanques</button>
+        <button data-ref="cane" class="cane-only" hidden>Caña: mes de cosecha</button>
+        <button data-ref="canenisar" class="cane-only" hidden>Caña: cosecha vista por radar</button>
       </div>
       <div id="truthInfo" class="probe"></div>
       <div class="legend" id="legendWc" hidden></div>
@@ -200,6 +205,45 @@
       <canvas id="lakeLvlChart" height="170"></canvas>
       <p class="hint" id="lakeHint">Nivel del agua (SWOT) y temperatura de la superficie del agua de día (ECOSTRESS).</p>
       <div class="kpis" id="lakeKpis"></div>
+    </div>
+
+    <div class="card" id="caneCard" hidden>
+      <h3>La caña alrededor del manglar</h3>
+      <p class="hint" style="margin-top:0">El manglar está estable, pero tiene presión al lado: cañales que se cosechan y se queman en la zafra (noviembre–mayo). Así se vigila esa presión año con año.</p>
+      <div class="kpis" id="caneKpis"></div>
+      <canvas id="caneChart" height="150"></canvas>
+      <div class="row" style="gap:6px;flex-wrap:wrap;margin:8px 0">
+        <button class="btn" data-goref="cane">Ver cuándo se cosecha →</button>
+        <button class="btn" data-goref="canenisar">Ver lo que detecta el radar →</button>
+      </div>
+      <div id="fireBox" class="probe"></div>
+      <div id="caneTemp" class="probe" style="margin-top:6px"></div>
+      <p class="hint">Cultivos según el mapa ESA (en esta planicie son sobre todo caña). Cosecha: caída fuerte del verdor en las fotos Sentinel-2 y de la señal del radar NISAR.</p>
+    </div>
+
+    <div class="card" id="histCard" hidden>
+      <h3>30 años de manglar con el mismo tipo de radar</h3>
+      <p class="hint" style="margin-top:0">Antes de NISAR, satélites japoneses con radar en banda L (el mismo tipo) mapearon los manglares del mundo desde 1996. Unimos ese registro con NISAR.</p>
+      <canvas id="histChart" height="160"></canvas>
+      <div class="kpis" id="histKpis"></div>
+      <button class="btn" data-goref="gmw">Ver dónde se perdió y ganó →</button>
+      <p class="hint">Fuente: Global Mangrove Watch v3 (JAXA, 1996–2020) y NISAR (2025–2026).</p>
+    </div>
+
+    <div class="card" id="carbonCard" hidden>
+      <h3>Carbono azul: lo que guarda el manglar</h3>
+      <div class="bignum" id="carbonBig"></div>
+      <div class="kpis" id="carbonKpis"></div>
+      <button class="btn" data-goref="height">Ver la altura de los árboles →</button>
+      <p class="hint" id="carbonHint"></p>
+    </div>
+
+    <div class="card" id="pondsCard" hidden>
+      <h3>Estanques junto al manglar</h3>
+      <p class="hint" style="margin-top:0">El radar encuentra agua quieta con forma <b>rectangular</b> (la naturaleza no hace rectángulos): camaroneras y salineras. Es lo que el ser humano construye junto al manglar.</p>
+      <div class="kpis" id="pondsKpis"></div>
+      <button class="btn" data-goref="ponds">Ver los estanques en el mapa →</button>
+      <p class="hint">Mínimo detectado: estanques pegados entre sí, separados por bordos de menos de 20 m, el radar los ve como una sola mancha y no los cuenta.</p>
     </div>
 
     <div class="card" id="mangCard" hidden>

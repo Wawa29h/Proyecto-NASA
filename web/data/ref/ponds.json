@@ -1,0 +1,18 @@
+{
+ "method": "agua en >=25% de las fechas NISAR (incluye estanques que se vacian) + forma rectangular (>=0.70), 1-150 ha",
+ "count": 1,
+ "area_ha": 2.0,
+ "near_mangrove_ha": 0.0,
+ "on_mangrove_loss_ha": 0.0,
+ "gmw_loss_near_ponds_ha": 0.0,
+ "img": "ref/ponds.png",
+ "ponds": [
+  {
+   "ha": 2.0,
+   "rect": 0.71,
+   "water_freq": 0.66,
+   "lat": 13.72075,
+   "lon": -90.0663
+  }
+ ]
+}

@@ -51,6 +51,14 @@ python scripts/fetch_reference.py --bbox -88.70 13.17 -88.30 13.33 --out web/dat
 python scripts/fetch_gcov.py --granules data/granules_jiquilisco.json --frames 8 --bbox -88.70 13.17 -88.30 13.33 --out web/data-jiquilisco --edge-trim --fill-tracks
 python scripts/compare_mangroves.py
 
+# Manglar: historia, carbono, estanques y caña
+python scripts/fetch_mangrove_history.py   # Global Mangrove Watch 1996-2020 (radar banda L de JAXA), solo los cuadros necesarios
+python scripts/fetch_blue_carbon.py        # carbono azul con el mapa de biomasa y altura de manglares de NASA (ORNL DAAC)
+python scripts/detect_ponds.py             # estanques rectangulares (camaroneras/salineras) con NISAR
+python scripts/cane.py                     # caña: donde, a que distancia del manglar y en que mes se cosecha (Sentinel-2 + NISAR)
+python scripts/fetch_ecostress.py --site barra   # temperatura manglar vs cañal
+python scripts/fetch_firms.py              # quemas NASA FIRMS (necesita llave gratuita en FIRMS_MAP_KEY o ~/.firms_key)
+
 python -m http.server 5560 --directory web             # abrir http://localhost:5560  (?site=cerron)
 ```
 
