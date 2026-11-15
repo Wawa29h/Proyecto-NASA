@@ -18,7 +18,8 @@
   function placeScienceCards(on) {
     const grid = $("analysisGrid");
     if (!grid) return;
-    SCI_CARDS.forEach((id) => {
+    // La vista por bloques conserva un único hogar por tarjeta y un portal de detalle.
+    if (!document.body.classList.contains("wireframe")) SCI_CARDS.forEach((id) => {
       const el = $(id);
       if (!el) return;
       if (!homes[id]) { homes[id] = document.createComment("lugar:" + id); el.parentNode.insertBefore(homes[id], el); }
@@ -137,13 +138,39 @@
   const setLayer = (l) => { if ($("layerMlBtn").hidden && l === "ml") l = "rgb"; state.layer = l; document.querySelectorAll("#layerSeg button").forEach((b) => b.classList.toggle("on", b.dataset.layer === l)); };
   const setRef = (r) => { state.ref = r; document.querySelectorAll("#truthSeg button").forEach((b) => b.classList.toggle("on", b.dataset.ref === r)); };
   const fitAll = () => map.flyToBounds(bounds, { padding: [10, 10], duration: 1.4 });
+  let tourTarget = null;
+  const tourReturn = document.createElement("button");
+  tourReturn.type = "button"; tourReturn.className = "btn tour-return";
+  tourReturn.textContent = "← Volver al tutorial"; tourReturn.hidden = true;
+  document.body.appendChild(tourReturn);
+  let tourFocusTimer = null;
+  function resizeTourCharts(card) {
+    requestAnimationFrame(() => card.querySelectorAll("canvas").forEach((canvas) => {
+      const chart = Chart.getChart(canvas);
+      if (chart) { chart.options.maintainAspectRatio = false; chart.resize(canvas.parentElement.clientWidth, canvas.parentElement.clientHeight); }
+    }));
+  }
+  function restoreTourEvidence() {
+    clearTimeout(tourFocusTimer);
+    tourTarget?.classList.remove("tour-located");
+    tourTarget?.closest(".wf-result-item")?.classList.remove("tour-located-item");
+    tourTarget = null;
+    tourReturn.hidden = true;
+    window.dispatchEvent(new Event("resize"));
+  }
   function focusCard(id) {
     const el = $(id);
     if (!el || el.hidden) return;
+    for (let parent = el.parentElement; parent; parent = parent.parentElement) {
+      if (parent.tagName === "DETAILS") parent.open = true;
+    }
     if (el.classList.contains("more-card")) setMore(true);   // el recorrido abre los hallazgos plegados
     el.classList.add("in");
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
-    el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
+    tourTarget = el;
+    el.classList.add("tour-located");
+    el.closest(".wf-result-item")?.classList.add("tour-located-item");
+    resizeTourCharts(el);
+    el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
   }
   function go({ mode = "single", layer = "rgb", date, ref, fly, card }) {
     stopPlay();
@@ -153,8 +180,7 @@
     setMode(mode);
     if (fly) map.flyTo(fly[0], fly[1], { duration: 1.6 }); else fitAll();
     const narrow = matchMedia("(max-width:860px)").matches;
-    if (card) setTimeout(() => focusCard(card), 500);
-    else if (narrow) document.querySelector(".mapwrap").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (narrow) document.querySelector(".mapwrap").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function steps() {
@@ -166,9 +192,9 @@
       return [
         { t: "Este es el embalse Cerrón Grande", x: "Es el lago artificial más grande de El Salvador: guarda agua del río Lempa, genera electricidad y da de comer a muchas familias pescadoras. Así lo ve el radar NISAR: <b>lo oscuro es agua</b>, lo verde es vegetación.", go: { date: "2026-01-18" } },
         { t: "Ese día llovía", x: (CLOUDS?.wow ? `El <b>${shortDate(CLOUDS.wow.photo_date)}</b> la foto normal salió con el <b>${CLOUDS.wow.cloud_pct} %</b> del embalse tapado por nubes. ` : "En época de lluvias las fotos salen tapadas por nubes. ") + "NISAR manda su propia señal de microondas y ve <b>de día, de noche y con nubes</b>. Arrastra la barra blanca: a la izquierda el radar con el lirio en amarillo, a la derecha la foto nublada.", go: CLOUDS?.wow ? { mode: "truth", ref: "cloud", layer: "ml", date: CLOUDS.wow.nisar_date, card: "wowCard" } : { mode: "truth", ref: "s2", date: "2026-07-05" } },
-        { t: `El embalse respira: baja ${f.level ? f.level.drop.toFixed(0) : "varios"} metros`, x: lvTxt + " En la época seca llueve poco y la represa usa el agua para generar electricidad; con las lluvias se vuelve a llenar.", go: { date: "2026-07-17", card: "lakeCard" } },
-        { t: "Aparecen plantas sobre el agua", x: `En <b style="color:#ffd600">amarillo</b> está lo que la inteligencia artificial detecta como plantas flotantes (posible lirio acuático).` + (f.plants ? ` En lluvias cubren unos <b>${f.plants.wet.toFixed(0)} km²</b>, contra ${f.plants.dry.toFixed(0)} km² en verano.` : "") + " Se juntan donde entra el río Lempa, que trae nutrientes.", go: { layer: "ml", date: "2026-09-15", fly: [[14.07, -89.13], 12] } },
-        { t: "Una alerta por zonas", x: "El embalse se divide en 4 zonas. Para cada pasada del radar se calcula cuánto lirio hay en cada una, si <b>subió o bajó</b>, y se arma un <b>mensaje corto listo para compartir</b> con pescadores, cooperativas o la alcaldía.", go: { layer: "ml", date: "2026-09-15", card: "alertCard" } },
+        { t: `El embalse respira: baja ${f.level ? f.level.drop.toFixed(0) : "varios"} metros`, x: lvTxt + " La variación del nivel responde a la lluvia y al uso del agua; para conocer el peso exacto de cada factor hace falta comparar con los registros de operación de la represa.", go: { date: "2026-07-17", card: "lakeCard" } },
+        { t: "Aparecen plantas sobre el agua", x: `En <b style="color:#ffd600">amarillo</b> está lo que la inteligencia artificial detecta como vegetación sobre el agua (posible macrofíta flotante; la especie requiere verificación en campo).` + (f.plants ? ` En lluvias cubre unos <b>${f.plants.wet.toFixed(0)} km²</b>, contra ${f.plants.dry.toFixed(0)} km² en verano.` : "") + " Se concentra donde entra el río Lempa, que trae nutrientes.", go: { layer: "ml", date: "2026-09-15", fly: [[14.07, -89.13], 12] } },
+        { t: "Un aviso por zonas", x: "El embalse se divide en 4 zonas. Para cada pasada del radar se calcula cuánta vegetación flotante hay en cada una, si <b>subió o bajó</b>, y se genera un <b>mensaje corto para compartir</b> con pescadores, cooperativas o la alcaldía. Los niveles bajo, medio y alto son relativos al período observado en cada zona, no umbrales oficiales de emergencia.", go: { layer: "ml", date: "2026-09-15", card: "alertCard" } },
         { t: "La computadora aprendió de las fotos", x: "Usamos las fotos de días despejados para enseñarle al radar cómo se ven las plantas. Probado en fechas que <b>nunca vio</b>, gana a la regla anterior en <b>7 de 7</b> casos" + (ML ? `, y cuando la foto y el radar están a 4 días o menos acierta con <b>${(ML.close_f1 ?? 0.68).toFixed(2)}</b> de 1` : "") + ".", go: { layer: "ml", date: "2026-08-10", card: "mlCard" } },
         { t: "¿Naturaleza o ser humano?", x: "<b>Natural:</b> la lluvia llena el embalse y el calor ayuda a crecer a las plantas. <b>Humano:</b> la represa decide cuánta agua se suelta, y las aguas negras y fertilizantes que bajan por los ríos alimentan el lirio. El satélite muestra el patrón; las causas hay que confirmarlas en el campo.", go: { date: "2026-09-03", card: "semaCard" } },
         { t: "Y funciona en otros lugares", x: "Con el mismo método revisamos el manglar de <b>Barra de Santiago</b>: coincidió en un ~90 % con el mapa oficial de la ESA. Se puede llevar a cualquier humedal del mundo.", go: {}, next: { label: "Ver Barra de Santiago →", site: "barra" } },
@@ -197,24 +223,43 @@
 
   let tour = null;
   function show(i) {
+    restoreTourEvidence();
     const st = tour[i];
     tour.i = i;
     $("storyStep").textContent = `Paso ${i + 1} de ${tour.length}`;
     $("storyTitle").innerHTML = st.t;
     $("storyText").innerHTML = st.x;
+    $("storyLocate").hidden = !st.go?.card || !$(st.go.card) || $(st.go.card).hidden;
     $("storyDots").innerHTML = tour.map((_, k) => `<i class="${k === i ? "on" : ""}"></i>`).join("");
     $("storyPrev").disabled = i === 0;
     $("storyNext").textContent = st.next ? st.next.label : i === tour.length - 1 ? "Terminar ✓" : "Siguiente →";
     const box = $("story");
     box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
     go(st.go || {});
+    if (document.body.classList.contains("wireframe")) document.querySelector(".mapwrap").scrollIntoView({ behavior: "instant", block: "start" });
   }
   function startTour() {
+    if (!S?.dates?.length) return;
     tour = steps();
+    document.body.classList.add("tour-active");
+    document.querySelector(".mapwrap").scrollIntoView({ behavior: "smooth", block: "start" });
     $("story").hidden = false;
     show(0);
   }
-  const endTour = () => { $("story").hidden = true; tour = null; };
+  const endTour = () => { restoreTourEvidence(); $("story").hidden = true; document.body.classList.remove("tour-active"); tour = null; };
+  $("storyLocate").onclick = () => {
+    const id = tour?.[tour.i]?.go?.card;
+    if (!id) return;
+    $("story").hidden = true;
+    focusCard(id);
+    tourReturn.hidden = false;
+  };
+  tourReturn.onclick = () => {
+    if (!tour) return;
+    restoreTourEvidence(); $("story").hidden = false;
+    document.querySelector(".mapwrap").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("storyLocate").focus({ preventScroll: true });
+  };
   $("tourBtn").onclick = () => (tour ? endTour() : startTour());
   $("storyClose").onclick = endTour;
   $("storyPrev").onclick = () => tour && tour.i > 0 && show(tour.i - 1);
@@ -225,6 +270,7 @@
     if (tour.i < tour.length - 1) show(tour.i + 1); else endTour();
   };
   document.addEventListener("keydown", (e) => {
+    if (tour && e.key === "Escape" && !tourReturn.hidden && !document.querySelector("dialog[open]")) { tourReturn.click(); return; }
     if (!tour || $("story").hidden) return;
     if (e.key === "ArrowRight") $("storyNext").click();
     if (e.key === "ArrowLeft") $("storyPrev").click();
@@ -259,7 +305,7 @@
       const lv = (SWOT?.observations || []).filter((o) => o.quality <= 1);
       const l = near(lv, d.date, 25);
       html += light("Nivel del agua", l ? l.wse_m.toFixed(1) : null, " m", lv.map((o) => o.wse_m), "low",
-        ["bajo: época seca o descarga de la represa", "nivel medio", "alto: embalse lleno"]);
+        ["bajo: posible época seca o mayor descarga; confirmar con registros de la presa", "nivel medio", "alto: embalse lleno"]);
       const eco = (ECO?.observations || []).filter((o) => o.day && o.water_c != null && o.water_px > 0.3 * o.water_total_px);
       const e = near(eco, d.date, 15, "local_time");
       html += light("Temperatura del agua", e ? e.water_c.toFixed(0) : null, " °C", eco.map((o) => o.water_c), "high",
@@ -315,7 +361,7 @@
   function buildWow() {
     const w = CLOUDS?.wow, rain = CLOUDS?.seasons?.lluvias;
     if (!w) return;
-    $("wowTitle").textContent = `El ${shortDate(w.photo_date)} la foto no vio nada. El radar vio ${w.ml_km2.toFixed(0)} km² de lirio.`;
+    $("wowTitle").textContent = `El ${shortDate(w.photo_date)} la foto no vio nada. El radar + IA detectó ${w.ml_km2.toFixed(0)} km² de vegetación sobre el agua.`;
     $("wowLead").innerHTML = `Arrastra sobre la imagen: a la izquierda la <b>foto normal</b> de ese día (${w.cloud_pct} % del embalse tapado por nubes); a la derecha el <b>radar NISAR</b>, con las plantas que encontró la inteligencia artificial en amarillo.`;
     $("wowPhoto").src = P(w.photo);
     $("wowRadar").src = P(w.radar);
@@ -347,12 +393,12 @@
     const r = d && ALERTS.dates.find((x) => x.id === d.id);
     const card = $("alertCard");
     card.hidden = false;
-    if (!r) { $("alertZones").innerHTML = `<p class="hint">Sin alerta para ${d ? shortDate(d.date) : "esta fecha"}: el radar no cubrió todo el embalse.</p>`; $("alertMsg").textContent = ""; return; }
+    if (!r) { $("alertZones").innerHTML = `<p class="hint">Sin evaluación disponible para ${d ? shortDate(d.date) : "esta fecha"}: el radar no cubrió el mínimo del embalse para esta pasada. La ausencia de evaluación no implica ausencia de vegetación.</p>`; $("alertMsg").textContent = ""; return; }
     $("alertZones").innerHTML = ALERTS.zones.map((z) => {
       const v = r.zones[z.id];
       const tr = v.delta_km2 == null ? `<span class="eq">—</span>` : v.delta_km2 > 0.3 ? `<span class="up">▲ +${v.delta_km2.toFixed(1)}</span>` : v.delta_km2 < -0.3 ? `<span class="down">▼ ${v.delta_km2.toFixed(1)}</span>` : `<span class="eq">= igual</span>`;
       return `<div class="az"><span class="bulb" style="color:${levelColor[v.level]};background:${levelColor[v.level]}"></span>` +
-        `<div><b>${z.name}</b><small>${v.km2.toFixed(1)} km² con lirio · ${v.pct.toFixed(0)} % del agua · nivel ${v.level}</small></div><div class="tr">${tr}</div></div>`;
+        `<div><b>${z.name}</b><small>${v.km2.toFixed(1)} km² de vegetación detectada · ${v.pct.toFixed(0)} % del agua · nivel ${v.level} (relativo al año)</small></div><div class="tr">${tr}</div></div>`;
     }).join("");
     $("alertMsg").textContent = r.message;
     Object.entries(zoneLayers).forEach(([id, l]) => l.rect.setStyle({ color: levelColor[r.zones[id].level], weight: r.zones[id].level === "alto" ? 2.5 : 1 }));

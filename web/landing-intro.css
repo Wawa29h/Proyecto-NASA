@@ -1,0 +1,16 @@
+/* Misma bienvenida 3D del explorador, aislada de los estilos de la landing. */
+.intro{position:fixed;inset:0;z-index:3000;background:radial-gradient(ellipse at 50% 40%,#0b1a24 0%,#03070a 70%);overflow:hidden;transition:opacity .75s ease;color:#edf5f4}
+.intro[hidden]{display:none}.intro.out{opacity:0;pointer-events:none}#introGlobe{position:absolute;inset:0}
+.intro-load{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#bdcece;transition:opacity .5s}.intro-load.off{opacity:0}
+.intro-ui{position:absolute;left:0;right:0;bottom:7vh;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 16px;gap:10px;transition:opacity .5s ease,transform .5s ease;pointer-events:none;z-index:2;max-height:90svh;overflow-y:auto;overflow-x:hidden}.intro-ui>*{pointer-events:auto}
+.intro.going .intro-ui{opacity:0;transform:translateY(20px)}
+.intro h1{margin:0;font-size:clamp(24px,3vw,40px);line-height:1.4;max-width:1200px;text-shadow:0 2px 18px #000c;letter-spacing:normal;font-weight:800;color:#fff;text-wrap:pretty}
+.intro-title-text,.intro-quote{display:inline;font-size:inherit;line-height:inherit;margin:0}.intro-quote{font-style:normal;color:#fff;background:var(--blue,#002d91);padding:3px 9px;box-decoration-break:clone;-webkit-box-decoration-break:clone;text-shadow:none}.intro-attribution,.intro-attribution a{display:inline;font:inherit;color:#fff}.intro-attribution a,.intro-science-source{color:inherit;text-underline-offset:4px}.intro-attribution a:hover,.intro-science-source:hover{text-decoration-thickness:2px}.intro-science-source{display:block;font-size:10px;line-height:1.5;margin-top:8px;color:#fff}
+.intro-sub{margin:24px 0 12px;max-width:700px;color:#fff;font-size:clamp(14px,1.6vw,17px);text-shadow:0 2px 12px #000e}
+.intro .eyebrow{margin:0;text-shadow:0 2px 10px #000e;color:#bdcece;letter-spacing:2px;font-size:12px}
+.intro-go{display:inline-flex;align-items:center;justify-content:center;gap:24px;font-size:18px;font-weight:800;padding:13px 30px;border-radius:9px;margin-top:10px;background:var(--blue,#002d91);color:#fff;border:1px solid var(--blue,#002d91);cursor:pointer;box-shadow:0 3px 15px #0003;transition:background .18s ease,box-shadow .18s ease}.intro-go:hover{background:#1649ae;box-shadow:0 4px 20px #0005}.intro-go span{font-size:24px;line-height:1}
+.intro-skip{background:none;border:0;color:#fff;font:inherit;font-size:12px;cursor:pointer;text-decoration:underline}
+body:has(>.intro:not([hidden]):not(.out)){overflow:hidden}
+@media(prefers-reduced-motion:reduce){.intro-go{animation:none}}
+.intro::before,.intro::after{content:"";position:absolute;z-index:1;pointer-events:none;width:clamp(160px,30vw,420px);height:clamp(150px,26vw,330px);background:url('img/landing/decoracion/halftone_azul_esquina.svg') center/contain no-repeat;opacity:.36}.intro::before{top:-35px;left:-35px}.intro::after{bottom:-60px;right:-45px;transform:rotate(180deg);opacity:.2}
+@media(max-width:600px){.intro-ui{bottom:4vh;gap:9px;padding-inline:18px;max-height:92svh}.intro h1{font-size:clamp(24px,6.3vw,33px)}.intro-sub{font-size:14px;max-width:360px}.intro-go{font-size:16px;padding:12px 26px}.intro::before{opacity:.25}.intro::after{opacity:.12}}

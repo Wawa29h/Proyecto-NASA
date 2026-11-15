@@ -23,7 +23,8 @@
     ["burnWeekChart", "Quemas de caña por semana"],
     ["histChart", "Manglar 1996–2020"],
     ["mangChart", "Dos manglares, mismo radar"],
-    ["probeChart", "Análisis por punto"]
+    ["probeChart", "Análisis por punto"],
+    ["wfRadarChart", "HH / HV medios del área válida"]
   ];
 
   function message(text, error = false) {
@@ -194,4 +195,5 @@
     if (++attempts >= 60) clearInterval(check);
   }, 500);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshCharts(); });
+  document.addEventListener("manglo:charts", refreshCharts);
 })();

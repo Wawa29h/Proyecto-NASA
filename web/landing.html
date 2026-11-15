@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MANGLO: monitoreo de manglares y ecosistemas acuáticos de El Salvador con datos de radar. Explora tres territorios, sus datos y sus métodos.">
+  <title>MANGLO — Radar para manglares y humedales</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="landing.css?v=20261115-4">
+  <link rel="stylesheet" href="landing-intro.css?v=20261115-editorial3">
+</head>
+<body id="inicio">
+  <div id="intro" class="intro" hidden aria-label="Bienvenida a MANGLO">
+    <div id="introGlobe"></div>
+    <div class="intro-load" id="introLoad" role="status">cargando la Tierra…</div>
+    <div class="intro-ui">
+      <h1><span class="intro-quote">&quot;La conservación no reconoce fronteras&quot;</span> <span class="intro-attribution"><a href="https://www.ambiente.gob.sv/intercambio-regional-fortalece-la-conservacion-de-cocodrilos-y-caimanes/" target="_blank" rel="noopener noreferrer">(Fernando López, citado por MARN, 2025)</a></span>: <span class="intro-title-text">Vigilando los manglares de El Salvador desde el espacio.</span></h1>
+      <p class="intro-sub">NISAR utiliza radar para observar la superficie terrestre, incluso a través de las nubes y en la oscuridad.<a class="intro-science-source" href="https://science.nasa.gov/mission/nisar/mission-overview/" target="_blank" rel="noopener noreferrer">Fuente: NASA NISAR ↗</a></p>
+      <button id="introGo" class="btn primary intro-go" type="button">Comenzar <span aria-hidden="true">→</span></button>
+      <button id="introSkip" class="intro-skip" type="button" hidden>Saltar</button>
+    </div>
+  </div>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+    <symbol id="layers" viewBox="0 0 40 40"><path d="m3 14 17-9 17 9-17 9L3 14Zm0 8 17 9 17-9M3 29l17 9 17-9"/></symbol>
+    <symbol id="clock" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16"/><path d="M20 7v14l10 5M14 2h12"/></symbol>
+    <symbol id="plant" viewBox="0 0 40 40"><path d="M20 37V20M20 25C8 26 4 17 4 9c10 0 17 4 16 16ZM20 21C20 9 28 4 37 4c0 11-7 18-17 17Z"/></symbol>
+    <symbol id="trend" viewBox="0 0 40 40"><path d="m5 29 10-12 9 6 11-15M26 8h9v9"/></symbol>
+  </defs></svg>
+  <header class="site-header">
+    <div class="nav-inner">
+      <a class="logo" href="#inicio" aria-label="MANGLO, inicio"><span>MANGLO</span><svg viewBox="0 0 90 20" aria-hidden="true"><path d="M2 9q14-9 28 0t28 0M16 14q14-9 28 0t28 0"/></svg></a>
+      <p class="brand-description">Monitoreo de manglares<br>y ecosistemas acuáticos<br>con datos de radar</p>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav" type="button">Menú <span aria-hidden="true">☰</span></button>
+      <nav id="main-nav" aria-label="Navegación principal">
+        <a class="active" href="#inicio">Inicio</a><a href="#proyecto">El proyecto</a><a href="#sitios">Sitios de estudio</a><a href="#datos-abiertos">Datos abiertos</a><a href="https://github.com/Wawa29h/Proyecto-NASA#readme" target="_blank" rel="noopener noreferrer" title="Documentación real del proyecto en GitHub">Publicaciones</a>
+        <a class="button nav-map" href="index.html?site=barra">Explorar mapa <svg><use href="#arrow"/></svg></a>
+      </nav>
+    </div>
+  </header>
+  <main id="contenido">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-picture" aria-hidden="true"><img src="img/landing/imagenes/hero_manglares_recorte.png" alt="" fetchpriority="high"></div>
+      <div class="hero-shade"></div><div class="dots hero-dots" aria-hidden="true"></div>
+      <div class="hero-content wrap">
+        <h1 id="hero-title">LA TIERRA<br>CAMBIA</h1>
+        <p class="hero-subtitle"><span>EL RADAR REVELA TRANSFORMACIONES</span><br><span>EN MANGLARES Y ECOSISTEMAS</span><br><span>ACUÁTICOS</span></p>
+        <p class="hero-description">MANGLO usa datos de radar, incluyendo NISAR, para monitorear cambios en manglares, humedales y cuerpos de agua de El Salvador.</p>
+        <a class="button" href="index.html?site=barra">Explorar MANGLO <svg><use href="#arrow"/></svg></a>
+      </div>
+      <div class="image-credit"><a href="https://science.nasa.gov/mission/nisar/mission-overview/" target="_blank" rel="noopener noreferrer">Fuente científica: NASA NISAR</a><span>Imagen ilustrativa del diseño · no es fotografía documental</span></div>
+    </section>
+
+    <section class="challenge cream" id="proyecto" aria-labelledby="challenge-title">
+      <div class="wrap challenge-layout">
+        <div class="challenge-heading"><h2 id="challenge-title">EL DESAFÍO:<br>ECOSISTEMAS<br>VULNERABLES</h2><div class="dot-strip" aria-hidden="true"></div></div>
+        <div class="challenge-copy"><h3>¿Por qué monitorear con radar?</h3><p>Los manglares y humedales cumplen funciones esenciales para la biodiversidad y el almacenamiento de carbono. Sin embargo, estos ecosistemas enfrentan transformaciones asociadas con procesos naturales y actividades humanas. El radar NISAR permite estudiar sus cambios mediante observaciones repetidas, incluso cuando la nubosidad dificulta el uso de imágenes ópticas (NASA Jet Propulsion Laboratory [JPL], 2023).</p><a class="source" href="https://www.jpl.nasa.gov/news/nasa-isro-radar-mission-to-provide-dynamic-view-of-forests-wetlands/" target="_blank" rel="noopener noreferrer">Fuente: NASA JPL, 2023 ↗</a>
+          <ul class="benefits"><li><svg><use href="#layers"/></svg><strong>Observa<br>sin nubes</strong></li><li><svg><use href="#clock"/></svg><strong>Monitorea<br>cambios en el tiempo</strong></li><li><svg><use href="#plant"/></svg><strong>Aporta evidencia<br>para la conservación</strong></li></ul>
+        </div>
+      </div><img class="challenge-dots" src="img/landing/decoracion/halftone_azul_circulo.svg" alt="" aria-hidden="true">
+    </section>
+
+    <section class="study-sites cream" id="sitios" aria-labelledby="sites-title">
+      <div class="wrap">
+        <p class="eyebrow">SITIOS DE ESTUDIO</p><h2 id="sites-title">TRES TERRITORIOS CLAVE</h2>
+        <div class="site-cards">
+          <article class="site-card">
+            <a class="site-photo" href="index.html?site=barra" aria-label="Explorar Barra de Santiago en el mapa"><img src="img/landing/imagenes/barra_de_santiago_tarjeta.png" alt="Ilustración de referencia de un manglar costero, no fotografía documental de Barra de Santiago" loading="lazy"></a>
+            <div class="site-card-copy"><h3><a href="index.html?site=barra">Barra de Santiago</a></h3><p>El Complejo Barra de Santiago comprende <strong>11,519 hectáreas de humedales costeros</strong> y constituye una importante fuente de sustento para las comunidades locales. Una estimación histórica recogida por el PNUD señala que alrededor de <strong>3,500 personas se dedicaban regularmente a actividades pesqueras</strong>, complementadas por el turismo y el comercio de moluscos (PNUD, s. f.).</p><div class="site-sources"><strong>Fuente: MARN / PNUD →</strong><a href="https://visorsima.ambiente.gob.sv/p/sitios-ramsar" target="_blank" rel="noopener noreferrer">MARN — Superficie y contexto ambiental ↗</a><a href="https://rsis.ramsar.org/RISapp/files/RISrep/SV2207RIS.pdf" target="_blank" rel="noopener noreferrer">Ramsar — Información socioeconómica ↗</a></div><p class="note">Estimación histórica; no representa un censo actualizado de 2026.</p></div>
+          </article>
+          <article class="site-card">
+            <a class="site-photo" href="index.html?site=jiquilisco" aria-label="Explorar Bahía de Jiquilisco en el mapa"><img src="img/landing/imagenes/bahia_de_jiquilisco_tarjeta.png" alt="Ilustración de referencia de una bahía con manglares, no fotografía documental de Jiquilisco" loading="lazy"></a>
+            <div class="site-card-copy"><h3><a href="index.html?site=jiquilisco">Bahía de Jiquilisco</a></h3><p>La Bahía de Jiquilisco abarca <strong>63,500 hectáreas</strong> y constituye el complejo de agua salobre y bosque de manglar más extenso de El Salvador. Una ficha Ramsar elaborada en 2004 recogió estimaciones de <strong>5,000 pescadores y 1,500 mujeres dedicadas a actividades pesqueras</strong>, evidenciando la importancia histórica de estos recursos para la economía local (MARN, 2004).</p><div class="site-sources"><strong>Fuente: MARN / Ramsar →</strong><a href="https://www.ambiente.gob.sv/bahia-de-jiquilisco-es-el-primer-sitio-de-el-salvador-en-la-red-hemisferica-de-reservas-para-aves-playeras/" target="_blank" rel="noopener noreferrer">MARN — Superficie y contexto ambiental ↗</a><a href="https://simacc.ambiente.gob.sv/detalle-ecosistema/25" target="_blank" rel="noopener noreferrer">Ficha Ramsar — Información socioeconómica ↗</a></div><p class="note">Cifras históricas de 2004. Las categorías podrían superponerse y no se suman.</p></div>
+          </article>
+          <article class="site-card">
+            <a class="site-photo" href="index.html?site=cerron" aria-label="Explorar Cerrón Grande en el mapa"><img src="img/landing/imagenes/cerron_grande_tarjeta.png" alt="Ilustración de referencia de un embalse, no fotografía documental de Cerrón Grande" loading="lazy"></a>
+            <div class="site-card-copy"><h3><a href="index.html?site=cerron">Cerrón Grande</a></h3><p>El Embalse Cerrón Grande forma parte de un sitio Ramsar de <strong>60,698 hectáreas</strong> y contribuye a la pesca, el turismo y la generación hidroeléctrica. En octubre de 2025, Protección Civil informó que la proliferación de lechuga acuática había afectado directamente a <strong>al menos 4,500 pescadores artesanales y 40 restaurantes</strong>, demostrando su importancia socioeconómica (Dirección General de Protección Civil, 2025).</p><div class="site-sources"><strong>Fuente: Ramsar / Protección Civil →</strong><a href="https://www.ramsar.org/es/news/el-tercer-sitio-ramsar-de-el-salvador" target="_blank" rel="noopener noreferrer">Ramsar — Importancia ambiental ↗</a><a href="https://www.proteccioncivil.gob.sv/2025/10/29/consejo-asesor-preve-minimizar-impacto-de-la-lechuga-de-agua-del-embalse-cerron-grande-29-octubre-2025/" target="_blank" rel="noopener noreferrer">Protección Civil — Impacto socioeconómico ↗</a></div><p class="note">La superficie corresponde al sitio Ramsar completo, no solo al espejo de agua.</p></div>
+          </article>
+        </div><p class="asset-note">Imágenes de las tarjetas: ilustraciones temporales extraídas del diseño de referencia; no son fotografías documentales de los sitios.</p>
+      </div>
+    </section>
+
+    <section class="action" aria-labelledby="action-title">
+      <div class="dots action-dots" aria-hidden="true"></div>
+      <div class="wrap action-layout">
+        <div class="action-copy"><p class="eyebrow">DEL DATO A LA ACCIÓN</p><h2 id="action-title">DETECTAMOS<br>CAMBIOS<br>REALES</h2><p>Transformamos datos de radar en información clara sobre la dinámica de manglares y cuerpos de agua, para comprender los cambios ambientales y apoyar su conservación.</p><a class="button" href="index.html?site=barra">Ver un ejemplo <svg><use href="#arrow"/></svg></a></div>
+        <figure class="radar-comparison"><div class="radar-pair"><div class="radar-frame"><span>25 DIC 2025</span><img src="data/2025-12-25_A134_rgb.png" alt="Producto radar NISAR de Barra de Santiago del 25 de diciembre de 2025, visualización de falso color" loading="lazy"></div><span class="comparison-arrow" aria-hidden="true"><svg><use href="#arrow"/></svg></span><div class="radar-frame"><span>21 OCT 2026</span><img src="data/2026-10-21_A134_rgb.png" alt="Producto radar NISAR de Barra de Santiago del 21 de octubre de 2026, visualización de falso color" loading="lazy"></div></div><figcaption>Barra de Santiago · NISAR L2 GCOV · HH / HV en falso color.<br>Productos del proyecto, no fotografías ópticas. La comparación visual no cuantifica pérdidas.</figcaption></figure>
+        <div class="action-indicators"><h3>Ejemplo de cambio<br> observado</h3><div class="action-indicator"><span class="round-icon"><svg><use href="#layers"/></svg></span><div><h4>Cambios de cobertura</h4><p>Permite identificar variaciones en la vegetación y en las condiciones de inundación mediante la comparación de observaciones radar (JPL, 2023).</p><a href="https://www.jpl.nasa.gov/news/nasa-isro-radar-mission-to-provide-dynamic-view-of-forests-wetlands/" target="_blank" rel="noopener noreferrer">Fuente: NASA JPL ↗</a></div></div><div class="action-indicator"><span class="round-icon"><svg><use href="#trend"/></svg></span><div><h4>Series temporales comparables</h4><p>Facilita analizar la evolución de las características de los ecosistemas mediante observaciones obtenidas en distintas fechas (NASA, 2026).</p><a href="https://science.nasa.gov/mission/nisar/mission-overview/" target="_blank" rel="noopener noreferrer">Fuente: NASA NISAR ↗</a></div></div></div>
+      </div>
+    </section>
+
+    <section class="open-science cream" id="datos-abiertos" aria-labelledby="open-title">
+      <div class="wrap open-layout"><div class="open-heading"><h2 id="open-title">CIENCIA ABIERTA<br> Y TRANSPARENCIA</h2><div class="dot-strip" aria-hidden="true"></div></div><div class="open-content"><p class="open-description">Datos, métodos y contexto ambiental accesibles para la investigación, la gestión pública y la conservación de los ecosistemas acuáticos.</p><div class="resource-cards">
+        <article class="resource-card"><img src="img/landing/imagenes/datos_abiertos_miniatura.png" alt="Miniatura ilustrativa de radar" loading="lazy"><div><h3>Datos abiertos</h3><p>Datos de radar NISAR, estimaciones y productos.</p><a href="https://science.nasa.gov/mission/nisar/" target="_blank" rel="noopener noreferrer">NASA NISAR ↗</a><a href="https://search.asf.alaska.edu/" target="_blank" rel="noopener noreferrer">ASF DAAC →</a></div></article>
+        <article class="resource-card"><img src="img/landing/imagenes/metodologia_miniatura.png" alt="Miniatura ilustrativa de procesamiento geoespacial" loading="lazy"><div><h3>Metodología</h3><p>Código, procesamiento y documentación del proyecto.</p><a href="https://github.com/Wawa29h/Proyecto-NASA" target="_blank" rel="noopener noreferrer">GitHub del proyecto →</a></div></article>
+        <article class="resource-card"><img src="img/landing/imagenes/humedales_miniatura.png" alt="Ilustración de un ave en un humedal" loading="lazy"><div><h3>Humedales</h3><p>Contexto ambiental, fichas de sitios y marco de conservación.</p><a href="https://visorsima.ambiente.gob.sv/p/sitios-ramsar" target="_blank" rel="noopener noreferrer">MARN — Sitios Ramsar →</a></div></article>
+      </div><details class="references"><summary>Referencias bibliográficas · APA 7</summary><ol>
+        <li>Comisión sobre los Humedales. (2006, 18 de enero). <a href="https://www.ramsar.org/es/news/el-tercer-sitio-ramsar-de-el-salvador" target="_blank" rel="noopener noreferrer"><cite>El tercer Sitio Ramsar de El Salvador</cite></a>.</li>
+        <li>Dirección General de Protección Civil. (2025, 29 de octubre). <a href="https://www.proteccioncivil.gob.sv/2025/10/29/consejo-asesor-preve-minimizar-impacto-de-la-lechuga-de-agua-del-embalse-cerron-grande-29-octubre-2025/" target="_blank" rel="noopener noreferrer"><cite>Consejo Asesor prevé minimizar impacto de la lechuga de agua del Embalse Cerrón Grande</cite></a>.</li>
+        <li>Ministerio de Medio Ambiente y Recursos Naturales. (2004). <a href="https://simacc.ambiente.gob.sv/storage/ecosistema_documentos/26/z7pNh2WUH0kS4BT8YXWTG6QxQXp54B4niOK5hppH.pdf" target="_blank" rel="noopener noreferrer"><cite>Ficha informativa de los humedales de Ramsar: Complejo Bahía de Jiquilisco</cite></a>.</li>
+        <li>Ministerio de Medio Ambiente y Recursos Naturales. (s. f.). <a href="https://visorsima.ambiente.gob.sv/p/sitios-ramsar" target="_blank" rel="noopener noreferrer"><cite>Sitios Ramsar</cite></a>. Sistema de Información y Monitoreo Ambiental.</li>
+        <li>National Aeronautics and Space Administration. (2026, 2 de junio). <a href="https://science.nasa.gov/mission/nisar/mission-overview/" target="_blank" rel="noopener noreferrer"><cite>Mission overview</cite></a>. NASA Science.</li>
+        <li>NASA Jet Propulsion Laboratory. (2023, 27 de octubre). <a href="https://www.jpl.nasa.gov/news/nasa-isro-radar-mission-to-provide-dynamic-view-of-forests-wetlands/" target="_blank" rel="noopener noreferrer"><cite>NASA-ISRO radar mission to provide dynamic view of forests, wetlands</cite></a>.</li>
+        <li>Programa de las Naciones Unidas para el Desarrollo. (s. f.). <a href="https://sgp.undp.org/spacial-itemid-projects-landing-page/spacial-itemid-project-search-results/spacial-itemid-project-detailpage.html?id=11039&amp;view=projectdetail" target="_blank" rel="noopener noreferrer"><cite>Construcción de infraestructura básica para la conservación del ANP Complejo Barra de Santiago</cite></a>.</li>
+      </ol><p>Miniaturas: ilustraciones del diseño, no productos científicos.</p></details></div></div>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-title"><div class="closing-picture" aria-hidden="true"><img src="img/landing/imagenes/cierre_paisaje_recorte.png" alt="" loading="lazy"></div><div class="closing-shade"></div><div class="closing-dots" aria-hidden="true"></div><div class="wrap closing-content"><h2 id="closing-title"><span>CONOCE MANGLO</span></h2><p>Monitoreo con radar para ecosistemas más resilientes.</p><a class="button" href="index.html?site=barra">Explorar el proyecto <svg><use href="#arrow"/></svg></a></div><span class="image-credit">Imagen ilustrativa del diseño · no es fotografía documental</span></section>
+  </main>
+  <script src="landing.js"></script>
+  <script src="intro.js?v=20261115-landing"></script>
+</body>
+</html>
