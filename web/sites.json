@@ -1,21 +1,5 @@
 [
   {
-    "id": "cerron",
-    "name": "Embalse Cerrón Grande",
-    "title": "Pulso del Embalse",
-    "subtitle": "Cerrón Grande · Chalatenango/Cabañas, El Salvador · NISAR + SWOT + ECOSTRESS + GPM + Sentinel-2",
-    "base": "data-cerron",
-    "center": [
-      14.03,
-      -89.08
-    ],
-    "lake": true,
-    "labels": {
-      "water": "Agua abierta del embalse km²",
-      "veg": "Superficie con plantas (NISAR) km²"
-    }
-  },
-  {
     "id": "barra",
     "name": "Barra de Santiago",
     "title": "Latido del Manglar",
@@ -48,6 +32,22 @@
     "labels": {
       "water": "Agua de la bahía km²",
       "veg": "Manglar inundado km²"
+    }
+  },
+  {
+    "id": "cerron",
+    "name": "Embalse Cerrón Grande",
+    "title": "Pulso del Embalse",
+    "subtitle": "Cerrón Grande · Chalatenango/Cabañas, El Salvador · NISAR + SWOT + ECOSTRESS + GPM + Sentinel-2",
+    "base": "data-cerron",
+    "center": [
+      14.03,
+      -89.08
+    ],
+    "lake": true,
+    "labels": {
+      "water": "Agua abierta del embalse km²",
+      "veg": "Superficie con plantas (NISAR) km²"
     }
   }
 ]

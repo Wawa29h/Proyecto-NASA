@@ -344,7 +344,7 @@
     updateSema();
     moveNow();
     reveal();
-    if (!params.has("site") || params.get("intro") === "1") hero.hidden = false;
+    if (!window.INTRO_ACTIVE && (params.get("hero") === "1" || (!params.has("site") && !document.getElementById("intro")))) hero.hidden = false;
     else if (params.get("tour") === "1") setTimeout(startTour, 600);
   };
 })();

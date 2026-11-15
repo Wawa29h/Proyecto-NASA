@@ -7,121 +7,135 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#06090c;--panel:#111d20;--card:#152428;--line:#24393e;--text:#e7f1ef;--muted:#93aaa6;--accent:#2fd6a3;--accent2:#ff8a00}
+:root{--bg:#06090c;--panel:rgba(14,26,29,.88);--line:#24393e;--text:#e7f1ef;--muted:#93aaa6;--accent:#2fd6a3;--accent2:#ff8a00}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 Inter,system-ui,sans-serif;overflow:hidden}
 #globe{position:fixed;inset:0}
-.hud{position:fixed;pointer-events:none;z-index:5}
-.hud>*{pointer-events:auto}
-.title{top:16px;left:18px;max-width:400px}
-.title h1{margin:0;font-size:22px;font-weight:700}
-.title h1 small{color:var(--accent);font-weight:600;margin-right:8px}
-.title p{margin:6px 0 0;color:#c9d8d5;font-size:13px}
-.title a{color:var(--accent);text-decoration:none;font-size:12px}
-.card{background:rgba(21,36,40,.9);border:1px solid var(--line);border-radius:12px;padding:10px 12px;backdrop-filter:blur(6px)}
-.card h3{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600}
-.left{top:118px;left:18px;width:330px;display:flex;flex-direction:column;gap:8px;max-height:calc(100% - 140px);overflow:auto}
-.right{top:16px;right:16px;width:300px;display:flex;flex-direction:column;gap:8px;max-height:calc(100% - 32px);overflow:auto}
-.big{font-size:20px;font-weight:700;line-height:1.15}
-.sub{color:var(--muted);font-size:12px}
+.glass{background:var(--panel);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(8px)}
+/* título compacto */
+.title{position:fixed;top:12px;left:12px;z-index:6;display:flex;align-items:center;gap:10px;padding:8px 12px}
+.title b{font-size:14px}.title b small{color:var(--accent);font-weight:700;margin-right:6px}
+.title a{color:var(--accent);text-decoration:none;font-size:12px;white-space:nowrap}
+.live{width:8px;height:8px;border-radius:50%;background:#ff4b4b;box-shadow:0 0 0 0 rgba(255,75,75,.7);animation:live 1.6s infinite}
+@keyframes live{70%{box-shadow:0 0 0 8px rgba(255,75,75,0)}100%{box-shadow:0 0 0 0 rgba(255,75,75,0)}}
+/* barra de controles abajo */
+.bar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:10px;padding:8px 10px;max-width:calc(100% - 24px);flex-wrap:wrap;justify-content:center}
+.now{min-width:210px;padding:0 6px;border-right:1px solid var(--line)}
+.now b{display:block;font-size:15px}
+.now span{display:block;color:var(--muted);font-size:11px;line-height:1.35}
+.seg{display:flex;background:#0e1a1d;border:1px solid var(--line);border-radius:10px;padding:2px}
+.seg button{background:none;border:0;color:var(--muted);padding:6px 8px;border-radius:8px;cursor:pointer;font:inherit;font-weight:600;font-size:12px}
+.seg button.on{background:var(--accent);color:#04231a}
+.ib{display:inline-flex;align-items:center;gap:6px;background:#162a2e;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 10px;cursor:pointer;font:inherit;font-size:12px;font-weight:600;white-space:nowrap}
+.ib:hover{border-color:var(--accent)}
+.ib.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.ib.fire{background:linear-gradient(135deg,#7a1a05,#c43c08);border-color:#ff6a2a}
+.ib.fire.on{box-shadow:0 0 0 2px #ffb347,0 0 18px #ff5a1f;animation:fireBtn 1.2s ease-in-out infinite}
+@keyframes fireBtn{50%{box-shadow:0 0 0 2px #ffd27a,0 0 28px #ff3b1f}}
+.ib .lbl{display:inline}
+/* paneles que se abren */
+.drawer{position:fixed;top:64px;right:12px;z-index:7;width:320px;max-height:calc(100% - 150px);overflow:auto;padding:12px 14px;display:none}
+.drawer.open{display:block;animation:slideIn .25s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.drawer h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.drawer h3 button{background:none;border:0;color:var(--muted);font-size:16px;cursor:pointer}
 .pass{border-top:1px solid var(--line);padding:8px 0 4px;margin-top:6px}
 .pass:first-of-type{border-top:0;margin-top:0;padding-top:2px}
-.pass b{display:block;font-size:15px}
-.pass .when{color:var(--accent);font-weight:600}
+.pass b{display:block;font-size:14px}
+.pass .when{color:var(--accent);font-weight:600;font-size:13px}
 .pass .how{color:var(--muted);font-size:12px}
-.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
-.seg button{flex:1;background:none;border:0;color:var(--muted);padding:6px 4px;border-radius:8px;cursor:pointer;font:inherit;font-weight:500;font-size:12px}
-.seg button.on{background:var(--accent);color:#04231a}
-.btn{background:#1d3237;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px 10px;cursor:pointer;font:inherit;font-size:12px}
-.btn:hover{border-color:var(--accent)}
+.sub{color:var(--muted);font-size:12px}
 details{border-top:1px solid var(--line);padding:6px 0}
-details:first-of-type{border-top:0}
 summary{cursor:pointer;font-weight:600;font-size:13px}
 details p{margin:6px 0 0;color:var(--muted);font-size:12px}
 .legend div{display:flex;align-items:center;gap:8px;font-size:12px;margin:3px 0}
-.sw{width:14px;height:4px;border-radius:2px;flex:none}
-.dotsw{width:10px;height:10px;border-radius:50%;flex:none}
+.sw{width:14px;height:4px;border-radius:2px;flex:none}.dotsw{width:10px;height:10px;border-radius:50%;flex:none}
+.toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:7;max-width:min(560px,calc(100% - 24px));padding:8px 14px;font-size:13px;display:none;text-align:center}
+.toast.show{display:block;animation:slideIn .25s ease}
 #load{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:9;transition:opacity .6s,visibility 0s .6s}
 #load.off{opacity:0;visibility:hidden;pointer-events:none}
-#load div{text-align:center;color:var(--muted)}
-#load b{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
+#load div{text-align:center;color:var(--muted)}#load b{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
 .warn{color:var(--accent2);font-size:12px}
-.btn.big2{padding:9px 12px;font-size:13px;font-weight:600}
-.btn.fire{background:linear-gradient(135deg,#7a1a05,#c43c08);border-color:#ff6a2a}
-.btn.fire.on{box-shadow:0 0 0 2px #ffb347,0 0 18px #ff5a1f;animation:fireBtn 1.2s ease-in-out infinite}
-@keyframes fireBtn{50%{box-shadow:0 0 0 2px #ffd27a,0 0 28px #ff3b1f}}
-@media (max-width:900px){.right{display:none}.left{width:calc(100% - 36px);max-height:46%;top:auto;bottom:12px}.title{max-width:calc(100% - 36px)}}
+.site-pin{display:flex;align-items:center;gap:6px;transform:translate(-6px,-6px);pointer-events:none;white-space:nowrap}
+.site-pin i{width:12px;height:12px;border-radius:50%;background:#ff5a1f;border:2px solid #fff;box-shadow:0 0 10px rgba(255,90,31,.9)}
+.site-pin span{font:600 12px Inter,system-ui,sans-serif;color:#fff;background:rgba(6,9,12,.65);padding:2px 7px;border-radius:6px;text-shadow:0 1px 3px #000}
+
+@media (max-width:760px){
+  .ib .lbl{display:none}.ib{padding:8px 10px;font-size:15px}
+  .now{min-width:0;flex:1 1 100%;border-right:0;border-bottom:1px solid var(--line);padding:0 2px 6px}
+  .drawer{left:12px;right:12px;width:auto;top:auto;bottom:118px;max-height:50%}
+  .title b{font-size:13px}
+}
 </style>
 </head>
 <body>
 <div id="globe"></div>
 <div id="load"><div><b>Buscando a NISAR…</b><span id="loadTxt">cargando la Tierra y la órbita</span></div></div>
 
-<div class="hud title">
-  <h1><small>MANGLO</small>¿Dónde está NISAR ahora?</h1>
-  <p>El satélite da una vuelta a la Tierra cada 99 minutos y vuelve a pasar por el mismo lugar cada 12 días. Aquí lo ves moverse en tiempo real con su órbita pública. <a href="index.html">← volver a la app</a></p>
+<div class="title glass"><span class="live" title="en vivo"></span><b><small>MANGLO</small>NISAR en vivo</b><a href="index.html?site=barra">← volver al mapa</a></div>
+
+<div class="toast glass" id="fireNote"></div>
+
+<div class="bar glass">
+  <div class="now"><b id="nowPos">—</b><span id="nowSub">—</span><span id="nowClock">—</span></div>
+  <div class="seg" id="speedSeg" title="Velocidad del tiempo">
+    <button data-s="1" class="on">Real</button><button data-s="60">×60</button><button data-s="600">×600</button><button data-s="3600">×3600</button>
+  </div>
+  <button class="ib" id="nowBtn" title="Volver a la hora real">⟲<span class="lbl">Ahora</span></button>
+  <button class="ib" id="nextBtn" title="Saltar a la próxima pasada sobre El Salvador">⏭<span class="lbl">Próxima pasada</span></button>
+  <button class="ib" id="followBtn" title="La cámara sigue al satélite">🎯<span class="lbl">Seguir</span></button>
+  <button class="ib" id="closeBtn" title="Ver el satélite de cerca">🛰<span class="lbl">De cerca</span></button>
+  <button class="ib fire" id="fireBtn" title="Quemas de caña junto al manglar">🔥<span class="lbl">Quemas</span></button>
+  <button class="ib" id="passBtn" title="Cuándo vuelve a pasar sobre cada sitio">📅<span class="lbl">Pasadas</span></button>
+  <button class="ib" id="infoBtn" title="Qué estoy viendo">ℹ<span class="lbl">¿Qué es esto?</span></button>
 </div>
 
-<div class="hud left">
-  <div class="card">
-    <h3>Ahora mismo</h3>
-    <div class="big" id="nowPos">—</div>
-    <div class="sub" id="nowSub">—</div>
-    <div class="sub" id="nowClock">—</div>
-  </div>
-  <div class="card">
-    <h3>Próxima pasada sobre cada sitio</h3>
-    <div id="passes"><div class="sub">calculando…</div></div>
-    <div class="sub" id="tleNote" style="margin-top:8px"></div>
-  </div>
-  <div class="card">
-    <h3>Tiempo</h3>
-    <div class="seg" id="speedSeg">
-      <button data-s="1" class="on">Real</button>
-      <button data-s="60">×60</button>
-      <button data-s="600">×600</button>
-      <button data-s="3600">×3600</button>
-    </div>
-    <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-      <button class="btn" id="nowBtn">Volver a ahora</button>
-      <button class="btn" id="nextBtn">Saltar a la próxima pasada</button>
-      <button class="btn" id="followBtn">Seguir al satélite</button>
-    </div>
-  </div>
-  <div class="card">
-    <h3>Ver más</h3>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <button class="btn big2" id="closeBtn">🛰 Ver el satélite de cerca</button>
-      <button class="btn big2 fire" id="fireBtn">🔥 Quemas de la zafra</button>
-    </div>
-    <div class="sub" id="fireNote" style="margin-top:6px"></div>
-  </div>
+<div class="drawer glass" id="passDrawer">
+  <h3>Próxima pasada sobre cada sitio <button data-close="passDrawer" aria-label="Cerrar">✕</button></h3>
+  <div id="passes"><div class="sub">calculando…</div></div>
+  <div class="sub" id="tleNote" style="margin-top:8px"></div>
 </div>
 
-<div class="hud right">
-  <div class="card legend">
-    <h3>Qué ves</h3>
+<div class="drawer glass" id="infoDrawer">
+  <h3>Qué ves <button data-close="infoDrawer" aria-label="Cerrar">✕</button></h3>
+  <div class="legend">
     <div><i class="dotsw" style="background:#d9a531;box-shadow:0 0 8px #d9a531"></i>NISAR en 3D, a 747 km (tamaño muy exagerado: mide ~12 m)</div>
     <div><i class="sw" style="background:#ff8a00;height:8px;opacity:.5"></i>Haz del radar: lo que está mirando ahora</div>
-    <div><i class="dotsw" style="background:#ff3b1f;box-shadow:0 0 10px #ff3b1f"></i>Quemas de caña junto al manglar (zafra 2025–2026)</div>
     <div><i class="sw" style="background:#2fd6a3"></i>Por dónde va a pasar (próximos 50 min)</div>
     <div><i class="sw" style="background:#5f7a80"></i>Por dónde pasó (últimos 50 min)</div>
     <div><i class="sw" style="background:#ff8a00;height:8px;opacity:.6"></i>Franja de 240 km que ve el radar (a su izquierda)</div>
     <div><i class="dotsw" style="background:#ff5a1f"></i>Barra de Santiago · Jiquilisco · Cerrón Grande</div>
+    <div><i class="dotsw" style="background:#ff3b1f;box-shadow:0 0 10px #ff3b1f"></i>Quemas de caña junto al manglar (zafra 2025–2026)</div>
   </div>
-  <div class="card">
-    <h3>Para entenderlo</h3>
-    <details open><summary>¿Por qué mira de lado y no hacia abajo?</summary><p>Un radar necesita ángulo para distinguir lo cercano de lo lejano. NISAR apunta a su izquierda, hacia una franja de unos 240 km que empieza a unos 430 km de su vertical. Por eso el satélite no pasa <i>encima</i> de El Salvador: pasa a un lado y lo mira de reojo.</p></details>
-    <details><summary>¿Por qué cada 12 días?</summary><p>Da 173 vueltas en 12 días exactos y entonces repite el mismo camino con una precisión de metros. Así cada imagen nueva se compara con la anterior punto por punto: eso es lo que permite ver cambios.</p></details>
-    <details><summary>¿Por qué pasa de madrugada?</summary><p>Su órbita va casi de polo a polo y está sincronizada con el Sol: siempre cruza el ecuador a las 6 de la mañana subiendo y a las 6 de la tarde bajando (hora local del lugar). Sobre El Salvador la pasada de la mañana cae alrededor de las 5:30. Como el radar lleva su propia luz, la hora y las nubes le dan igual.</p></details>
-    <details><summary>¿Qué es "subiendo" y "bajando"?</summary><p>En una vuelta el satélite cruza el país hacia el norte (subiendo) y en otra hacia el sur (bajando). Como mira a la izquierda, subiendo ve hacia el oeste y bajando hacia el este. Por eso la misma zona se ve desde dos lados distintos.</p></details>
-    <details><summary>¿Qué tan exacto es esto?</summary><p>La posición sale de los elementos orbitales públicos (TLE) de CelesTrak con el modelo SGP4, el mismo que usan los rastreadores de satélites. Es exacto a segundos durante unos días; para fechas lejanas puede moverse un poco. La franja del radar está dibujada de forma aproximada.</p></details>
-  </div>
+  <details open><summary>¿Por qué mira de lado y no hacia abajo?</summary><p>Un radar necesita ángulo para distinguir lo cercano de lo lejano. NISAR apunta a su izquierda, a una franja de unos 240 km que empieza a unos 430 km de su vertical. Por eso no pasa <i>encima</i> de El Salvador: pasa a un lado y lo mira de reojo.</p></details>
+  <details><summary>¿Por qué cada 12 días?</summary><p>Da 173 vueltas en 12 días exactos y entonces repite el mismo camino con precisión de metros. Así cada imagen nueva se compara con la anterior punto por punto: eso permite ver cambios.</p></details>
+  <details><summary>¿Por qué pasa de madrugada?</summary><p>Su órbita va casi de polo a polo y está sincronizada con el Sol: cruza el ecuador a las 6 a. m. subiendo y a las 6 p. m. bajando. Sobre El Salvador la pasada de la mañana cae cerca de las 5:30. Como el radar lleva su propia luz, la hora y las nubes le dan igual.</p></details>
+  <details><summary>¿Qué es "subiendo" y "bajando"?</summary><p>En una vuelta cruza el país hacia el norte (subiendo) y en otra hacia el sur (bajando). Como mira a la izquierda, subiendo ve hacia el oeste y bajando hacia el este.</p></details>
+  <details><summary>¿Qué tan exacto es esto?</summary><p>La posición sale de los elementos orbitales públicos (TLE) de CelesTrak con el modelo SGP4, el mismo que usan los rastreadores de satélites. Es exacto a segundos durante unos días. La franja y el haz del radar están dibujados de forma aproximada.</p></details>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.40.0/dist/globe.gl.min.js"></script>
+<!-- Three.js DESPUÉS de globe.gl: si va antes, globe.gl lo usa de base y se rompen los cuadros de alta resolución -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.32.0/dist/globe.gl.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
+<script src="nisar3d.js"></script>
 <script src="orbita.js"></script>
+<script>
+  // paneles que se abren y cierran (uno a la vez)
+  const drawers = { passBtn: "passDrawer", infoBtn: "infoDrawer" };
+  Object.entries(drawers).forEach(([b, d]) => document.getElementById(b).onclick = () => {
+    const el = document.getElementById(d), open = !el.classList.contains("open");
+    Object.values(drawers).forEach((x) => document.getElementById(x).classList.remove("open"));
+    Object.keys(drawers).forEach((x) => document.getElementById(x).classList.remove("on"));
+    if (open) { el.classList.add("open"); document.getElementById(b).classList.add("on"); }
+  });
+  document.querySelectorAll("[data-close]").forEach((x) => x.onclick = () => {
+    document.getElementById(x.dataset.close).classList.remove("open");
+    Object.keys(drawers).forEach((b) => document.getElementById(b).classList.remove("on"));
+  });
+  // el aviso de quemas se muestra arriba como una nota corta
+  new MutationObserver(() => document.getElementById("fireNote").classList.toggle("show", !!document.getElementById("fireNote").textContent.trim()))
+    .observe(document.getElementById("fireNote"), { childList: true, subtree: true, characterData: true });
+</script>
 </body>
 </html>

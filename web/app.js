@@ -455,12 +455,12 @@ function buildCaneCard() {
 // ---------- quemas dramáticas: llamas animadas y "ver la zafra quemarse" ----------
 let zafra = null;
 function flameMarker(e, flash) {
-  const near = e.km_to_mangrove < 1;
-  const s = Math.round(Math.min(48, 16 + Math.sqrt(e.ha) * 5));
+  const near = e.km_to_mangrove < 0.5;                 // anillo solo si está a menos de 500 m del manglar
+  const s = Math.round(Math.min(28, 11 + Math.sqrt(e.ha) * 2.6));   // más discreto en el mapa 2D
   const html = `<div class="flame ${near ? "near" : ""} ${flash ? "flash" : ""}" style="width:${s}px;height:${s}px">` +
-    `<span class="glow" style="width:${s * 1.7}px;height:${s * 1.7}px"></span>` +
+    `<span class="glow" style="width:${s * 1.35}px;height:${s * 1.35}px"></span>` +
     (near ? `<span class="ring" style="width:${s * 1.2}px;height:${s * 1.2}px"></span>` : "") +
-    `<span class="fire" style="font-size:${Math.round(s * 0.85)}px">🔥</span></div>`;
+    `<span class="fire" style="font-size:${Math.round(s * 0.75)}px">🔥</span></div>`;
   return L.marker([e.lat, e.lon], { icon: L.divIcon({ className: "", html, iconSize: [s, s], iconAnchor: [s / 2, s * 0.75] }), zIndexOffset: near ? 500 : 0 })
     .bindTooltip(`🔥 Quemada entre el ${fmtDate(e.from)} y el ${fmtDate(e.to)} · ${e.ha} ha · ${e.km_to_mangrove < 0.05 ? "pegada al" : e.km_to_mangrove + " km del"} manglar`);
 }
