@@ -1,171 +1,299 @@
+
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Latido del Manglar · NISAR</title>
-<meta name="description" content="Cambios en el manglar y el estero de Barra de Santiago (El Salvador) vistos por el radar NISAR de NASA-ISRO.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header class="top">
-  <div class="brand">
-    <span class="dot"></span>
-    <div>
-      <h1 id="siteTitle">Latido del Manglar</h1>
-      <p id="siteSub">Barra de Santiago, El Salvador · radar NISAR banda L</p>
-    </div>
-    <select id="siteSel" aria-label="Sitio"></select>
-  </div>
-  <nav class="modes" role="tablist">
-    <button data-mode="single" class="on">Una fecha</button>
-    <button data-mode="compare">Antes / después</button>
-    <button data-mode="change">Cambios</button>
-    <button data-mode="truth">Radar vs foto</button>
-  </nav>
-</header>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MANGLO | Modo Científico</title>
+  <meta name="description" content="MANGLO: plataforma de monitoreo científico de ecosistemas mediante imágenes satelitales NISAR y otras misiones.">
 
-<main class="layout">
-  <section class="mapwrap">
-    <div id="map"></div>
-    <div id="divider" hidden><span></span></div>
-    <div class="maptag left" id="tagA" hidden></div>
-    <div class="maptag right" id="tagB" hidden></div>
-    <div id="empty" class="empty" hidden>
-      <h2>Aún no hay capas NISAR procesadas</h2>
-      <p>Corre en la terminal, dentro de la carpeta del proyecto:</p>
-      <code>python scripts/fetch_gcov.py --limit 3</code>
-      <p>y recarga esta página.</p>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- ENCABEZADO -->
+  <header class="top">
+    <div class="brand">
+      <img src="img/Logo_manglo.png" alt="Logo de MANGLO" class="brand-logo">
+      <div>
+        <h1 id="siteTitle">MANGLO | Modo Científico</h1>
+        <p id="siteSub">Observación y análisis de ecosistemas mediante NISAR</p>
+      </div>
+      <select id="siteSel" aria-label="Sitio de estudio"></select>
+    </div>
+
+    <nav class="modes" role="tablist" aria-label="Modos de análisis">
+      <button data-mode="single" class="on">Una fecha</button>
+      <button data-mode="compare">Antes / después</button>
+      <button data-mode="change">Cambios</button>
+      <button data-mode="truth">Radar vs foto</button>
+    </nav>
+  </header>
+
+  <!-- MAPA Y CONTROLES -->
+  <main class="layout">
+    <section class="mapwrap" aria-label="Mapa satelital">
+      <div id="map"></div>
+      <div id="divider" hidden><span></span></div>
+      <div class="maptag left" id="tagA" hidden></div>
+      <div class="maptag right" id="tagB" hidden></div>
+
+      <div id="empty" class="empty" hidden>
+        <h2>Aún no hay capas NISAR procesadas</h2>
+        <p>Corre en la terminal, dentro de la carpeta del proyecto:</p>
+        <code>python scripts/fetch_gcov.py --limit 3</code>
+        <p>y recarga esta página.</p>
+      </div>
+    </section>
+
+    <aside class="panel" aria-label="Controles científicos">
+
+      <!-- SELECCIÓN TEMPORAL -->
+      <div class="card" id="ctlSingle">
+        <div class="row between">
+          <h3>Selección temporal</h3>
+          <button id="play" class="btn" aria-label="Reproducir">▶ Animar</button>
+        </div>
+        <div class="datebig" id="dateLabel">—</div>
+        <input type="range" id="dateSlider" min="0" max="0" value="0">
+        <div class="ticks" id="ticks"></div>
+      </div>
+
+      <!-- REFERENCIAS INDEPENDIENTES -->
+      <div class="card" id="ctlTruth" hidden>
+        <h3>Validación con imágenes de referencia</h3>
+        <p class="hint" style="margin-top:0">
+          Izquierda: radar NISAR. Derecha: referencia independiente.
+          Arrastra la barra blanca para comparar.
+        </p>
+
+        <div class="seg" id="truthSeg">
+          <button data-ref="s2" class="on">Foto Sentinel-2</button>
+          <button data-ref="wc">Mapa ESA WorldCover</button>
+          <button data-ref="veg" id="refVegBtn" hidden>Plantas (Sentinel-2)</button>
+        </div>
+
+        <div id="truthInfo" class="probe"></div>
+        <div class="legend" id="legendWc" hidden></div>
+      </div>
+
+      <!-- COMPARACIÓN TEMPORAL -->
+      <div class="card" id="ctlPair" hidden>
+        <h3>Comparación temporal</h3>
+
+        <label>Antes <select id="selA"></select></label>
+        <label>Después <select id="selB"></select></label>
+
+        <div class="presets">
+          <button class="chip" id="presetSeason">Seca vs lluviosa</button>
+        </div>
+
+        <div id="changeOpts" hidden>
+          <label class="inline">
+            Umbral
+            <input type="range" id="thr" min="1" max="8" step="0.5" value="3">
+            <b id="thrVal">3 dB</b>
+          </label>
+
+          <div class="legend">
+            <span>
+              <i style="background:#2f80ff"></i>
+              Bajó la señal: agua nueva o pérdida de vegetación
+            </span>
+            <span>
+              <i style="background:#ff8a00"></i>
+              Subió la señal: inundación bajo el manglar, rebrote o cultivo
+            </span>
+          </div>
+
+          <div class="kpis" id="changeKpis"></div>
+        </div>
+      </div>
+
+      <!-- CAPAS NISAR -->
+      <div class="card" id="ctlLayer">
+        <h3>Capas NISAR</h3>
+
+        <div class="seg" id="layerSeg">
+          <button data-layer="rgb" class="on">Falso color</button>
+          <button data-layer="cls">Agua / manglar inundado</button>
+          <button data-layer="ml" id="layerMlBtn" hidden>IA: plantas</button>
+        </div>
+
+        <label class="inline">
+          Opacidad
+          <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.85">
+        </label>
+
+        <div class="legend" id="legendRgb">
+          <span><i style="background:#ff3b30"></i>R = HH (rugosidad, doble rebote)</span>
+          <span><i style="background:#34c759"></i>G = HV (volumen: hojas y ramas)</span>
+          <span><i style="background:#0a84ff"></i>B = HH/HV (superficie lisa)</span>
+        </div>
+
+        <div class="legend" id="legendCls" hidden>
+          <span><i style="background:#1e88e5"></i>Agua abierta</span>
+          <span><i style="background:#d81bc4"></i>Vegetación inundada (doble rebote)</span>
+          <span><i style="background:#3cdc5a"></i>Plantas sobre el agua (posible lirio)</span>
+          <span><i style="background:#14325a"></i>Mar</span>
+        </div>
+
+        <div class="legend" id="legendMl" hidden>
+          <span>
+            <i style="background:#ffd600"></i>
+            Plantas sobre el agua según NISAR + IA
+            (más intenso = más seguro)
+          </span>
+        </div>
+      </div>
+
+      <!-- INFORMACIÓN CIENTÍFICA -->
+      <details class="card about">
+        <summary>Metodología y fundamentos científicos</summary>
+
+        <p>
+          <b>NISAR</b> (NASA + ISRO) utiliza radar de microondas
+          para observar la superficie terrestre de día, de noche
+          y bajo condiciones de nubosidad.
+        </p>
+
+        <p>
+          La <b>banda L</b> permite estudiar interacciones de la
+          señal con vegetación, humedad y estructuras superficiales.
+        </p>
+
+        <ul>
+          <li><b>Agua abierta:</b> suele presentar baja retrodispersión.</li>
+          <li><b>Vegetación inundada:</b> puede producir doble rebote entre agua y troncos.</li>
+          <li><b>HV:</b> aporta información sobre dispersión volumétrica en la vegetación.</li>
+        </ul>
+
+        <p>
+          <b>Hipótesis para Barra de Santiago:</b>
+          las variaciones estacionales de precipitación y nivel del agua
+          pueden modificar la superficie de vegetación inundada.
+        </p>
+
+        <p class="hint">
+          Las clasificaciones y los umbrales son aproximados.
+          Los cambios observados no demuestran por sí solos una causa.
+          Consulta el README para conocer las limitaciones de los datos.
+        </p>
+      </details>
+    </aside>
+  </main>
+
+  <!-- DASHBOARD CIENTÍFICO -->
+  <section class="scientific-analysis" aria-label="Análisis científico detallado">
+
+    <div class="analysis-header">
+      <h2>Análisis científico detallado</h2>
+      <p>
+        Explora indicadores, series temporales, clasificación,
+        validación y resultados del monitoreo satelital.
+      </p>
+    </div>
+
+      <!-- Herramientas de exportación: no alteran el procesamiento de app.js -->
+      <div class="science-tools" aria-label="Exportaciones del análisis científico">
+        <button class="science-tool-btn" id="exportCsv" type="button" title="Descargar las mediciones NISAR del sitio seleccionado">
+          ↓ Descargar datos CSV
+        </button>
+        <label class="science-tool-picker" for="exportChartSelect">
+          Gráfica
+          <select id="exportChartSelect" aria-label="Gráfica que deseas exportar">
+            <option value="">Seleccionar gráfica</option>
+          </select>
+        </label>
+        <button class="science-tool-btn" id="exportPng" type="button">
+          ↓ Descargar PNG
+        </button>
+        <span class="science-tool-status" id="exportStatus" role="status" aria-live="polite"></span>
+      </div>
+
+    <div class="analysis-grid" id="analysisGrid">
+
+      <!-- INDICADORES GENERALES -->
+      <div class="card">
+        <h3>Indicadores del área de estudio</h3>
+        <div class="kpis" id="kpis"></div>
+        <canvas id="chart" height="190"></canvas>
+        <p class="hint">
+          Barras: lluvia de 12 días antes de cada pasada (Open-Meteo).
+          Líneas: áreas medidas por NISAR.
+        </p>
+      </div>
+
+      <!-- ANÁLISIS DEL EMBALSE -->
+      <div class="card" id="lakeCard" hidden>
+        <h3>El embalse visto por 5 misiones</h3>
+        <canvas id="lakeVegChart" height="170"></canvas>
+        <p class="hint">
+          Plantas sobre el agua: NISAR (radar) vs Sentinel-2
+          (imagen óptica en días despejados).
+        </p>
+        <canvas id="lakeLvlChart" height="170"></canvas>
+        <p class="hint" id="lakeHint">
+          Nivel del agua (SWOT) y temperatura de la superficie (ECOSTRESS).
+        </p>
+        <div class="kpis" id="lakeKpis"></div>
+      </div>
+
+      <!-- INTELIGENCIA ARTIFICIAL -->
+      <div class="card" id="mlCard" hidden>
+        <h3>Clasificación mediante inteligencia artificial</h3>
+        <p class="hint" style="margin-top:0">
+          Modelo Random Forest entrenado con referencias Sentinel-2
+          para identificar vegetación sobre el agua mediante radar NISAR.
+        </p>
+        <div class="kpis" id="mlKpis"></div>
+        <canvas id="mlChart" height="150"></canvas>
+        <p class="hint" id="mlHint"></p>
+      </div>
+
+      <!-- CALIDAD DEL AGUA -->
+      <div class="card" id="wqCard" hidden>
+        <h3>Indicadores ópticos del agua</h3>
+        <canvas id="wqChart" height="160"></canvas>
+        <p class="hint">
+          NDCI ≈ clorofila/algas · NDTI ≈ turbidez/sedimento.
+          Medianas calculadas sobre agua abierta sin nubes.
+          Son índices relativos, no concentraciones en mg/L.
+        </p>
+      </div>
+
+      <!-- VALIDACIÓN CIENTÍFICA -->
+      <div class="card" id="valCard" hidden>
+        <h3>Validación: firma de radar por cobertura</h3>
+        <canvas id="valChart" height="200"></canvas>
+        <p class="hint">
+          HV mediana (dB) por tipo de cobertura según
+          ESA WorldCover 2021. Las variaciones temporales
+          permiten comparar el comportamiento de distintas superficies.
+        </p>
+        <div class="kpis" id="valKpis"></div>
+      </div>
+
+      <!-- ANÁLISIS POR PUNTO -->
+      <div class="card">
+        <h3>Análisis por punto</h3>
+        <div id="probe" class="probe">
+          Selecciona un punto del mapa para consultar
+          su señal de radar a lo largo del tiempo.
+        </div>
+        <canvas id="probeChart" height="140" hidden></canvas>
+      </div>
+
     </div>
   </section>
 
-  <aside class="panel">
-    <div class="card" id="ctlSingle">
-      <div class="row between">
-        <h3>Fecha</h3>
-        <button id="play" class="btn" aria-label="Reproducir">▶ Animar</button>
-      </div>
-      <div class="datebig" id="dateLabel">—</div>
-      <input type="range" id="dateSlider" min="0" max="0" value="0">
-      <div class="ticks" id="ticks"></div>
-    </div>
-
-    <div class="card" id="ctlTruth" hidden>
-      <h3>¿Qué hay en realidad?</h3>
-      <p class="hint" style="margin-top:0">Izquierda: radar NISAR. Derecha: referencia independiente. Arrastra la barra blanca.</p>
-      <div class="seg" id="truthSeg">
-        <button data-ref="s2" class="on">Foto Sentinel-2</button>
-        <button data-ref="wc">Mapa ESA WorldCover</button>
-        <button data-ref="veg" id="refVegBtn" hidden>Plantas (Sentinel-2)</button>
-      </div>
-      <div id="truthInfo" class="probe"></div>
-      <div class="legend" id="legendWc" hidden></div>
-    </div>
-
-    <div class="card" id="ctlPair" hidden>
-      <h3>Comparar dos fechas</h3>
-      <label>Antes <select id="selA"></select></label>
-      <label>Después <select id="selB"></select></label>
-      <div class="presets">
-        <button class="chip" id="presetSeason">Seca vs lluviosa</button>
-      </div>
-      <div id="changeOpts" hidden>
-        <label class="inline">Umbral <input type="range" id="thr" min="1" max="8" step="0.5" value="3"> <b id="thrVal">3 dB</b></label>
-        <div class="legend">
-          <span><i style="background:#2f80ff"></i>Bajó la señal: agua nueva o pérdida de vegetación</span>
-          <span><i style="background:#ff8a00"></i>Subió la señal: inundación bajo el manglar, rebrote o cultivo</span>
-        </div>
-        <div class="kpis" id="changeKpis"></div>
-      </div>
-    </div>
-
-    <div class="card" id="ctlLayer">
-      <h3>Capa</h3>
-      <div class="seg" id="layerSeg">
-        <button data-layer="rgb" class="on">Falso color</button>
-        <button data-layer="cls">Agua / manglar inundado</button>
-        <button data-layer="ml" id="layerMlBtn" hidden>IA: plantas</button>
-      </div>
-      <label class="inline">Opacidad <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.85"></label>
-      <div class="legend" id="legendRgb">
-        <span><i style="background:#ff3b30"></i>R = HH (rugosidad, doble rebote)</span>
-        <span><i style="background:#34c759"></i>G = HV (volumen: hojas y ramas)</span>
-        <span><i style="background:#0a84ff"></i>B = HH/HV (superficie lisa)</span>
-      </div>
-      <div class="legend" id="legendCls" hidden>
-        <span><i style="background:#1e88e5"></i>Agua abierta</span>
-        <span><i style="background:#d81bc4"></i>Vegetación inundada (doble rebote)</span>
-        <span><i style="background:#3cdc5a"></i>Plantas sobre el agua (posible lirio)</span>
-        <span><i style="background:#14325a"></i>Mar</span>
-      </div>
-      <div class="legend" id="legendMl" hidden>
-        <span><i style="background:#ffd600"></i>Plantas sobre el agua según NISAR + IA (más intenso = más seguro)</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>El ritmo del estero</h3>
-      <div class="kpis" id="kpis"></div>
-      <canvas id="chart" height="190"></canvas>
-      <p class="hint">Barras: lluvia de 12 días antes de cada pasada (Open-Meteo). Líneas: áreas medidas por NISAR.</p>
-    </div>
-
-    <div class="card" id="lakeCard" hidden>
-      <h3>El embalse visto por 5 misiones</h3>
-      <canvas id="lakeVegChart" height="170"></canvas>
-      <p class="hint">Plantas sobre el agua: NISAR (radar, cada 12 días, con nubes o sin ellas) vs Sentinel-2 (foto, solo días despejados).</p>
-      <canvas id="lakeLvlChart" height="170"></canvas>
-      <p class="hint" id="lakeHint">Nivel del agua (SWOT) y temperatura de la superficie del agua de día (ECOSTRESS).</p>
-      <div class="kpis" id="lakeKpis"></div>
-    </div>
-
-    <div class="card" id="mlCard" hidden>
-      <h3>IA: el radar aprende de la foto</h3>
-      <p class="hint" style="margin-top:0">Los días despejados, Sentinel-2 marca dónde hay plantas sobre el agua. Con esas "respuestas" entrenamos un modelo (Random Forest) que aprende cómo se ven esas plantas en el radar NISAR. Así se detectan también en días nublados.</p>
-      <div class="kpis" id="mlKpis"></div>
-      <canvas id="mlChart" height="150"></canvas>
-      <p class="hint" id="mlHint"></p>
-    </div>
-
-    <div class="card" id="wqCard" hidden>
-      <h3>Color del agua (Sentinel-2)</h3>
-      <canvas id="wqChart" height="160"></canvas>
-      <p class="hint">NDCI ≈ clorofila/algas · NDTI ≈ turbidez/sedimento. Mediana sobre el agua abierta sin nubes. Son índices relativos: sirven para comparar fechas, no son mg/L.</p>
-    </div>
-
-    <div class="card" id="valCard" hidden>
-      <h3>Firma de radar por cobertura</h3>
-      <canvas id="valChart" height="200"></canvas>
-      <p class="hint">HV mediana (dB) de cada tipo de cobertura según el mapa ESA WorldCover 2021. El manglar debe mantenerse alto todo el año; el cultivo baja cuando se cosecha.</p>
-      <div class="kpis" id="valKpis"></div>
-    </div>
-
-    <div class="card">
-      <h3>Toca un punto del mapa</h3>
-      <div id="probe" class="probe">Toca el estero, el manglar o un cultivo y verás su señal de radar en cada fecha.</div>
-      <canvas id="probeChart" height="140" hidden></canvas>
-    </div>
-
-    <details class="card about">
-      <summary>¿Qué estoy viendo?</summary>
-      <p><b>NISAR</b> (NASA + ISRO) es un radar: manda su propia energía de microondas, así que ve de día, de noche y con nubes. Pasa por aquí cada 12 días.</p>
-      <p>La <b>banda L</b> (24 cm) atraviesa las copas y llega a los troncos y al agua. Lo que regresa depende de la <b>rugosidad</b> y de la <b>humedad</b> (constante dieléctrica).</p>
-      <ul>
-        <li><b>Agua abierta</b> es como un espejo: el pulso rebota lejos y se ve <b>negra</b>.</li>
-        <li><b>Manglar inundado</b>: el pulso rebota agua → tronco → radar (<i>doble rebote</i>) y en HH brilla muchísimo.</li>
-        <li><b>HV</b> mide la dispersión en volumen (ramas y hojas): sirve para la estructura y la biomasa del bosque.</li>
-      </ul>
-      <p><b>Hipótesis:</b> en la época lluviosa (mayo–octubre) los ríos Cara Sucia y Paz suben y el área de manglar con doble rebote debe crecer. En la seca (noviembre–abril) se reduce y el agua queda en el canal del estero. Los cambios bruscos fuera de ese ritmo pueden venir de tala, camaroneras, quemas de caña o azolve de la bocana.</p>
-      <p class="hint">Los umbrales de clase son aproximados (ver README). Los datos son productos NISAR L2 GCOV de ASF DAAC.</p>
-    </details>
-  </aside>
-</main>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="app.js"></script>
+  <!-- LIBRERÍAS Y LÓGICA -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+  <script src="scientific-tools.js"></script>
 </body>
 </html>
