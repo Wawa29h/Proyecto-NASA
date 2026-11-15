@@ -764,3 +764,29 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
   top: 0;
 }
 
+
+/* ---------- Analiza tu zona ---------- */
+.zone-btn{position:absolute;right:10px;bottom:26px;z-index:902;border:0;border-radius:999px;padding:9px 15px;background:#ffd84d;color:#091C25;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.zone-btn:hover{filter:brightness(1.07)}
+.zone-drawbar{position:absolute;left:50%;transform:translateX(-50%);bottom:22px;z-index:903;width:min(560px,calc(100% - 24px));display:flex;flex-direction:column;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(5,25,32,.92);border:1px solid #ffd84d;color:var(--cream);font-size:14px;text-align:center;backdrop-filter:blur(4px)}
+.zone-drawbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.zone-drawbtns .btn:disabled{opacity:.45;cursor:default}
+#map.zone-drawing,#map.zone-drawing .leaflet-interactive{cursor:crosshair}
+.zone-card{border-color:#ffd84d}
+.zone-card h3{color:#ffd84d !important}
+.zone-card h4{font-size:13px;color:var(--cyan);margin:14px 0 6px;font-weight:700}
+.zone-card h4 small{color:var(--muted,#9bb);font-weight:400}
+.zone-area{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.zone-area b{font-size:24px;color:var(--cream)}
+.zone-area span{font-size:13px;color:var(--muted,#9bb)}
+.zone-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:#123}
+.zone-bar i{display:block;height:100%}
+.zone-list{list-style:none;padding:0;margin:6px 0;display:grid;gap:3px;font-size:13px}
+.zone-list b{color:var(--cream);margin-left:4px}
+.zone-list small{color:var(--muted,#9bb);margin-left:4px}
+.zone-mang{font-size:14px;margin:8px 0}
+.zone-cmp{width:100%;border-collapse:collapse;font-size:13px;margin:4px 0 8px}
+.zone-cmp th,.zone-cmp td{padding:4px 5px;border-bottom:1px solid var(--line);text-align:right}
+.zone-cmp th:first-child,.zone-cmp td:first-child{text-align:left}
+.zone-card .row{margin-top:10px;gap:8px}
+@media (max-width:640px){.zone-btn{bottom:auto;top:56px;right:10px;font-size:13px;padding:8px 12px}.zone-drawbar{font-size:13px}}

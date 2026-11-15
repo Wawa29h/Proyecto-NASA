@@ -100,6 +100,11 @@
     <div class="maptag left" id="tagA" hidden></div>
     <div class="maptag right" id="tagB" hidden></div>
     <div class="zafra-clock" id="zafraClock" hidden></div>
+    <button class="zone-btn" id="zoneBtn" type="button">✏️ Analiza tu zona</button>
+    <div class="zone-drawbar" id="zoneBar" hidden role="status">
+      <span id="zoneMsg"></span>
+      <div class="zone-drawbtns"><button class="btn" id="zoneUndo" type="button">↶ Deshacer</button><button class="btn" id="zoneCancel" type="button">Cancelar</button><button class="btn primary" id="zoneDone" type="button">✓ Listo</button></div>
+    </div>
     <div id="story" class="story" hidden>
       <div class="story-top"><span id="storyStep"></span><button id="storyClose" aria-label="Cerrar recorrido">✕</button></div>
       <h2 id="storyTitle"></h2>
@@ -203,6 +208,12 @@
     <div class="card" id="interpCard" hidden>
       <h3 data-simple="¿Por qué pudo ocurrir este cambio?" data-sci="Evaluación de hipótesis de cambio">¿Por qué pudo ocurrir este cambio?</h3>
       <div id="interpContent" class="interp-box probe"></div>
+    </div>
+
+    <div class="card zone-card" id="zoneCard" hidden>
+      <h3>Tu zona</h3>
+      <div id="zoneOut"></div>
+      <div class="row"><button class="btn" id="zoneRedo" type="button">✏️ Dibujar otra</button><button class="btn" id="zoneClear" type="button">Borrar</button></div>
     </div>
 
     <div class="card" id="ctlLayer">
@@ -392,6 +403,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="app.js"></script>
+<script src="zona.js"></script>
 <script src="story.js"></script>
 <script src="intro.js"></script>
 <script src="scientific-tools.js"></script>
