@@ -80,20 +80,20 @@ def main():
     for i, r in enumerate(rows):
         prev = rows[i - 1]["date"] if i else None
         worst = max(ZONES, key=lambda z: r["zones"][z["id"]]["km2"])
-        lines = [f"Lirio acuático · Embalse Cerrón Grande · {fmt_date(r['date'])} (satélite NISAR, ve aunque esté nublado)"]
+        lines = [f"Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · {fmt_date(r['date'])} (satélite NISAR, ve aunque esté nublado)"]
         for z in ZONES:
             v = r["zones"][z["id"]]
             arrow = "" if v["delta_km2"] is None else (" ▲ sube" if v["delta_km2"] > 0.3 else " ▼ baja" if v["delta_km2"] < -0.3 else " = igual")
             lines.append(f"• {z['short']}: {v['km2']:.1f} km² ({v['pct']:.0f}% del agua){arrow} · nivel {v['level'].upper()}")
         altos = [z for z in ZONES if r["zones"][z["id"]]["level"] == "alto"]
         if altos:
-            lines.append("Atención: nivel ALTO en " + ", ".join(z["name"] for z in altos) +
-                         f". La zona con más lirio es {worst['name']}. Precaución con lanchas y redes.")
+            lines.append("Atención: nivel ALTO relativo en " + ", ".join(z["name"] for z in altos) +
+                         f". La zona con mayor vegetación detectada es {worst['name']}. Precaución con lanchas y redes.")
         else:
-            lines.append(f"Ninguna zona en nivel alto respecto al resto del año. La zona con más lirio es {worst['name']}.")
+            lines.append(f"Ninguna zona en nivel alto respecto al resto del año. La zona con mayor vegetación detectada es {worst['name']}.")
         if prev:
             lines.append(f"Comparado con la pasada del {fmt_date(prev)}.")
-        lines.append("Dato experimental: confirmar en el lugar.")
+        lines.append("Dato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.")
         r["message"] = "\n".join(lines)
         r["top_zone"] = worst["id"]
 

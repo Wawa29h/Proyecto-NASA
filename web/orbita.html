@@ -18,6 +18,9 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
 .brand{display:flex;align-items:center;gap:8px}
 .brand b{font-size:15px}.brand b small{color:var(--accent);font-weight:700;margin-right:6px}
 .brand a{margin-left:auto;color:var(--accent);text-decoration:none;font-size:12px;white-space:nowrap}
+.lang-sw{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
+.lang-sw button{background:none;border:0;color:var(--muted);font:600 11px Inter,system-ui,sans-serif;padding:3px 7px;cursor:pointer}
+.lang-sw button[aria-pressed="true"]{background:var(--accent);color:#fff}
 .live{width:8px;height:8px;border-radius:50%;background:#ff4b4b;flex:none;animation:live 1.6s infinite}
 @keyframes live{70%{box-shadow:0 0 0 8px rgba(255,75,75,0)}100%{box-shadow:0 0 0 0 rgba(255,75,75,0)}}
 .now{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
@@ -148,6 +151,7 @@ details p{margin:6px 0 0;color:var(--muted);font-size:12px}
     </div>
   </div>
 </aside>
+<script src="orbita-lang.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.40.0/dist/globe.gl.min.js"></script>
 <!-- Three.js DESPUÉS de globe.gl: si va antes, globe.gl lo usa de base y se rompen los cuadros de alta resolución -->

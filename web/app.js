@@ -19,6 +19,7 @@ let VAL = null;        // ref/validation.json
 let bounds = null;     // L.LatLngBounds de las capas
 let rain = null;       // { date -> mm }
 const hhCache = {};    // id -> Uint8Array (valores codificados) para sondas y cambios
+let changeRequestId = 0; // invalida calculos pendientes al cambiar controles o modo
 
 // ---------- mapa ----------
 const map = L.map("map", { zoomControl: true, attributionControl: true }).setView(CENTER, 13);
@@ -87,6 +88,7 @@ function nearestS2(date) {
   return REF.sentinel2.reduce((b, s) => (Math.abs(new Date(s.date) - t) < Math.abs(new Date(b.date) - t) ? s : b));
 }
 function render() {
+  changeRequestId++;
   if (!S || !S.dates.length) return;
   // fundido: en "Una fecha" la imagen anterior se queda debajo mientras aparece la nueva
   const prevA = state.mode === "single" && ovA ? ovA : null;
@@ -255,33 +257,74 @@ function loadHH(d) {
 const toDb = (e) => (e === 0 ? null : S.hh_range[0] + ((e - 1) / 254) * (S.hh_range[1] - S.hh_range[0]));
 
 // ---------- detector de cambios ----------
+function changeQuantificationIssue(A, B) {
+  for (const d of [A, B]) {
+    if (!d || d.qc === false) return "Observación sin control de calidad suficiente.";
+    for (const key of ["filled_pct", "time_filled_pct"]) {
+      if (key in d && (!Number.isFinite(d[key]) || d[key] < 0 || d[key] > 100)) return "Metadatos de procedencia incompletos.";
+      if (d[key] > 0) return "Hay rellenos temporales u orbitales sin una máscara completa que permita excluirlos.";
+    }
+    for (const key of ["fill_from", "time_fill_from"]) {
+      if (key in d && !Array.isArray(d[key])) return "Metadatos de procedencia incompletos.";
+      // Una aportación redondeada a 0 % puede contener píxeles rellenados.
+      if (d[key]?.length) return "Hay aportes de otras adquisiciones sin una máscara completa que permita excluirlos.";
+    }
+    const coverage = d.coverage_real_pct ?? d.coverage_pct;
+    if (!Number.isFinite(coverage) || coverage <= 0 || coverage > 100) return "No se puede verificar la cobertura observada de ambas fechas.";
+  }
+  return null;
+}
+
+function comparableHHChange(ha, hb, range, threshold) {
+  if (ha.w !== hb.w || ha.h !== hb.h || ha.w <= 0 || ha.h <= 0 || ha.v.length !== ha.w * ha.h || hb.v.length !== hb.w * hb.h) throw new Error("Las imágenes no comparten una malla compatible.");
+  if (!range || !Number.isFinite(range[0]) || !Number.isFinite(range[1]) || range[1] <= range[0] || !Number.isFinite(threshold) || threshold <= 0) throw new Error("Escala HH o umbral no válido.");
+  const pixels = new Uint8ClampedArray(ha.v.length * 4);
+  let down = 0, up = 0, valid = 0;
+  for (let i = 0; i < ha.v.length; i++) {
+    // 0 = sin dato: la intersección válida es el soporte y el denominador.
+    if (ha.v[i] === 0 || hb.v[i] === 0) continue;
+    valid++;
+    const dd = (hb.v[i] - ha.v[i]) / 254 * (range[1] - range[0]), k = i * 4;
+    if (dd <= -threshold) { down++; pixels.set([47, 128, 255, Math.min(255, 120 + (-dd - threshold) * 40)], k); }
+    else if (dd >= threshold) { up++; pixels.set([255, 138, 0, Math.min(255, 120 + (dd - threshold) * 40)], k); }
+  }
+  return { down, up, valid, pixels };
+}
+
+function changeUnavailable(reason, days) {
+  $("changeKpis").innerHTML = kpi("Cuantificación no disponible", reason + " La comparación visual es orientativa; no confirma un cambio ambiental.") + kpi(days + " días", "entre pasadas");
+}
+
 async function renderChange() {
   const A = S.dates[state.a], B = S.dates[state.b];
+  const request = changeRequestId, thr = +$("thr").value;
+  const days = Math.round((new Date(B.date) - new Date(A.date)) / 864e5);
+  const current = () => request === changeRequestId && state.mode === "change" && S.dates[state.a]?.id === A.id && S.dates[state.b]?.id === B.id && +$("thr").value === thr;
+  $("changeKpis").textContent = "Calculando comparación…";
+  try {
   const [ha, hb] = await Promise.all([loadHH(A), loadHH(B)]);
-  if (state.mode !== "change") return;
-  const thr = +$("thr").value;
+  if (!current()) return;
+  const result = comparableHHChange(ha, hb, S.hh_range, thr);
   const c = document.createElement("canvas");
   c.width = ha.w; c.height = ha.h;
   const ctx = c.getContext("2d");
   const out = ctx.createImageData(ha.w, ha.h);
-  let down = 0, up = 0, valid = 0;
-  for (let i = 0; i < ha.v.length; i++) {
-    const a = toDb(ha.v[i]), b = toDb(hb.v[i]);
-    if (a === null || b === null) continue;
-    valid++;
-    const dd = b - a, k = i * 4;
-    if (dd <= -thr) { down++; out.data.set([47, 128, 255, Math.min(255, 120 + (-dd - thr) * 40)], k); }
-    else if (dd >= thr) { up++; out.data.set([255, 138, 0, Math.min(255, 120 + (dd - thr) * 40)], k); }
-  }
+  out.data.set(result.pixels);
   ctx.putImageData(out, 0, 0);
   if (ovChange) map.removeLayer(ovChange);
   ovChange = L.imageOverlay(c.toDataURL(), bounds, { pane: "paneChange", interactive: false }).addTo(map);
+  const issue = changeQuantificationIssue(A, B) || (!result.valid ? "No hay píxeles válidos comunes entre las dos observaciones." : null);
+  if (issue) { changeUnavailable(issue, days); return; }
+  const { down, up, valid } = result;
   const px = pxKm2();
   $("changeKpis").innerHTML =
     kpi((down * px).toFixed(2) + " km²", "bajó ≥ " + thr + " dB") +
     kpi((up * px).toFixed(2) + " km²", "subió ≥ " + thr + " dB") +
-    kpi(((100 * (down + up)) / Math.max(1, valid)).toFixed(1) + " %", "del área cambió") +
-    kpi(Math.round((new Date(B.date) - new Date(A.date)) / 864e5) + " días", "entre pasadas");
+    kpi(((100 * (down + up)) / valid).toFixed(1) + " %", "del área válida común presenta variación HH") +
+    kpi(days + " días", "entre pasadas");
+  } catch {
+    if (current()) changeUnavailable("No se pudieron verificar las imágenes y su soporte comparable.", days);
+  }
 }
 function pxKm2() {
   const lat = (S.bbox[1] + S.bbox[3]) / 2;
@@ -292,6 +335,12 @@ const kpi = (v, l) => `<div class="kpi"><b>${v}</b><span>${l}</span></div>`;
 function updateComparabilityWarning(A, B) {
   const el = $("comparabilityWarning");
   if (!el) return;
+  const quantificationIssue = changeQuantificationIssue(A, B);
+  if (quantificationIssue) {
+    el.hidden = false;
+    el.textContent = "Cuantificación no disponible: " + quantificationIssue + " La comparación visual se conserva como orientación.";
+    return;
+  }
   const covA = A.coverage_pct ?? 100;
   const covB = B.coverage_pct ?? 100;
   const fillsA = A.fill_from || [];
@@ -308,58 +357,33 @@ function updateComparabilityWarning(A, B) {
 
   if (issues.length) {
     el.hidden = false;
-    el.innerHTML = `⚠ <b>Soporte espacial no homogéneo:</b> ${issues.join(" ")} Los cambios calculados en km² brutos no representan un cambio físico absoluto de toda la cuenca sin una máscara común.`;
+    el.innerHTML = `⚠ <b>Soporte espacial parcial:</b> ${issues.join(" ")} La cuantificación se limita a los píxeles válidos comunes; no se extrapola a toda la región.`;
   } else {
     el.hidden = true;
   }
 }
 
+function regionalInterpretation(A, B) {
+  // Only an explicitly validated regional release may supply scientific explanations.
+  if (INTERP?.data_status !== "validated" || changeQuantificationIssue(A, B)) return null;
+  const pair = INTERP.sites?.[SITE.id]?.comparisons?.find(c => c.before_id === A.id && c.after_id === B.id);
+  if (pair?.status !== "supported" || !Array.isArray(pair.hypotheses) || !pair.hypotheses.length) return null;
+  if (!pair.hypotheses.every(h => typeof h.summary === "string" && h.summary.trim() && typeof h.evidence === "string" && h.evidence.trim())) return null;
+  return pair;
+}
 function updateInterpretation(A, B) {
-  const card = $("interpCard");
-  const box = $("interpContent");
+  const card = $("interpCard"), box = $("interpContent");
   if (!card || !box) return;
-
-  const siteInterp = INTERP?.sites ? INTERP.sites[SITE.id] : null;
-  const pairInterp = siteInterp?.comparisons?.find((c) => c.before_id === A.id && c.after_id === B.id);
-  const isSimulated = INTERP?.data_status === "simulated";
-
   card.hidden = false;
-
-  if (pairInterp) {
-    const badge = isSimulated ? `<span class="badge-simulated">Datos simulados (prueba)</span><br>` : "";
-    if (pairInterp.status === "not_comparable") {
-      box.innerHTML = badge +
-        `<b>Resultado no comparable directamente:</b><br>` +
-        `Las observaciones del <b>${fmtDate(A.date)}</b> y <b>${fmtDate(B.date)}</b> no comparten el mismo soporte espacial o temporal.<br>` +
-        (pairInterp.limitations?.length ? `<p class="hint" style="margin-top:4px">${pairInterp.limitations.map((l) => "• " + l).join("<br>")}</p>` : "");
-      return;
-    }
-
-    if (pairInterp.status === "supported" && pairInterp.hypotheses?.length) {
-      const hyposHtml = pairInterp.hypotheses.map((h) =>
-        `<div class="interp-hypo">` +
-        `<b>${h.summary}</b><br>` +
-        (h.evidence ? `<span>Evidencia: ${h.evidence}</span><br>` : "") +
-        (h.confidence ? `<small style="color:var(--muted)">Confianza: ${h.confidence}</small>` : "") +
-        `</div>`
-      ).join("");
-
-      box.innerHTML = badge +
-        (pairInterp.observed_change ? `<span>Cambio observado: <b>${pairInterp.observed_change.delta_km2} ${pairInterp.observed_change.unit}</b> en ${pairInterp.observed_change.variable}</span><br>` : "") +
-        hyposHtml +
-        (pairInterp.limitations?.length ? `<p class="hint" style="margin-top:4px">${pairInterp.limitations.map((l) => "• " + l).join("<br>")}</p>` : "");
-      return;
-    }
+  const pair = regionalInterpretation(A, B);
+  if (!pair) {
+    box.innerHTML = "<b>Información científica no disponible</b><p>No hay una interpretación regional validada para las fechas seleccionadas.</p><p class=\"hint\">La comparación visual no demuestra una causa. Consulta la procedencia y la comparabilidad de las observaciones.</p>";
+    return;
   }
-
-  // Si no hay hipótesis precalculadas:
-  const covA = A.coverage_pct ?? 100, covB = B.coverage_pct ?? 100;
-  if (Math.abs(covA - covB) > 10) {
-    box.innerHTML = `<b>No comparable:</b> La cobertura del barrido difiere significativamente entre ${fmtDate(A.date)} (${Math.round(covA)}%) y ${fmtDate(B.date)} (${Math.round(covB)}%). Se requiere una máscara común aprobada por el equipo científico.`;
-  } else {
-    box.innerHTML = `<b>Información científica pendiente:</b> No hay evidencia suficiente para proponer una explicación causal automática entre el <b>${fmtDate(A.date)}</b> y el <b>${fmtDate(B.date)}</b>.<br>` +
-      `<p class="hint" style="margin-top:4px">Las variaciones de retrodispersión radar pueden obedecer a múltiples variables (humedad del dosel, nivel de marea, rugosidad superficial o fenología vegetal). Pendiente de reglas validadas.</p>`;
-  }
+  const text = value => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  // No substitute simulated deltas or calculate areas in this explanatory panel.
+  box.innerHTML = pair.hypotheses.map(h => `<div class="interp-hypo"><b>${text(h.summary)}</b><br>Evidencia: ${text(h.evidence)}</div>`).join("") +
+    (pair.limitations?.length ? `<p class="hint">${pair.limitations.map(text).join("<br>")}</p>` : "");
 }
 
 // ---------- lluvia (Open-Meteo, sin llave) ----------
@@ -501,9 +525,9 @@ function explainPair(A, B) {
   const trend = (a, b, up, down) => (b - a > 0.15 * Math.max(a, 0.5) ? up : a - b > 0.15 * Math.max(a, 0.5) ? down : "casi igual");
   let out = `<p class="explain-h">${sameSeason ? `Las dos fechas son de la <b>${seasonOf(A.date).toLowerCase().replace("época de ", "época de ")}</b>` : `<b>${seasonOf(A.date)}</b> contra <b>${seasonOf(B.date).toLowerCase()}</b>`}</p>`;
   if (SITE.lake) {
-    out += `<p>💧 <b>Agua del embalse:</b> ${km(A.water_km2)} → ${km(B.water_km2)} km² (${trend(A.water_km2, B.water_km2, "subió: llovió o la represa guardó agua", "bajó: la represa usó agua para generar luz")}).</p>`;
+    out += `<p>💧 <b>Agua del embalse:</b> ${km(A.water_km2)} → ${km(B.water_km2)} km² (${trend(A.water_km2, B.water_km2, "subió: posible aporte de lluvias o menor descarga", "bajó: posible época seca o mayor descarga; confirmar con datos de operación de la presa")}).</p>`;
     out += `<p>🌿 <b>Plantas sobre el agua</b> (verde encima del agua, posible lirio): ${km(A.floatveg_km2)} → ${km(B.floatveg_km2)} km².</p>`;
-    out += `<p class="explain-note">${sameSeason ? "En la misma época el embalse debería verse parecido: un cambio grande de lirio sí es para avisar." : "Entre seca y lluvias es normal que el embalse cambie mucho de tamaño."}</p>`;
+    out += `<p class="explain-note">${sameSeason ? "En la misma época el embalse debería verse parecido: un cambio grande en la vegetación detectada merece revisión en campo. Los niveles son relativos al período observado." : "Entre seca y lluvias es normal que el embalse cambie mucho de tamaño."}</p>`;
     return out;
   }
   out += sameSeason
@@ -513,7 +537,7 @@ function explainPair(A, B) {
   const hv = (d) => mg?.dates.find((r) => r.date === d.date)?.hv_mangrove;
   if (mg && hv(A) != null && hv(B) != null) {
     const dd = hv(B) - hv(A);
-    out += `<p>🌳 <b>El manglar</b> (junto al estero) ${Math.abs(dd) < 1 ? "<b>casi no cambió</b>." : dd > 0 ? `se ve más brillante: con la lluvia las hojas y el suelo mojados rebotan más el radar. <b>Es natural</b>, no es que creciera.` : `se ve un poco más apagado: hojas y suelo más secos. <b>Es natural.</b>`} En todo el año perdió solo <b>${Math.round(mg.loss_km2 * 100)} ha</b>: está estable.</p>`;
+    out += `<p>🌳 <b>El manglar</b> (junto al estero) ${Math.abs(dd) < 1 ? "<b>casi no cambió</b>." : dd > 0 ? `se ve más brillante: con la lluvia las hojas y el suelo mojados rebotan más el radar. <b>Es natural</b>, no es que creciera.` : `se ve un poco más apagado: hojas y suelo más secos. <b>Es natural.</b>`} En el año, el indicador de variación de señal radar es de solo <b>${Math.round(mg.loss_km2 * 100)} ha</b> (umbral de caída radar; requiere verificación en campo para confirmar pérdida física).</p>`;
   }
   const part = [A, B].filter((d) => (d.coverage_pct ?? 100) + (d.time_filled_pct || 0) < 90);
   out += `<p>💧 <b>Agua del estero:</b> ${km(A.water_km2)} → ${km(B.water_km2)} km².` +
@@ -545,7 +569,7 @@ function buildAiCard() {
     (RFOTO ? kpi(`${RFOTO.val_error_0_255}/255`, `error del radar→foto en la zona no usada para entrenar (pintar el color medio: ${RFOTO.baseline_mean_color_error})`) : "");
   $("aiHint").innerHTML = `<b>1. MangroveNet</b> dibuja el mapa de agua, manglar, árboles y caña usando solo radar: así se puede vigilar cada 12 días aunque esté nublado.` +
     (RFOTO ? ` <b>2. Radar → foto</b> convierte cada pasada en una imagen parecida a una foto satelital (aproximada, no real).` : "") +
-    ` Las dos coinciden: el manglar está estable y lo que más cambia está en los bordes (caña, suelos).`;
+    ` Ambos modelos concuerdan en que la señal del manglar se mantiene estable durante el año observado; los mayores cambios de señal se detectan en los bordes (caña, suelos). Esto es consistente con estabilidad, pero no reemplaza verificación en campo.`;
   $("aiTable").innerHTML = `<table class="ai-table"><tr><th>Clase</th><th>F1</th><th>Precisión</th><th>Exhaustividad</th></tr>` +
     Object.entries(m.per_class).map(([c, v]) => `<tr><td>${c}</td><td>${v.f1}</td><td>${v.precision}</td><td>${v.recall}</td></tr>`).join("") +
     `</table><p class="hint">U-Net con 10 canales temporales de NISAR (HH, HV). Etiquetas: ESA WorldCover 2021. Entrenada en ${MNET.train_sites.join(" + ")} (sin su franja este, que sirvió para elegir el modelo); ${MNET.val_site} solo se usó como prueba final. Mejor modelo tras ${MNET.minutes_trained} min en GPU.` +
@@ -913,7 +937,7 @@ $("play").onclick = () => {
   $("thr").setAttribute("aria-label", "Umbral de cambio en decibelios");
   $("opacity").setAttribute("aria-label", "Opacidad de la capa radar");
 
-  INTERP = (await getJSON(BASE + "/interpretations.json")) || (await getJSON("fixtures/interpretations_simulated.json"));
+  INTERP = await getJSON(BASE + "/interpretations.json"); // Sin fallback a cifras de prueba.
   REF = await getJSON(BASE + "/ref/reference.json");
   VAL = await getJSON(BASE + "/ref/validation.json");
   SWOT = await getJSON(BASE + "/swot.json");

@@ -96,7 +96,7 @@
      "delta_km2": null
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 25 dic 2025 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 2.3 km² (18% del agua) · nivel BAJO\n• Norte: 0.2 km² (1% del agua) · nivel BAJO\n• Centro: 0.9 km² (2% del agua) · nivel BAJO\n• Brazo sur: 0.4 km² (6% del agua) · nivel BAJO\nNinguna zona en nivel alto respecto al resto del año. La zona con más lirio es Entrada del río Lempa.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 25 dic 2025 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 2.3 km² (18% del agua) · nivel BAJO\n• Norte: 0.2 km² (1% del agua) · nivel BAJO\n• Centro: 0.9 km² (2% del agua) · nivel BAJO\n• Brazo sur: 0.4 km² (6% del agua) · nivel BAJO\nNinguna zona en nivel alto respecto al resto del año. La zona con mayor vegetación detectada es Entrada del río Lempa.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -128,7 +128,7 @@
      "delta_km2": 0.05
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 6 ene 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 2.3 km² (18% del agua) = igual · nivel BAJO\n• Norte: 0.2 km² (1% del agua) = igual · nivel BAJO\n• Centro: 1.0 km² (2% del agua) = igual · nivel BAJO\n• Brazo sur: 0.5 km² (7% del agua) = igual · nivel BAJO\nNinguna zona en nivel alto respecto al resto del año. La zona con más lirio es Entrada del río Lempa.\nComparado con la pasada del 25 dic 2025.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 6 ene 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 2.3 km² (18% del agua) = igual · nivel BAJO\n• Norte: 0.2 km² (1% del agua) = igual · nivel BAJO\n• Centro: 1.0 km² (2% del agua) = igual · nivel BAJO\n• Brazo sur: 0.5 km² (7% del agua) = igual · nivel BAJO\nNinguna zona en nivel alto respecto al resto del año. La zona con mayor vegetación detectada es Entrada del río Lempa.\nComparado con la pasada del 25 dic 2025.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -160,7 +160,7 @@
      "delta_km2": -0.04
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 18 ene 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 2.5 km² (20% del agua) = igual · nivel BAJO\n• Norte: 0.2 km² (1% del agua) = igual · nivel BAJO\n• Centro: 1.0 km² (2% del agua) = igual · nivel BAJO\n• Brazo sur: 0.4 km² (6% del agua) = igual · nivel BAJO\nNinguna zona en nivel alto respecto al resto del año. La zona con más lirio es Entrada del río Lempa.\nComparado con la pasada del 6 ene 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 18 ene 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 2.5 km² (20% del agua) = igual · nivel BAJO\n• Norte: 0.2 km² (1% del agua) = igual · nivel BAJO\n• Centro: 1.0 km² (2% del agua) = igual · nivel BAJO\n• Brazo sur: 0.4 km² (6% del agua) = igual · nivel BAJO\nNinguna zona en nivel alto respecto al resto del año. La zona con mayor vegetación detectada es Entrada del río Lempa.\nComparado con la pasada del 6 ene 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -192,7 +192,7 @@
      "delta_km2": 0.12
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 5 jul 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 5.5 km² (44% del agua) ▲ sube · nivel ALTO\n• Norte: 2.9 km² (9% del agua) ▲ sube · nivel MEDIO\n• Centro: 3.0 km² (7% del agua) ▲ sube · nivel ALTO\n• Brazo sur: 0.5 km² (8% del agua) = igual · nivel MEDIO\nAtención: nivel ALTO en Entrada del río Lempa, Centro del embalse. La zona con más lirio es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 18 ene 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 5 jul 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 5.5 km² (44% del agua) ▲ sube · nivel ALTO\n• Norte: 2.9 km² (9% del agua) ▲ sube · nivel MEDIO\n• Centro: 3.0 km² (7% del agua) ▲ sube · nivel ALTO\n• Brazo sur: 0.5 km² (8% del agua) = igual · nivel MEDIO\nAtención: nivel ALTO relativo en Entrada del río Lempa, Centro del embalse. La zona con mayor vegetación detectada es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 18 ene 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -224,7 +224,7 @@
      "delta_km2": 0.07
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 17 jul 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 6.4 km² (51% del agua) ▲ sube · nivel ALTO\n• Norte: 3.5 km² (11% del agua) ▲ sube · nivel ALTO\n• Centro: 2.9 km² (7% del agua) = igual · nivel ALTO\n• Brazo sur: 0.6 km² (9% del agua) = igual · nivel ALTO\nAtención: nivel ALTO en Entrada del río Lempa, Norte (Chalatenango), Centro del embalse, Brazo sur y este (Suchitoto – Cabañas). La zona con más lirio es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 5 jul 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 17 jul 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 6.4 km² (51% del agua) ▲ sube · nivel ALTO\n• Norte: 3.5 km² (11% del agua) ▲ sube · nivel ALTO\n• Centro: 2.9 km² (7% del agua) = igual · nivel ALTO\n• Brazo sur: 0.6 km² (9% del agua) = igual · nivel ALTO\nAtención: nivel ALTO relativo en Entrada del río Lempa, Norte (Chalatenango), Centro del embalse, Brazo sur y este (Suchitoto – Cabañas). La zona con mayor vegetación detectada es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 5 jul 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -256,7 +256,7 @@
      "delta_km2": -0.08
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 10 ago 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 6.3 km² (50% del agua) = igual · nivel ALTO\n• Norte: 3.0 km² (9% del agua) ▼ baja · nivel ALTO\n• Centro: 2.7 km² (6% del agua) = igual · nivel MEDIO\n• Brazo sur: 0.5 km² (8% del agua) = igual · nivel MEDIO\nAtención: nivel ALTO en Entrada del río Lempa, Norte (Chalatenango). La zona con más lirio es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 17 jul 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 10 ago 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 6.3 km² (50% del agua) = igual · nivel ALTO\n• Norte: 3.0 km² (9% del agua) ▼ baja · nivel ALTO\n• Centro: 2.7 km² (6% del agua) = igual · nivel MEDIO\n• Brazo sur: 0.5 km² (8% del agua) = igual · nivel MEDIO\nAtención: nivel ALTO relativo en Entrada del río Lempa, Norte (Chalatenango). La zona con mayor vegetación detectada es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 17 jul 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -288,7 +288,7 @@
      "delta_km2": 0.04
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 22 ago 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 6.5 km² (52% del agua) = igual · nivel ALTO\n• Norte: 3.1 km² (10% del agua) = igual · nivel ALTO\n• Centro: 2.9 km² (7% del agua) = igual · nivel ALTO\n• Brazo sur: 0.6 km² (8% del agua) = igual · nivel MEDIO\nAtención: nivel ALTO en Entrada del río Lempa, Norte (Chalatenango), Centro del embalse. La zona con más lirio es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 10 ago 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 22 ago 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 6.5 km² (52% del agua) = igual · nivel ALTO\n• Norte: 3.1 km² (10% del agua) = igual · nivel ALTO\n• Centro: 2.9 km² (7% del agua) = igual · nivel ALTO\n• Brazo sur: 0.6 km² (8% del agua) = igual · nivel MEDIO\nAtención: nivel ALTO relativo en Entrada del río Lempa, Norte (Chalatenango), Centro del embalse. La zona con mayor vegetación detectada es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 10 ago 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -320,7 +320,7 @@
      "delta_km2": 0.0
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 3 sep 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 5.6 km² (44% del agua) ▼ baja · nivel ALTO\n• Norte: 3.1 km² (10% del agua) = igual · nivel ALTO\n• Centro: 3.2 km² (7% del agua) = igual · nivel ALTO\n• Brazo sur: 0.6 km² (8% del agua) = igual · nivel MEDIO\nAtención: nivel ALTO en Entrada del río Lempa, Norte (Chalatenango), Centro del embalse. La zona con más lirio es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 22 ago 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 3 sep 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 5.6 km² (44% del agua) ▼ baja · nivel ALTO\n• Norte: 3.1 km² (10% del agua) = igual · nivel ALTO\n• Centro: 3.2 km² (7% del agua) = igual · nivel ALTO\n• Brazo sur: 0.6 km² (8% del agua) = igual · nivel MEDIO\nAtención: nivel ALTO relativo en Entrada del río Lempa, Norte (Chalatenango), Centro del embalse. La zona con mayor vegetación detectada es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 22 ago 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -352,7 +352,7 @@
      "delta_km2": 0.01
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 15 sep 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 5.3 km² (42% del agua) = igual · nivel MEDIO\n• Norte: 5.8 km² (18% del agua) ▲ sube · nivel ALTO\n• Centro: 3.0 km² (7% del agua) = igual · nivel ALTO\n• Brazo sur: 0.6 km² (8% del agua) = igual · nivel ALTO\nAtención: nivel ALTO en Norte (Chalatenango), Centro del embalse, Brazo sur y este (Suchitoto – Cabañas). La zona con más lirio es Norte (Chalatenango). Precaución con lanchas y redes.\nComparado con la pasada del 3 sep 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 15 sep 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 5.3 km² (42% del agua) = igual · nivel MEDIO\n• Norte: 5.8 km² (18% del agua) ▲ sube · nivel ALTO\n• Centro: 3.0 km² (7% del agua) = igual · nivel ALTO\n• Brazo sur: 0.6 km² (8% del agua) = igual · nivel ALTO\nAtención: nivel ALTO relativo en Norte (Chalatenango), Centro del embalse, Brazo sur y este (Suchitoto – Cabañas). La zona con mayor vegetación detectada es Norte (Chalatenango). Precaución con lanchas y redes.\nComparado con la pasada del 3 sep 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "norte"
   },
   {
@@ -384,7 +384,7 @@
      "delta_km2": -0.1
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 27 sep 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 4.6 km² (37% del agua) ▼ baja · nivel MEDIO\n• Norte: 2.1 km² (7% del agua) ▼ baja · nivel MEDIO\n• Centro: 2.0 km² (5% del agua) ▼ baja · nivel MEDIO\n• Brazo sur: 0.5 km² (7% del agua) = igual · nivel MEDIO\nNinguna zona en nivel alto respecto al resto del año. La zona con más lirio es Entrada del río Lempa.\nComparado con la pasada del 15 sep 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 27 sep 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 4.6 km² (37% del agua) ▼ baja · nivel MEDIO\n• Norte: 2.1 km² (7% del agua) ▼ baja · nivel MEDIO\n• Centro: 2.0 km² (5% del agua) ▼ baja · nivel MEDIO\n• Brazo sur: 0.5 km² (7% del agua) = igual · nivel MEDIO\nNinguna zona en nivel alto respecto al resto del año. La zona con mayor vegetación detectada es Entrada del río Lempa.\nComparado con la pasada del 15 sep 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -416,7 +416,7 @@
      "delta_km2": 0.12
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 9 oct 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 3.9 km² (31% del agua) ▼ baja · nivel MEDIO\n• Norte: 0.9 km² (3% del agua) ▼ baja · nivel MEDIO\n• Centro: 1.3 km² (3% del agua) ▼ baja · nivel MEDIO\n• Brazo sur: 0.6 km² (9% del agua) = igual · nivel ALTO\nAtención: nivel ALTO en Brazo sur y este (Suchitoto – Cabañas). La zona con más lirio es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 27 sep 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 9 oct 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 3.9 km² (31% del agua) ▼ baja · nivel MEDIO\n• Norte: 0.9 km² (3% del agua) ▼ baja · nivel MEDIO\n• Centro: 1.3 km² (3% del agua) ▼ baja · nivel MEDIO\n• Brazo sur: 0.6 km² (9% del agua) = igual · nivel ALTO\nAtención: nivel ALTO relativo en Brazo sur y este (Suchitoto – Cabañas). La zona con mayor vegetación detectada es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 27 sep 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -448,7 +448,7 @@
      "delta_km2": -0.2
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 21 oct 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 3.2 km² (26% del agua) ▼ baja · nivel MEDIO\n• Norte: 0.7 km² (2% del agua) = igual · nivel BAJO\n• Centro: 1.4 km² (3% del agua) = igual · nivel MEDIO\n• Brazo sur: 0.4 km² (6% del agua) = igual · nivel BAJO\nNinguna zona en nivel alto respecto al resto del año. La zona con más lirio es Entrada del río Lempa.\nComparado con la pasada del 9 oct 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 21 oct 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 3.2 km² (26% del agua) ▼ baja · nivel MEDIO\n• Norte: 0.7 km² (2% del agua) = igual · nivel BAJO\n• Centro: 1.4 km² (3% del agua) = igual · nivel MEDIO\n• Brazo sur: 0.4 km² (6% del agua) = igual · nivel BAJO\nNinguna zona en nivel alto respecto al resto del año. La zona con mayor vegetación detectada es Entrada del río Lempa.\nComparado con la pasada del 9 oct 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   },
   {
@@ -480,7 +480,7 @@
      "delta_km2": 0.19
     }
    },
-   "message": "Lirio acuático · Embalse Cerrón Grande · 2 nov 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 3.0 km² (24% del agua) = igual · nivel BAJO\n• Norte: 1.6 km² (5% del agua) ▲ sube · nivel MEDIO\n• Centro: 1.1 km² (3% del agua) = igual · nivel BAJO\n• Brazo sur: 0.6 km² (9% del agua) = igual · nivel ALTO\nAtención: nivel ALTO en Brazo sur y este (Suchitoto – Cabañas). La zona con más lirio es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 21 oct 2026.\nDato experimental: confirmar en el lugar.",
+   "message": "Aviso experimental de vegetación sobre agua · Embalse Cerrón Grande · 2 nov 2026 (satélite NISAR, ve aunque esté nublado)\n• Entrada del Lempa: 3.0 km² (24% del agua) = igual · nivel BAJO\n• Norte: 1.6 km² (5% del agua) ▲ sube · nivel MEDIO\n• Centro: 1.1 km² (3% del agua) = igual · nivel BAJO\n• Brazo sur: 0.6 km² (9% del agua) = igual · nivel ALTO\nAtención: nivel ALTO relativo en Brazo sur y este (Suchitoto – Cabañas). La zona con mayor vegetación detectada es Entrada del río Lempa. Precaución con lanchas y redes.\nComparado con la pasada del 21 oct 2026.\nDato experimental (IA radar): niveles relativos al año en cada zona, no umbrales oficiales de emergencia. Especie no confirmada en campo.",
    "top_zone": "lempa"
   }
  ]

@@ -4,6 +4,21 @@
   const Z = { drawing: false, pts: [], line: null, poly: null, marks: [] };
   const pxCache = {};
   const btn = $("zoneBtn"), bar = $("zoneBar"), card = $("zoneCard");
+  // idioma: el mismo selector Español / English de la app (language.js)
+  const EN = () => window.MangloLanguage?.get?.() === "en";
+  const tr = (es, en) => (EN() ? en : es);
+  const CLS_EN = { agua: "water", manglar: "mangroves", "árboles": "trees", cultivo: "cropland", "pasto/arbusto": "grass/shrub", "suelo/urbano": "bare soil/urban" };
+  const clsName = (c) => (EN() ? CLS_EN[c] || c : c);
+  const season = (d) => (seasonOf(d) === "Época seca" ? tr("época seca", "dry season") : tr("época de lluvias", "rainy season"));
+  function applyStatic() {
+    btn.textContent = tr("✏️ Analiza tu zona", "✏️ Analyze your area");
+    $("zoneUndo").textContent = tr("↶ Deshacer", "↶ Undo");
+    $("zoneCancel").textContent = tr("Cancelar", "Cancel");
+    $("zoneDone").textContent = tr("✓ Listo", "✓ Done");
+    card.querySelector("h3").textContent = tr("Tu zona", "Your area");
+    $("zoneRedo").textContent = tr("✏️ Dibujar otra", "✏️ Draw another");
+    $("zoneClear").textContent = tr("Borrar", "Clear");
+  }
 
   // ---------- leer una imagen como píxeles ----------
   function loadPx(url) {
@@ -81,9 +96,9 @@
   }
   function updateBar() {
     const n = Z.pts.length;
-    $("zoneMsg").textContent = n === 0 ? "Toca el mapa para marcar la primera esquina de tu zona"
-      : n < 3 ? `Llevas ${n} esquina${n > 1 ? "s" : ""}. Marca al menos 3`
-      : `Llevas ${n} esquinas. Toca "Listo" o la primera esquina para cerrar`;
+    $("zoneMsg").textContent = n === 0 ? tr("Toca el mapa para marcar la primera esquina de tu zona", "Tap the map to mark the first corner of your area")
+      : n < 3 ? tr(`Llevas ${n} esquina${n > 1 ? "s" : ""}. Marca al menos 3`, `${n} corner${n > 1 ? "s" : ""} so far. Mark at least 3`)
+      : tr(`Llevas ${n} esquinas. Toca "Listo" o la primera esquina para cerrar`, `${n} corners so far. Tap "Done" or the first corner to close`);
     $("zoneDone").disabled = n < 3;
     $("zoneUndo").disabled = n === 0;
   }
@@ -117,7 +132,7 @@
   }
 
   // ---------- análisis ----------
-  const km = (n) => (n < 0.1 ? n.toFixed(3) : n < 10 ? n.toFixed(2) : n.toFixed(1)).replace(".", ",") + " km²";
+  const km = (n) => { const t = n < 0.1 ? n.toFixed(3) : n < 10 ? n.toFixed(2) : n.toFixed(1); return (EN() ? t : t.replace(".", ",")) + " km²"; };
   const pc = (a, b) => (b ? Math.round((100 * a) / b) : 0) + " %";
 
   async function clsStats(d, idx) {
@@ -137,13 +152,13 @@
     if (!Z.poly || !S) return;
     const my = ++busy;
     card.hidden = false;
-    $("zoneOut").innerHTML = '<p class="hint">Calculando…</p>';
+    $("zoneOut").innerHTML = `<p class="hint">${tr("Calculando…", "Calculating…")}</p>`;
     const px = pxKm2();
     const h0 = await loadHH(S.dates[0]);
     const idx = maskFor(Z.pts, h0.w, h0.h);
     const total = polyKm2(Z.pts), inKm = idx.length * px;
-    if (!idx.length) { $("zoneOut").innerHTML = '<p class="explain-warn">Tu zona queda fuera del recuadro que analiza NISAR (la línea punteada turquesa). Dibújala adentro.</p>'; return; }
-    let html = `<div class="zone-area"><b>${km(inKm)}</b><span>tamaño de tu zona${total > inKm * 1.05 ? ` (de ${km(total)} dibujados; el resto queda fuera del recuadro estudiado)` : ""}</span></div>`;
+    if (!idx.length) { $("zoneOut").innerHTML = `<p class="explain-warn">${tr("Tu zona queda fuera del recuadro que analiza NISAR (la línea punteada turquesa). Dibújala adentro.", "Your area is outside the box NISAR analyzes (the dashed turquoise line). Draw it inside.")}</p>`; return; }
+    let html = `<div class="zone-area"><b>${km(inKm)}</b><span>${tr("tamaño de tu zona", "size of your area")}${total > inKm * 1.05 ? tr(` (de ${km(total)} dibujados; el resto queda fuera del recuadro estudiado)`, ` (of ${km(total)} drawn; the rest is outside the study box)`) : ""}</span></div>`;
 
     // 1) qué hay: MangroveNet + WorldCover
     if (MNET) {
@@ -162,17 +177,17 @@
         if (c === mi && isWc) both++;
       }
       const order = cnt.map((v, i) => i).filter((i) => cnt[i] > 0).sort((a, b) => cnt[b] - cnt[a]);
-      const bar = order.map((i) => `<i style="width:${(100 * cnt[i]) / Math.max(1, nm)}%;background:${MNET.colors[i]}" title="${MNET.classes[i]}"></i>`).join("");
-      const rows = order.map((i) => `<li><span style="color:${MNET.colors[i]}">■</span> ${MNET.classes[i]} <b>${km(cnt[i] * px)}</b> <small>${pc(cnt[i], nm)}</small></li>`).join("");
+      const bar = order.map((i) => `<i style="width:${(100 * cnt[i]) / Math.max(1, nm)}%;background:${MNET.colors[i]}" title="${clsName(MNET.classes[i])}"></i>`).join("");
+      const rows = order.map((i) => `<li><span style="color:${MNET.colors[i]}">■</span> ${clsName(MNET.classes[i])} <b>${km(cnt[i] * px)}</b> <small>${pc(cnt[i], nm)}</small></li>`).join("");
       const mg = cnt[mi] * px, wcKm = wcMang * px;
       const agree = cnt[mi] + wcMang - both ? Math.round((100 * both) / (cnt[mi] + wcMang - both)) : null;
       const test = MNET.role === "prueba" || MNET.role === "validación";
-      html += `<h4>Qué hay adentro <small>(según la IA MangroveNet, solo con radar)</small></h4>
+      html += `<h4>${tr("Qué hay adentro", "What is inside")} <small>${tr("(según la IA MangroveNet, solo con radar)", "(according to the MangroveNet AI, radar only)")}</small></h4>
         <div class="zone-bar">${bar}</div><ul class="zone-list">${rows}</ul>
-        <p class="zone-mang">` + (mg < 0.01 && wcKm < 0.01 ? "🌿 No hay manglar en tu zona: la IA y el mapa de la ESA están de acuerdo."
-          : `🌿 <b>Manglar: ${km(mg)}</b>. El mapa de la ESA (WorldCover 2021) dice ${km(wcKm)}.` + (agree !== null ? ` Coinciden en el ${agree} % de ese manglar.` : "")) + `</p>` +
-        `<p class="hint">${test ? `Esta IA nunca vio este lugar al aprender; aquí acertó el manglar ${Math.round(100 * MNET.metrics_vs_worldcover.per_class.manglar.f1)} % de las veces.`
-          : "Esta IA aprendió con este mismo lugar, así que aquí el resultado es más optimista que en un sitio nuevo."} En zonas muy pequeñas (menos de 0,1 km²) puede fallar más.</p>`;
+        <p class="zone-mang">` + (mg < 0.01 && wcKm < 0.01 ? tr("🌿 No hay manglar en tu zona: la IA y el mapa de la ESA están de acuerdo.", "🌿 There are no mangroves in your area: the AI and the ESA map agree.")
+          : tr(`🌿 <b>Manglar: ${km(mg)}</b>. El mapa de la ESA (WorldCover 2021) dice ${km(wcKm)}.`, `🌿 <b>Mangroves: ${km(mg)}</b>. The ESA map (WorldCover 2021) says ${km(wcKm)}.`) + (agree !== null ? tr(` Coinciden en el ${agree} % de ese manglar.`, ` They agree on ${agree} % of those mangroves.`) : "")) + `</p>` +
+        `<p class="hint">${test ? tr(`Esta IA nunca vio este lugar al aprender; aquí acertó el manglar ${Math.round(100 * MNET.metrics_vs_worldcover.per_class.manglar.f1)} % de las veces.`, `This AI never saw this place while learning; here it got the mangroves right ${Math.round(100 * MNET.metrics_vs_worldcover.per_class.manglar.f1)} % of the time.`)
+          : tr("Esta IA aprendió con este mismo lugar, así que aquí el resultado es más optimista que en un sitio nuevo.", "This AI learned from this same place, so the result here is more optimistic than at a new site.")} ${tr("En zonas muy pequeñas (menos de 0,1 km²) puede fallar más.", "It may fail more in very small areas (under 0.1 km²).")}</p>`;
     }
 
     // 2) el radar en la fecha (o par de fechas) que está mirando
@@ -183,12 +198,12 @@
     const covA = sa.valid / idx.length, covB = sb ? sb.valid / idx.length : 1;
     const water = (s) => s.n[0] * px, flood = (s) => s.n[1] * px, sea = (s) => s.n[3] * px, flo = (s) => s.n[2] * px;
     if (!B) {
-      html += `<h4>Lo que vio el radar el ${fmtDate(A.date)} <small>(${seasonOf(A.date).toLowerCase()})</small></h4><ul class="zone-list">
-        <li><span style="color:#1e88e5">■</span> ${SITE.lake ? "Agua del embalse" : "Agua del estero"} <b>${km(water(sa))}</b></li>
-        <li><span style="color:#d81bc4">■</span> Manglar o plantas con agua debajo <b>${km(flood(sa))}</b></li>` +
-        (sa.n[2] ? `<li><span style="color:#3cdc5a">■</span> Plantas flotando (posible lirio) <b>${km(flo(sa))}</b></li>` : "") +
-        (sa.n[3] ? `<li><span style="color:#14325a">■</span> Mar <b>${km(sea(sa))}</b></li>` : "") + `</ul>
-        <p class="hint">Para ver cómo cambió tu zona, ve a <b>Antes / después</b> o <b>Cambios</b>; este cuadro se actualiza solo.</p>`;
+      html += `<h4>${tr("Lo que vio el radar el", "What the radar saw on")} ${fmtDate(A.date)} <small>(${season(A.date)})</small></h4><ul class="zone-list">
+        <li><span style="color:#1e88e5">■</span> ${SITE.lake ? tr("Agua del embalse", "Reservoir water") : tr("Agua del estero", "Estuary water")} <b>${km(water(sa))}</b></li>
+        <li><span style="color:#d81bc4">■</span> ${tr("Manglar o plantas con agua debajo", "Mangroves or plants with water underneath")} <b>${km(flood(sa))}</b></li>` +
+        (sa.n[2] ? `<li><span style="color:#3cdc5a">■</span> ${tr("Plantas flotando (posible lirio)", "Floating plants (possible water hyacinth)")} <b>${km(flo(sa))}</b></li>` : "") +
+        (sa.n[3] ? `<li><span style="color:#14325a">■</span> ${tr("Mar", "Sea")} <b>${km(sea(sa))}</b></li>` : "") + `</ul>
+        <p class="hint">${tr("Para ver cómo cambió tu zona, ve a <b>Antes / después</b> o <b>Cambios</b>; este cuadro se actualiza solo.", "To see how your area changed, go to <b>Before / after</b> or <b>Changes</b>; this box updates by itself.")}</p>`;
     } else {
       const [ha, hb] = await Promise.all([loadHH(A), loadHH(B)]);
       const thr = +$("thr").value;
@@ -201,18 +216,20 @@
       }
       if (my !== busy) return;
       const dW = water(sb) - water(sa), dF = flood(sb) - flood(sa);
-      const arrow = (v) => (Math.abs(v) < 0.005 ? "igual" : v > 0 ? "↑ " + km(v) : "↓ " + km(-v));
-      html += `<h4>Cómo cambió entre ${fmtDate(A.date)} y ${fmtDate(B.date)}</h4>
-        <table class="zone-cmp"><tr><th></th><th>${fmtDate(A.date)}</th><th>${fmtDate(B.date)}</th><th>cambio</th></tr>
-        <tr><td>💧 Agua</td><td>${km(water(sa))}</td><td>${km(water(sb))}</td><td>${arrow(dW)}</td></tr>
-        <tr><td>🌿 Manglar con agua debajo</td><td>${km(flood(sa))}</td><td>${km(flood(sb))}</td><td>${arrow(dF)}</td></tr></table>
-        <p>El brillo del radar <b style="color:#5aa2ff">bajó</b> en ${km(down * px)} y <b style="color:#ff9a2e">subió</b> en ${km(up * px)} (${pc(down + up, vv)} de tu zona, umbral ${thr} dB).</p>
-        <p class="hint">Bajar suele ser más agua o suelo pelado (cosecha, corte); subir, más plantas o manglar inundado. ${seasonOf(A.date) !== seasonOf(B.date) ? "Ojo: comparas época seca con época de lluvias, así que parte del cambio es solo la temporada." : ""}</p>`;
+      const arrow = (v) => (Math.abs(v) < 0.005 ? tr("igual", "same") : v > 0 ? "↑ " + km(v) : "↓ " + km(-v));
+      html += `<h4>${tr(`Cómo cambió entre ${fmtDate(A.date)} y ${fmtDate(B.date)}`, `How it changed between ${fmtDate(A.date)} and ${fmtDate(B.date)}`)}</h4>
+        <table class="zone-cmp"><tr><th></th><th>${fmtDate(A.date)}</th><th>${fmtDate(B.date)}</th><th>${tr("cambio", "change")}</th></tr>
+        <tr><td>💧 ${tr("Agua", "Water")}</td><td>${km(water(sa))}</td><td>${km(water(sb))}</td><td>${arrow(dW)}</td></tr>
+        <tr><td>🌿 ${tr("Manglar con agua debajo", "Mangroves with water underneath")}</td><td>${km(flood(sa))}</td><td>${km(flood(sb))}</td><td>${arrow(dF)}</td></tr></table>
+        <p>${tr(`El brillo del radar <b style="color:#5aa2ff">bajó</b> en ${km(down * px)} y <b style="color:#ff9a2e">subió</b> en ${km(up * px)} (${pc(down + up, vv)} de tu zona, umbral ${thr} dB).`, `Radar brightness <b style="color:#5aa2ff">dropped</b> over ${km(down * px)} and <b style="color:#ff9a2e">rose</b> over ${km(up * px)} (${pc(down + up, vv)} of your area, threshold ${thr} dB).`)}</p>
+        <p class="hint">${tr("Bajar suele ser más agua o suelo pelado (cosecha, corte); subir, más plantas o manglar inundado.", "A drop usually means more water or bare soil (harvest, clearing); a rise, more plants or flooded mangroves.")} ${seasonOf(A.date) !== seasonOf(B.date) ? tr("Ojo: comparas época seca con época de lluvias, así que parte del cambio es solo la temporada.", "Note: you are comparing the dry season with the rainy season, so part of the change is just the season.") : ""}</p>`;
     }
-    if (covA < 0.9 || covB < 0.9) html += `<p class="explain-warn">⚠ El radar no cubrió toda tu zona ese día (${Math.round(100 * Math.min(covA, covB))} %). Los números de agua y cambio cuentan solo la parte que sí se escaneó.</p>`;
+    if (covA < 0.9 || covB < 0.9) html += `<p class="explain-warn">${tr(`⚠ El radar no cubrió toda tu zona ese día (${Math.round(100 * Math.min(covA, covB))} %). Los números de agua y cambio cuentan solo la parte que sí se escaneó.`, `⚠ The radar did not cover your whole area that day (${Math.round(100 * Math.min(covA, covB))} %). Water and change figures only count the scanned part.`)}</p>`;
     $("zoneOut").innerHTML = html;
   }
 
+  applyStatic();
+  window.addEventListener("manglo:language", () => { applyStatic(); if (Z.drawing) updateBar(); if (Z.poly) analyze(); });
   btn.onclick = startDraw;
   $("zoneCancel").onclick = () => { stopDraw(); clearDrawing(); };
   $("zoneUndo").onclick = () => { Z.pts.pop(); redraw(); };

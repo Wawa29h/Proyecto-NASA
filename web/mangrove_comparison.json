@@ -1,7 +1,7 @@
 {
  "Barra de Santiago": {
   "mangrove_km2": 24.6,
-  "mangrove_seen_km2": 23.8,
+  "mangrove_seen_km2": 24.6,
   "dates": [
    {
     "date": "2025-12-13",
@@ -25,7 +25,7 @@
     "date": "2026-01-18",
     "hv_mangrove": -16.19,
     "flooded_mangrove_pct": 0.1,
-    "water_km2": 3.752
+    "water_km2": 3.74
    },
    {
     "date": "2026-07-05",
@@ -79,7 +79,7 @@
     "date": "2026-10-21",
     "hv_mangrove": -13.65,
     "flooded_mangrove_pct": 0.9,
-    "water_km2": 2.374
+    "water_km2": 2.423
    }
   ],
   "hv_range_db": 2.64,
@@ -88,94 +88,157 @@
    1.3
   ],
   "water_range_km2": [
-   2.374,
-   3.752
+   2.423,
+   3.74
   ],
   "loss_km2": 0.01,
   "loss_pct": 0.02,
-  "gain_km2": 5.35
+  "gain_km2": 5.34,
+  "provenance": {
+   "schema_version": "1.0",
+   "basis": "published_processed_rasters",
+   "generator": "scripts/compare_mangroves.py",
+   "generator_sha256": "c94dca7b7004018b37a3151be428e24623a6c698186c6f3924653782e962d303",
+   "input_sha256": {
+    "web/sites.json": "79dd1340f8873aebdc3947c8fb4b594a8a69d1ae9dc8e833855cc5b392c7e803",
+    "web/data/series.json": "22959b37f7331728b1c63d654a9d0e9d2c844d881944c03bae6d2a05754fcc58",
+    "web/data/ref/worldcover_codes.png": "4b28704414a7584ab9779c5811d0e734d8ebfda079364fbb723f0b74f5a8ff92",
+    "web/data/2025-12-13_A134_hh.png": "24274489879298d247b0c2922e0494d2ad7206274001f86135d5da24007d24c1",
+    "web/data/2025-12-13_A134_rgb.png": "f004c61e8dfb12ddd1255a9f7a2e5fb4ddeb68210582c1f3d7413f07d36106ce",
+    "web/data/2025-12-13_A134_cls.png": "f3e50097fda69a4b841deae25500ab5fed0bfe5724843038fd2840cb7b8c84ad",
+    "web/data/2025-12-25_A134_hh.png": "21818bf25a1a80174e379fa76401c5e6bca194c260fe080bf02a644e6187575c",
+    "web/data/2025-12-25_A134_rgb.png": "fcaeee57c6aa87df236612ec60329f119727a01578ac4a9e616cfec2d992fde5",
+    "web/data/2025-12-25_A134_cls.png": "5b71addd2d647d374cf8140317a165a6c9898ba556f5486c4233238c85049677",
+    "web/data/2026-01-06_A134_hh.png": "6ef1df7f504adeeee38a8a3757503b4bfb87f0a80791ae39b79bf78b3b20b3f5",
+    "web/data/2026-01-06_A134_rgb.png": "2aed64139973442486725f6933353639f8ae4bcf8480c06b95e16113c990ebfb",
+    "web/data/2026-01-06_A134_cls.png": "4af27ca67c4ac37aaba27e35fa19300d6e07f39bb106fc91df11453994bc4f2a",
+    "web/data/2026-01-18_A134_hh.png": "a95399ab82c756bb59fdbb6a5381a0bd16adfba1361a9efa5a7857f83e55d209",
+    "web/data/2026-01-18_A134_rgb.png": "086034fef832e8e7f82f6ebb28cabed61880a44275693cbbdd7be04ce7a8af6b",
+    "web/data/2026-01-18_A134_cls.png": "3874855348fa6bf9d9dd8d55b93319d1bb280e89c24ac0231218a596b48eac96",
+    "web/data/2026-07-05_A134_hh.png": "70ba307a0ae23240534cc791a736d05697b11b59a748b0ea94be2e7a318b8c6d",
+    "web/data/2026-07-05_A134_rgb.png": "9d478694b4132f647c29196b17e8aaf08d1ff75c69f877eab80dda5831e81181",
+    "web/data/2026-07-05_A134_cls.png": "72d7d1f33d2f289c6fca633b4bfce6904a6267752c4663cc8041769e59165b23",
+    "web/data/2026-07-17_A134_hh.png": "d9b791bdee140b8cba8e4b295d77e5f779765016eaacb77b98ba64bd9d8fe5b1",
+    "web/data/2026-07-17_A134_rgb.png": "156120dd6eb317169bb8b461da5763d78d1331a1e3ec3bc69a388b84fd00e5dd",
+    "web/data/2026-07-17_A134_cls.png": "579ef509e14da512bff62d279c181aa8477c16b873bb478d4c2213cffbad06b7",
+    "web/data/2026-08-10_A134_hh.png": "9058064af4faa44c9f48302a2b8216cf2554e5bdbf75020ad00b94ea1fe085ac",
+    "web/data/2026-08-10_A134_rgb.png": "bd83d4bcae8b45bee42d4f6af9c30cfff3e06de6aef5a159406421f7f3419074",
+    "web/data/2026-08-10_A134_cls.png": "7db96132926c231d539196e0a712da2a0bd5b49e7cbe284504fda9008c69e079",
+    "web/data/2026-08-22_A134_hh.png": "53e16a1fdce56b4c7b2a3b410309bfc23e475a41385b929b9973aa47310495ca",
+    "web/data/2026-08-22_A134_rgb.png": "4b08dd2064dd9cef18d452f9ec62624cade165c21759ea62c43e6b7efe46fa20",
+    "web/data/2026-08-22_A134_cls.png": "0791727975590f52298f15246c0335c945359dbf9c75e58ede27cdd52ef5975b",
+    "web/data/2026-09-03_A134_hh.png": "2a1ea184781cbb8ad245ba6081d43cd41d3da324bf8b21b4d19e665b29e5a02d",
+    "web/data/2026-09-03_A134_rgb.png": "d4b59d6732e5efa827c98883736a13875ebd52981067d577b07211f080b7afa8",
+    "web/data/2026-09-03_A134_cls.png": "95ba17efe656965d85c0d2b5337c02d48911656b638c441d373b13bdf24871bb",
+    "web/data/2026-09-15_A134_hh.png": "fe124cb421d98269f49d73350928457b9dc524749bbec752034fe78ae5e5b42f",
+    "web/data/2026-09-15_A134_rgb.png": "9517f8f064216c8fabd1d87177cdd3525a87e451dc9739c886dba5715568a981",
+    "web/data/2026-09-15_A134_cls.png": "8b72cf507be020b446e9657850c9ba5599363f1ff3980d7b0af71ecc31796734",
+    "web/data/2026-09-27_A134_hh.png": "4839c2a00ac7845f469f715fb47e91bf7021b6d90ad9a67a8ad9555c6e2f169a",
+    "web/data/2026-09-27_A134_rgb.png": "ba9f62c913825e2e96fe51088dd9cabbb57b748e621a1927eec6b0e1c1660687",
+    "web/data/2026-09-27_A134_cls.png": "11e3e37d84f5d729eb3b38bbb1b38d2f51bf49ab6badbcb9fa05727d3314d54d",
+    "web/data/2026-10-09_A134_hh.png": "d9108f774dc206300c2d772fa22a1fe349e4b7b3014e9bcfe370675898dc44eb",
+    "web/data/2026-10-09_A134_rgb.png": "c72ac87a4306acd886360a4a706c2421e8a4b97092b0c14ea1d6185b0f0b3de8",
+    "web/data/2026-10-09_A134_cls.png": "2735a3549afb6192798960cfb1a9c973619d7ade4e09cf5466b8150f0521aed6",
+    "web/data/2026-10-21_A134_hh.png": "923f381b2d00d63cc9cf07e08c97c4f5e4622ed3717a0648f7c11ffe8113cc08",
+    "web/data/2026-10-21_A134_rgb.png": "5396686b81b29892c1efabb16e974114a1effcad25ded15dee8e89db6a2c30a0",
+    "web/data/2026-10-21_A134_cls.png": "cc4faf4b0932d841c82140e6702cae77328d59cf3393e59fa035546d9f8f8345"
+   },
+   "method": "HH encoded -30..5 dB; HV decoded from RGB green -32..-8 dB; WorldCover class 95",
+   "change_support": "common valid processed mangrove pixels across all selected dates",
+   "change_definition": "mean HV of last 3 minus first 3 observations; thresholds -3/+3 dB",
+   "water_definition": "count of RGBA (30,136,229,230) in published classification",
+   "temporal_fill_dates": [
+    "2026-10-21"
+   ],
+   "orbital_fill_dates": [],
+   "limitations": [
+    "Fills remain included; processed validity is not observed-only provenance.",
+    "Signal loss/gain does not establish ecological loss/gain.",
+    "Quantized processed inputs; not a regeneration from original NISAR HDF5."
+   ]
+  }
  },
  "Bahia de Jiquilisco": {
   "mangrove_km2": 176.7,
-  "mangrove_seen_km2": 90.4,
+  "mangrove_seen_km2": 90.7,
   "dates": [
    {
     "date": "2025-12-13",
     "hv_mangrove": -16.09,
     "flooded_mangrove_pct": 0.0,
-    "water_km2": 17.221
+    "water_km2": 17.009
    },
    {
     "date": "2025-12-25",
     "hv_mangrove": -15.91,
     "flooded_mangrove_pct": 0.0,
-    "water_km2": 18.108
+    "water_km2": 18.143
    },
    {
     "date": "2026-01-06",
-    "hv_mangrove": -15.72,
+    "hv_mangrove": -15.81,
     "flooded_mangrove_pct": 0.0,
-    "water_km2": 19.7
+    "water_km2": 19.56
    },
    {
     "date": "2026-01-18",
-    "hv_mangrove": -15.72,
+    "hv_mangrove": -15.81,
     "flooded_mangrove_pct": 0.0,
-    "water_km2": 19.113
+    "water_km2": 19.251
    },
    {
     "date": "2026-07-05",
     "hv_mangrove": -14.31,
     "flooded_mangrove_pct": 0.2,
-    "water_km2": 37.803
+    "water_km2": 38.372
    },
    {
     "date": "2026-07-17",
     "hv_mangrove": -14.21,
     "flooded_mangrove_pct": 0.5,
-    "water_km2": 38.558
+    "water_km2": 38.583
    },
    {
     "date": "2026-08-10",
     "hv_mangrove": -14.02,
     "flooded_mangrove_pct": 0.3,
-    "water_km2": 39.311
+    "water_km2": 39.403
    },
    {
     "date": "2026-08-22",
     "hv_mangrove": -14.21,
     "flooded_mangrove_pct": 0.2,
-    "water_km2": 38.999
+    "water_km2": 39.016
    },
    {
     "date": "2026-09-03",
     "hv_mangrove": -13.65,
     "flooded_mangrove_pct": 0.8,
-    "water_km2": 36.371
+    "water_km2": 36.169
    },
    {
     "date": "2026-09-15",
     "hv_mangrove": -13.93,
     "flooded_mangrove_pct": 1.1,
-    "water_km2": 35.639
+    "water_km2": 35.558
    },
    {
     "date": "2026-09-27",
     "hv_mangrove": -13.55,
     "flooded_mangrove_pct": 1.0,
-    "water_km2": 35.007
+    "water_km2": 34.886
    },
    {
     "date": "2026-10-09",
     "hv_mangrove": -13.93,
     "flooded_mangrove_pct": 0.4,
-    "water_km2": 36.435
+    "water_km2": 36.52
    },
    {
     "date": "2026-10-21",
     "hv_mangrove": -14.02,
     "flooded_mangrove_pct": 0.3,
-    "water_km2": 34.64
+    "water_km2": 34.217
    }
   ],
   "hv_range_db": 2.54,
@@ -184,11 +247,85 @@
    1.1
   ],
   "water_range_km2": [
-   17.221,
-   39.311
+   17.009,
+   39.403
   ],
   "loss_km2": 0.03,
   "loss_pct": 0.03,
-  "gain_km2": 48.27
+  "gain_km2": 48.5,
+  "provenance": {
+   "schema_version": "1.0",
+   "basis": "published_processed_rasters",
+   "generator": "scripts/compare_mangroves.py",
+   "generator_sha256": "c94dca7b7004018b37a3151be428e24623a6c698186c6f3924653782e962d303",
+   "input_sha256": {
+    "web/sites.json": "79dd1340f8873aebdc3947c8fb4b594a8a69d1ae9dc8e833855cc5b392c7e803",
+    "web/data-jiquilisco/series.json": "bea3e50bd5ddfefabbe2738f71ad2f5950c571d88f2f62f14117a63de26bdd21",
+    "web/data-jiquilisco/ref/worldcover_codes.png": "39561510f284a2893757cafc5346a2987aa78118cd3ee93e78131c362f16a4a3",
+    "web/data-jiquilisco/2025-12-13_A134_hh.png": "aabba5a61526708091eb00e921ce39c2d6c37a0a66238b31f681ba3439d88c57",
+    "web/data-jiquilisco/2025-12-13_A134_rgb.png": "42a91f24bd0d8a02f2bc56d415c9e06bdddc249f729eeec949a0e8e6fbcd3af9",
+    "web/data-jiquilisco/2025-12-13_A134_cls.png": "e6f7e7266c89e5ebc5f240aa4db614d58eedd62e5c3f11d1b75b7f81461b4290",
+    "web/data-jiquilisco/2025-12-25_A134_hh.png": "548e2d2f9cf147b69a6872be183702e9db648fd222279aafe29a2852d3e4c52d",
+    "web/data-jiquilisco/2025-12-25_A134_rgb.png": "cfd122b25c470931f5d005580cf561027916a81df369250469fb6647fe6e7e51",
+    "web/data-jiquilisco/2025-12-25_A134_cls.png": "c073f628864a60fb78281fc19db1d5de0dfe9f83350a83aaeb8cb09d5fa964cf",
+    "web/data-jiquilisco/2026-01-06_A134_hh.png": "24c21f6aaf7bae67e0f4e147d2cd8b97b643a957838efc43916ee2c556fa1343",
+    "web/data-jiquilisco/2026-01-06_A134_rgb.png": "2cf6ab9e70dd87c9c29465681aa812a13a8c757e8ae7c78bb939877c738f16ee",
+    "web/data-jiquilisco/2026-01-06_A134_cls.png": "0c398e9b19b68c1e4dc616dc5a8155cf4ed846c574a3c18916d0e4b19b8825e4",
+    "web/data-jiquilisco/2026-01-18_A134_hh.png": "9388c46a3c715d7a016bb524ee38a2f4f3dc651c5912c9f43bcecd561be0065d",
+    "web/data-jiquilisco/2026-01-18_A134_rgb.png": "71b826086cb43619c6ec284c00edfedbcc0007c3b5535f757146cb037cd3ba2d",
+    "web/data-jiquilisco/2026-01-18_A134_cls.png": "60d769e4a5002341ce2b8646fad581edcbce8db34e036a80333418211add381b",
+    "web/data-jiquilisco/2026-07-05_A134_hh.png": "28a2050de21b1c75f68b74e081801e3f5fffca43b9c60c6d5dddf79b3e287f84",
+    "web/data-jiquilisco/2026-07-05_A134_rgb.png": "66310cf4e783c146a4ef25b28993640b085116fe76322f239fb4619e9691a481",
+    "web/data-jiquilisco/2026-07-05_A134_cls.png": "03af615740dcf5d0954c51dab5472fc9f5a5891e1ae26847e1de355c2e122ca0",
+    "web/data-jiquilisco/2026-07-17_A134_hh.png": "09d2ab3b85dea6fbaf88178253b7eb7cfe0b79879cd438ce3598952d4421e2a7",
+    "web/data-jiquilisco/2026-07-17_A134_rgb.png": "e1bd3d37c17cfd696194b64dbfd3015a7c22b93a295cabac1dbea5498eb22b11",
+    "web/data-jiquilisco/2026-07-17_A134_cls.png": "0e4bdf17cc9cd2d327f20e53bf27490eb5dbb2d6ca71cf6d92f131a281d8fcf4",
+    "web/data-jiquilisco/2026-08-10_A134_hh.png": "2c70eb213b15945cf84745b2dc74ce6302c4bfeaa8ffbeec224d381e5f0819e3",
+    "web/data-jiquilisco/2026-08-10_A134_rgb.png": "9d910ed307c1ae34a4c7c8f242116b7ecccd89a4bd4b387a028c292496b57811",
+    "web/data-jiquilisco/2026-08-10_A134_cls.png": "f2bb48c743a1136eab1deba936653e753bb791d4416a353d18facd5503f4cecd",
+    "web/data-jiquilisco/2026-08-22_A134_hh.png": "f1fc6890ea791a9fbd508152c5f95888e329394ca7a4a9c8c38c46e73888b346",
+    "web/data-jiquilisco/2026-08-22_A134_rgb.png": "30a54608a8246d6deb91bafce88381db7a9b3531ee253c99c1ec370e6130effc",
+    "web/data-jiquilisco/2026-08-22_A134_cls.png": "0b670bbf520846133de70727e054d2133fa79674c768a50a0e6da7f95959a820",
+    "web/data-jiquilisco/2026-09-03_A134_hh.png": "898db4ec854c498143dbc873400846bc28dd2ebcbf8141ef8a49bcdeed5440fa",
+    "web/data-jiquilisco/2026-09-03_A134_rgb.png": "62d9ca6bbb51ec9a7fcc9d104d7432a90ea51d6e561492334c4e89648fc6fd8f",
+    "web/data-jiquilisco/2026-09-03_A134_cls.png": "e47fe5f879d6206bf1febc9671a75f0dbea6504e3619e22063195782b3f12521",
+    "web/data-jiquilisco/2026-09-15_A134_hh.png": "065380020bc028e7f2cc374520d3e6544103ed1bcc82f855d0e07e94123f5cce",
+    "web/data-jiquilisco/2026-09-15_A134_rgb.png": "8a00934a12acc7fd286be87aa04049c757ef25ed4d112792c89d1d264d38ddd4",
+    "web/data-jiquilisco/2026-09-15_A134_cls.png": "be56dcde9d2b22e81f518986412970ecd36a598606f6908b5d41f0b5b7332e2a",
+    "web/data-jiquilisco/2026-09-27_A134_hh.png": "9f4591ffc8097ed14d1eb9c7e28970d8677d1f1c2a0f7d30e683ff8c4da7416f",
+    "web/data-jiquilisco/2026-09-27_A134_rgb.png": "15da1560681ba276240d040e623bbeafd7cc758db998a90f27f603773e009325",
+    "web/data-jiquilisco/2026-09-27_A134_cls.png": "6f0b9fd7c1d88430ba01359210919df59a6e6581d4327ab942c1f998c887dc2d",
+    "web/data-jiquilisco/2026-10-09_A134_hh.png": "e81d2ed75dba2dfa0a99aaf449c891a36be7589025b95ee8a77eba9b3ea95ea3",
+    "web/data-jiquilisco/2026-10-09_A134_rgb.png": "3540c8f5f8801968d733303c3caabc6d133d417a2c4fc560a6cab4c128226624",
+    "web/data-jiquilisco/2026-10-09_A134_cls.png": "e08c2c966894a04c9503db95cd1b1ea7d362b8d670b6162d017c5dc62e3a19cb",
+    "web/data-jiquilisco/2026-10-21_A134_hh.png": "1a1ee0c36adfc5aa2368db10f8a360fe42fad9a7576b61a3e19b003a0807ea79",
+    "web/data-jiquilisco/2026-10-21_A134_rgb.png": "3ed3d35ad17ebd61603c81096e237af83d000e34ab76755aae13c20e20d41310",
+    "web/data-jiquilisco/2026-10-21_A134_cls.png": "8d142dd90665c4426fcd1ce8797b7ca5acf19fb7cf05a8e8c36e570e9e222816"
+   },
+   "method": "HH encoded -30..5 dB; HV decoded from RGB green -32..-8 dB; WorldCover class 95",
+   "change_support": "common valid processed mangrove pixels across all selected dates",
+   "change_definition": "mean HV of last 3 minus first 3 observations; thresholds -3/+3 dB",
+   "water_definition": "count of RGBA (30,136,229,230) in published classification",
+   "temporal_fill_dates": [
+    "2025-12-13",
+    "2026-01-18"
+   ],
+   "orbital_fill_dates": [
+    "2026-07-05",
+    "2026-07-17",
+    "2026-08-10",
+    "2026-08-22",
+    "2026-09-03",
+    "2026-09-15",
+    "2026-09-27",
+    "2026-10-09",
+    "2026-10-21"
+   ],
+   "limitations": [
+    "Fills remain included; processed validity is not observed-only provenance.",
+    "Signal loss/gain does not establish ecological loss/gain.",
+    "Quantized processed inputs; not a regeneration from original NISAR HDF5."
+   ]
+  }
  }
 }

@@ -3,14 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+// La portada y el explorador son vistas separadas; los enlaces ?site= siguen abriendo el mapa.
+if (!location.search) location.replace("landing.html" + location.hash);
+</script>
 <title>Latido del Manglar · NISAR</title>
 <meta name="description" content="Cambios en el manglar y el estero de Barra de Santiago (El Salvador) vistos por el radar NISAR de NASA-ISRO.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="wireframe.css?v=20261115-locate1">
 </head>
-<body>
+<body class="wireframe">
 <header class="top">
   <div class="brand">
     <div class="brand-mark" aria-hidden="true"><img src="img/diseno-cientifico/icono-manglo.png" alt="" class="brand-logo"></div>
@@ -109,6 +114,7 @@
       <div class="story-top"><span id="storyStep"></span><button id="storyClose" aria-label="Cerrar recorrido">✕</button></div>
       <h2 id="storyTitle"></h2>
       <p id="storyText"></p>
+      <button id="storyLocate" class="btn" type="button" hidden>Ver en la app →</button>
       <div class="story-nav">
         <button id="storyPrev" class="btn">← Atrás</button>
         <div class="dots" id="storyDots"></div>
@@ -139,7 +145,7 @@
     </div>
 
     <div class="card" id="alertCard" hidden>
-      <h3>Alerta de lirio por zonas</h3>
+      <h3>Avisos experimentales de vegetación sobre agua por zonas</h3>
       <div class="azones" id="alertZones"></div>
       <pre class="alertmsg" id="alertMsg"></pre>
       <div class="row"><button class="btn primary" id="alertCopy">📋 Copiar mensaje</button><span class="hint" id="alertCopied"></span></div>
@@ -222,7 +228,7 @@
         <button data-layer="rgb" class="on">Falso color</button>
         <button data-layer="cls">Agua / manglar inundado</button>
         <button data-layer="ml" id="layerMlBtn" hidden>IA: plantas</button>
-        <button data-layer="photo" id="layerPhotoBtn" hidden>📷 Como foto (IA)</button>
+        <button data-layer="photo" id="layerPhotoBtn" hidden>📷 Reconstrucción visual (IA)</button>
       </div>
       <label class="inline tech">Opacidad <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.85"></label>
       <div class="legend simple-only" id="legendRgbSimple">
@@ -402,10 +408,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="app.js"></script>
-<script src="zona.js"></script>
-<script src="story.js"></script>
+<script src="language.js?v=20261115-stage3"></script>
+<script src="app.js?v=20261115-stage3"></script>
+<script src="zona.js?v=20261115-zona2"></script>
+<script src="story.js?v=20261115-locate1"></script>
 <script src="intro.js"></script>
 <script src="scientific-tools.js"></script>
+<script src="wireframe.js?v=20261115-landing1"></script>
 </body>
 </html>

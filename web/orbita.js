@@ -1,19 +1,22 @@
 // MANGLO · ¿Dónde está NISAR? Globo con la órbita real del satélite (TLE público + SGP4 vía satellite.js).
 (async () => {
   const $ = (id) => document.getElementById(id);
+  // idioma: el mismo que se eligió en la app (botones Español / English, guardado como "manglo-language")
+  const EN = (() => { try { return localStorage.getItem("manglo-language") === "en"; } catch { return false; } })();
+  const tr = (es, en) => (EN ? en : es);
   const R = 6371;                                   // km
   const SWATH = [430, 680];                         // km a la IZQUIERDA de la vertical (incidencia ~33°–47°, aprox.)
   const SITES = [
     { id: "barra", name: "Barra de Santiago", short: "Barra de Santiago", lat: 13.715, lon: -90.04 },
-    { id: "jiquilisco", name: "Bahía de Jiquilisco", short: "Jiquilisco", lat: 13.25, lon: -88.50 },
-    { id: "cerron", name: "Embalse Cerrón Grande", short: "Cerrón Grande", lat: 14.03, lon: -89.08 },
+    { id: "jiquilisco", name: tr("Bahía de Jiquilisco", "Jiquilisco Bay"), short: "Jiquilisco", lat: 13.25, lon: -88.50 },
+    { id: "cerron", name: tr("Embalse Cerrón Grande", "Cerrón Grande Reservoir"), short: "Cerrón Grande", lat: 14.03, lon: -89.08 },
   ];
   const TZ = -6;                                    // El Salvador, sin horario de verano
-  const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-  const DIAS = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+  const MESES = EN ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] : ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  const DIAS = EN ? ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] : ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
   const pad = (n) => String(n).padStart(2, "0");
   const localParts = (d) => { const t = new Date(d.getTime() + TZ * 3600e3); return { dia: DIAS[t.getUTCDay()], d: t.getUTCDate(), m: MESES[t.getUTCMonth()], hh: t.getUTCHours(), mm: t.getUTCMinutes() }; };
-  const fmtLocal = (d) => { const p = localParts(d); const h12 = ((p.hh + 11) % 12) + 1; return `${p.dia} ${p.d} ${p.m}, ${h12}:${pad(p.mm)} ${p.hh < 12 ? "a.m." : "p.m."}`; };
+  const fmtLocal = (d) => { const p = localParts(d); const h12 = ((p.hh + 11) % 12) + 1; return EN ? `${p.dia} ${p.m} ${p.d}, ${h12}:${pad(p.mm)} ${p.hh < 12 ? "a.m." : "p.m."}` : `${p.dia} ${p.d} ${p.m}, ${h12}:${pad(p.mm)} ${p.hh < 12 ? "a.m." : "p.m."}`; };
   // escribir en la página solo si el texto cambió: así el traductor del navegador (Chrome "Traducir") no se
   // deshace cada medio segundo y la página queda traducida
   const setText = (id, t) => { const e = $(id); if (e && e.dataset.v !== t) { e.dataset.v = t; e.textContent = t; } };
@@ -35,7 +38,7 @@
   const epoch = new Date(Date.UTC(epY, 0, 1) + (epD - 1) * 86400e3);
   // error típico: ~0.016 s × (días desde la órbita)², medido contra las imágenes reales; nunca menos de 3 s
   const errS = (t) => Math.max(3, Math.round(0.016 * ((t - epoch) / 86400e3) ** 2));
-  $("tleNote").textContent = `Órbita: elementos ${live ? "en vivo" : "guardados"} del ${fmtLocal(epoch)} (CelesTrak, NORAD 65053).`;
+  $("tleNote").textContent = tr(`Órbita: elementos ${live ? "en vivo" : "guardados"} del ${fmtLocal(epoch)} (CelesTrak, NORAD 65053).`, `Orbit: ${live ? "live" : "saved"} elements from ${fmtLocal(epoch)} (CelesTrak, NORAD 65053).`);
 
   // ---------- propagación ----------
   function ecf(date) {
@@ -99,7 +102,7 @@
     .htmlElementsData(SITES).htmlLat("lat").htmlLng("lon").htmlAltitude(0.003)
     .htmlElement((d) => {
       const e = document.createElement("div"); e.className = "site-pin" + (d.user ? " user" : "");
-      e.innerHTML = `<i></i><span>${d.user ? "📍 tu punto" : d.short || d.name}</span>` + (d.user ? `<button class="x" title="Quitar">✕</button>` : "");
+      e.innerHTML = `<i></i><span>${d.user ? tr("📍 tu punto", "📍 your point") : d.short || d.name}</span>` + (d.user ? `<button class="x" title="${tr("Quitar", "Remove")}">✕</button>` : "");
       if (d.user) e.querySelector(".x").onclick = (ev) => { ev.stopPropagation(); setUserPin(null); };
       pinEls[d.id] = e; writePin(d.id); return e;
     })
@@ -145,7 +148,9 @@
     const ps = (scanPasses([site], new Date(tQ.getTime() - 40 * 60e3), 80 / 1440)[site.id] || []).filter((p) => p.inSwath);
     const p = ps.sort((a, b) => Math.abs(a.t - tQ) - Math.abs(b.t - tQ))[0];
     simT = p ? p.t.getTime() : tQ.getTime(); speed = 0;
-    toast(`🛰 Así estaba NISAR cuando tomó la imagen de <b>${site.name}</b> que ves en la app: <b>${fmtLocal(new Date(simT)).replace(/,.*/, "")} · ${fmtLocalS(new Date(simT))}</b> (hora de El Salvador)${p ? `, ${p.ascending ? "subiendo hacia el norte y mirando al oeste" : "bajando hacia el sur y mirando al este"}, a ${Math.round(p.cross)} km del sitio` : ""}. Está en pausa: pulsa <b>⟲ Al presente</b> para verlo en vivo.`);
+    const when = `${fmtLocal(new Date(simT)).replace(/,.*/, "")} · ${fmtLocalS(new Date(simT))}`;
+    toast(tr(`🛰 Así estaba NISAR cuando tomó la imagen de <b>${site.name}</b> que ves en la app: <b>${when}</b> (hora de El Salvador)${p ? `, ${p.ascending ? "subiendo hacia el norte y mirando al oeste" : "bajando hacia el sur y mirando al este"}, a ${Math.round(p.cross)} km del sitio` : ""}. Está en pausa: pulsa <b>⟲ Al presente</b> para verlo en vivo.`,
+      `🛰 This is where NISAR was when it took the <b>${site.name}</b> image you see in the app: <b>${when}</b> (El Salvador time)${p ? `, ${p.ascending ? "heading north and looking west" : "heading south and looking east"}, ${Math.round(p.cross)} km from the site` : ""}. Paused: press <b>⟲ Now</b> to see it live.`));
     setTimeout(() => globe.pointOfView({ lat: 13.6, lng: -89.5, altitude: 1.1 }, 1500), 300);
   }
   const ctl = globe.controls();
@@ -157,7 +162,8 @@
     if (on) {
       speed = CYCLE_SPEED; autoRunEnd = null; setFollow(false);
       globe.pointOfView({ altitude: 2.6 }, 1200);
-      toast(`🔄 <b>El ciclo de NISAR, acelerado ×${CYCLE_SPEED}.</b> Cada vuelta dura 98 minutos y la Tierra gira debajo, por eso cada pasada cae más al oeste que la anterior. La línea turquesa va dejando el rastro: en <b>12 días (173 vueltas)</b> cubre todo el planeta y vuelve a empezar exactamente por el mismo camino. Arrastra el globo cuando quieras; vuelve a tocar <b>Ver el ciclo</b> para pararlo.`);
+      toast(tr(`🔄 <b>El ciclo de NISAR, acelerado ×${CYCLE_SPEED}.</b> Cada vuelta dura 98 minutos y la Tierra gira debajo, por eso cada pasada cae más al oeste que la anterior. La línea turquesa va dejando el rastro: en <b>12 días (173 vueltas)</b> cubre todo el planeta y vuelve a empezar exactamente por el mismo camino. Arrastra el globo cuando quieras; vuelve a tocar <b>Ver el ciclo</b> para pararlo.`,
+        `🔄 <b>NISAR's cycle, sped up ×${CYCLE_SPEED}.</b> Each orbit takes 98 minutes while the Earth turns underneath, so every pass falls further west than the previous one. The turquoise line leaves a trail: in <b>12 days (173 orbits)</b> it covers the whole planet and starts again on exactly the same path. Drag the globe whenever you like; press <b>See the cycle</b> again to stop.`));
     } else if (speed === CYCLE_SPEED) { speed = 1; toast(null); }
   }
   $("nowBtn").onclick = () => { setCycle(false); simT = Date.now(); speed = 1; autoRunEnd = null; toast(null); passCache = null; };
@@ -168,7 +174,7 @@
     const n = allPasses().find((p) => p.t.getTime() > simT + 60e3); if (!n) return;
     setCycle(false); simT = n.t.getTime() - 3 * 60e3; speed = 60; autoRunEnd = n.t.getTime() + 2 * 60e3; setFollow(false);
     globe.pointOfView({ lat: 13.6, lng: -89.3, altitude: 1.2 }, 1200);
-    toast(`⏭ Adelantando el tiempo a la próxima pasada sobre <b>${n.siteName}</b>: <b>${fmtLocal(n.t)}</b>. El reloj corre ×60 y se detiene justo después.`);
+    toast(tr(`⏭ Adelantando el tiempo a la próxima pasada sobre <b>${n.siteName}</b>: <b>${fmtLocal(n.t)}</b>. El reloj corre ×60 y se detiene justo después.`, `⏭ Fast-forwarding to the next pass over <b>${n.siteName}</b>: <b>${fmtLocal(n.t)}</b>. The clock runs ×60 and stops right after.`));
   };
   // la cámara se pone a un costado del satélite (no encima), así se ve el modelo 3D y su haz de lado
   // punto en el suelo a 'km' del satélite, detrás de él y un poco a su derecha: desde ahí se ve el modelo y el haz delante
@@ -188,23 +194,23 @@
 
   // ---------- pin del usuario: clic en cualquier lugar del globo → cuándo lo verá NISAR ----------
   function setUserPin(pt) {
-    userPin = pt ? { id: "user", name: "Este lugar", user: true, ...pt } : null;
+    userPin = pt ? { id: "user", name: tr("Este lugar", "This place"), user: true, ...pt } : null;
     delete pinEls.user; passCache = null;
     globe.htmlElementsData(userPin ? [...SITES, userPin] : SITES);
     renderPasses();
     if (!userPin) { toast(null); $("pinTip").hidden = false; return; }
     const ps = (passCache.byId.user || []).filter((p) => p.inSwath && p.t.getTime() > simT), p = ps[0], now = new Date(simT);
-    const where = `${Math.abs(pt.lat).toFixed(3)}° ${pt.lat >= 0 ? "N" : "S"}, ${Math.abs(pt.lon).toFixed(3)}° ${pt.lon >= 0 ? "E" : "O"}`;
+    const where = `${Math.abs(pt.lat).toFixed(3)}° ${pt.lat >= 0 ? "N" : "S"}, ${Math.abs(pt.lon).toFixed(3)}° ${pt.lon >= 0 ? "E" : tr("O", "W")}`;
     const edge = p && Math.min(p.cross - SWATH[0], SWATH[1] - p.cross) < 40;
     $("pinTip").hidden = true;
     toast(p
-      ? `<div class="sub">📍 Tu punto · ${where}</div><div class="pin-big">${fmtLocal(p.t).replace(/,.*/, "")} · ${fmtLocalS(p.t)}</div>` +
-        `<div class="sub">hora de El Salvador · margen ± ${errS(p.t)} s · en ${fmtDur(p.t - now)}</div>` +
-        `<div class="pin-row">${p.ascending ? "Sube hacia el norte y mira al oeste" : "Baja hacia el sur y mira al este"}; tu punto queda a ${Math.round(p.cross)} km de su vertical.</div>` +
-        (edge ? `<div class="pin-row warn">⚠ Queda cerca del borde de la franja del radar: puede salir en la imagen o quedar justo afuera.</div>` : "") +
-        (ps[1] ? `<div class="pin-row">Después: ${ps.slice(1, 3).map((q) => `${fmtLocal(q.t).replace(/,.*/, "")} ${fmtLocalS(q.t)}`).join(" · ")}</div>` : "") +
-        `<div class="pin-row">Toca otro punto para moverlo.</div>`
-      : `📍 ${where}: en los próximos 13 días NISAR no ve este punto dentro de su franja. Prueba otro lugar.`);
+      ? `<div class="sub">📍 ${tr("Tu punto", "Your point")} · ${where}</div><div class="pin-big">${fmtLocal(p.t).replace(/,.*/, "")} · ${fmtLocalS(p.t)}</div>` +
+        `<div class="sub">${tr(`hora de El Salvador · margen ± ${errS(p.t)} s · en ${fmtDur(p.t - now)}`, `El Salvador time · margin ± ${errS(p.t)} s · in ${fmtDur(p.t - now)}`)}</div>` +
+        `<div class="pin-row">${tr(`${p.ascending ? "Sube hacia el norte y mira al oeste" : "Baja hacia el sur y mira al este"}; tu punto queda a ${Math.round(p.cross)} km de su vertical.`, `${p.ascending ? "Heading north, looking west" : "Heading south, looking east"}; your point is ${Math.round(p.cross)} km from its ground track.`)}</div>` +
+        (edge ? `<div class="pin-row warn">${tr("⚠ Queda cerca del borde de la franja del radar: puede salir en la imagen o quedar justo afuera.", "⚠ Close to the edge of the radar swath: it may appear in the image or fall just outside.")}</div>` : "") +
+        (ps[1] ? `<div class="pin-row">${tr("Después", "Then")}: ${ps.slice(1, 3).map((q) => `${fmtLocal(q.t).replace(/,.*/, "")} ${fmtLocalS(q.t)}`).join(" · ")}</div>` : "") +
+        `<div class="pin-row">${tr("Toca otro punto para moverlo.", "Tap another point to move it.")}</div>`
+      : tr(`📍 ${where}: en los próximos 13 días NISAR no ve este punto dentro de su franja. Prueba otro lugar.`, `📍 ${where}: NISAR does not see this point inside its swath in the next 13 days. Try another place.`));
   }
   // clic propio (sin arrastrar): con las fotos de alta resolución activas, el clic de globe.gl no llega al planeta
   let down = null;
@@ -247,7 +253,8 @@
       setFollow(false); setCycle(false);
       globe.pointOfView({ lat: 13.58, lng: -90.03, altitude: 0.06 }, 2200);
       const near = b.events.filter((e) => e.km_to_mangrove < 1).length;
-      $("fireNote").innerHTML = `<b>${b.events.length}</b> quemas de caña en la zafra 2025–2026 junto al manglar de Barra de Santiago (detectadas con fotos Sentinel-2). <b style="color:#ff6b5b">${near}</b> a menos de 1 km del manglar. Más alta = más grande; más roja = más cerca del manglar.`;
+      $("fireNote").innerHTML = tr(`<b>${b.events.length}</b> quemas de caña en la zafra 2025–2026 junto al manglar de Barra de Santiago (detectadas con fotos Sentinel-2). <b style="color:#ff6b5b">${near}</b> a menos de 1 km del manglar. Más alta = más grande; más roja = más cerca del manglar.`,
+        `<b>${b.events.length}</b> sugarcane burns in the 2025–2026 harvest next to the Barra de Santiago mangroves (detected with Sentinel-2 images). <b style="color:#ff6b5b">${near}</b> within 1 km of the mangroves. Taller = bigger; redder = closer to the mangroves.`);
     } else $("fireNote").textContent = "";
   };
 
@@ -276,12 +283,12 @@
       const ps = (c.byId[s.id] || []).filter((p) => p.inSwath && p.t.getTime() > simT);
       lastPasses[s.id] = ps; writePin(s.id);
       const p = ps[0];
-      if (!p) return `<div class="pass"><b>${s.name}</b><span class="warn">sin pasada dentro de la franja en los próximos días</span></div>`;
-      const dir = p.ascending ? "subiendo hacia el norte" : "bajando hacia el sur";
-      const mira = p.ascending ? "mirando hacia el oeste" : "mirando hacia el este";
-      const hora = localParts(p.t).hh < 12 ? "de madrugada" : "al atardecer";
+      if (!p) return `<div class="pass"><b>${s.name}</b><span class="warn">${tr("sin pasada dentro de la franja en los próximos días", "no pass inside the swath in the coming days")}</span></div>`;
+      const dir = p.ascending ? tr("subiendo hacia el norte", "heading north") : tr("bajando hacia el sur", "heading south");
+      const mira = p.ascending ? tr("mirando hacia el oeste", "looking west") : tr("mirando hacia el este", "looking east");
+      const hora = localParts(p.t).hh < 12 ? tr("de madrugada", "before dawn") : tr("al atardecer", "at dusk");
       const rest = ps.slice(1, 3).map((q) => fmtLocal(q.t)).join(" · ");
-      return `<div class="pass"><b>${s.name}</b><span class="when">en ${fmtDur(p.t - now)} · ${fmtLocal(p.t)}</span><div class="how">${hora} · ${dir}, ${mira}, a ${Math.round(p.cross)} km de su vertical</div>${rest ? `<div class="how">después: ${rest}</div>` : ""}</div>`;
+      return `<div class="pass"><b>${s.name}</b><span class="when">${tr("en", "in")} ${fmtDur(p.t - now)} · ${fmtLocal(p.t)}</span><div class="how">${hora} · ${dir}, ${mira}, ${tr(`a ${Math.round(p.cross)} km de su vertical`, `${Math.round(p.cross)} km from its ground track`)}</div>${rest ? `<div class="how">${tr("después", "then")}: ${rest}</div>` : ""}</div>`;
     }).join("");
     setHTML("passes", html);
   }
@@ -318,7 +325,7 @@
   function tick(now) {
     requestAnimationFrame(tick);
     simT += (now - lastReal) * speed; lastReal = now;
-    if (autoRunEnd && simT >= autoRunEnd) { speed = 1; autoRunEnd = null; toast(`✅ Esa fue la pasada. El reloj sigue desde aquí en tiempo real; pulsa <b>⟲ Al presente</b> para la hora de hoy.`); }
+    if (autoRunEnd && simT >= autoRunEnd) { speed = 1; autoRunEnd = null; toast(tr(`✅ Esa fue la pasada. El reloj sigue desde aquí en tiempo real; pulsa <b>⟲ Al presente</b> para la hora de hoy.`, `✅ That was the pass. The clock keeps running in real time from here; press <b>⟲ Now</b> for today's time.`)); }
     const date = new Date(simT);
     const fr = frame(date);
     if (fr) {
@@ -331,11 +338,12 @@
     if (now - lastTextReal > 400) {
       lastTextReal = now; checkTiles();
       if (fr) {
-        const ns = fr.lat >= 0 ? "N" : "S", ew = fr.lon >= 0 ? "E" : "O";
+        const ns = fr.lat >= 0 ? "N" : "S", ew = fr.lon >= 0 ? "E" : tr("O", "W");
         setText("nowPos", `${Math.abs(fr.lat).toFixed(1)}° ${ns}, ${Math.abs(fr.lon).toFixed(1)}° ${ew}`);
-        setText("nowSub", `${Math.round(fr.h)} km de altura · 7.5 km/s · ${fr.ascending ? "subiendo hacia el norte" : "bajando hacia el sur"} · mira a su izquierda (${fr.ascending ? "oeste" : "este"})`);
+        setText("nowSub", tr(`${Math.round(fr.h)} km de altura · 7.5 km/s · ${fr.ascending ? "subiendo hacia el norte" : "bajando hacia el sur"} · mira a su izquierda (${fr.ascending ? "oeste" : "este"})`, `${Math.round(fr.h)} km high · 7.5 km/s · ${fr.ascending ? "heading north" : "heading south"} · looks to its left (${fr.ascending ? "west" : "east"})`));
       }
-      const lbl = cycle ? `Ciclo ×${CYCLE_SPEED} · vuelta ${(Math.floor((simT - cycleStart) / (98.4 * 60e3)) % 173) + 1} de 173` : speed === 1 ? "Hora real" : speed === 0 ? "En pausa" : "Adelantando ×" + speed;
+      const lap = (Math.floor((simT - cycleStart) / (98.4 * 60e3)) % 173) + 1;
+      const lbl = cycle ? tr(`Ciclo ×${CYCLE_SPEED} · vuelta ${lap} de 173`, `Cycle ×${CYCLE_SPEED} · orbit ${lap} of 173`) : speed === 1 ? tr("Hora real", "Real time") : speed === 0 ? tr("En pausa", "Paused") : tr("Adelantando ×", "Fast-forward ×") + speed;
       setText("nowClock", `${lbl}: ${fmtLocal(date)} (El Salvador) · ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())} UTC`);
       renderPasses();
     }
@@ -361,12 +369,14 @@
     const byDay = {};
     rows.forEach((r) => { const k = r.t.toISOString().slice(0, 10); const o = byDay[k] || (byDay[k] = { t: r.t, sites: [], diff: 0, miss: false }); o.sites.push({ "Barra de Santiago": "Barra", "Bahía de Jiquilisco": "Jiquilisco", "Embalse Cerrón Grande": "Cerrón" }[r.site] || r.site); if (r.diff === null) o.miss = true; else o.diff = Math.max(o.diff, Math.abs(r.diff)); });
     const days = Object.values(byDay).sort((a, b) => b.t - a.t);
-    const txt = (o) => o.miss && !o.diff ? "—" : o.diff < 60 ? `${Math.round(o.diff)} s` : `${(o.diff / 60).toFixed(1).replace(".", ",")} min`;
+    const txt = (o) => o.miss && !o.diff ? "—" : o.diff < 60 ? `${Math.round(o.diff)} s` : `${EN ? (o.diff / 60).toFixed(1) : (o.diff / 60).toFixed(1).replace(".", ",")} min`;
     const cls = (o) => o.miss && !o.diff ? "far" : o.diff < 60 ? "ok" : o.diff < 240 ? "mid" : "far";
-    $("realTable").innerHTML = `<table class="real-tbl"><tr><th>Imagen real</th><th>Hora (El Salvador)</th><th>Diferencia</th></tr>` +
+    $("realTable").innerHTML = `<table class="real-tbl"><tr><th>${tr("Imagen real", "Real image")}</th><th>${tr("Hora (El Salvador)", "Time (El Salvador)")}</th><th>${tr("Diferencia", "Difference")}</th></tr>` +
       days.slice(0, 10).map((o) => `<tr><td>${fmtLocal(o.t).replace(/,.*/, "")} ${o.t.getUTCFullYear()}<br><span class="sub">${[...new Set(o.sites)].join(", ")}</span></td><td>${fmtLocal(o.t).split(", ")[1]}</td><td class="d ${cls(o)}">${txt(o)}</td></tr>`).join("") + `</table>`;
     const recent = days.filter((o) => !o.miss && o.diff < 60);
-    if (recent.length) $("realVerdict").innerHTML = `✅ En las <b>${recent.length}</b> pasadas más recientes, la predicción y la imagen real se separan menos de <b>${Math.max(1, Math.round(Math.max(...recent.map((o) => o.diff))))} segundos</b>. Hacia atrás el error crece a minutos, pero la hora del día sigue siendo la misma.`;
+    const worst = Math.max(1, Math.round(Math.max(...recent.map((o) => o.diff))));
+    if (recent.length) $("realVerdict").innerHTML = tr(`✅ En las <b>${recent.length}</b> pasadas más recientes, la predicción y la imagen real se separan menos de <b>${worst} segundos</b>. Hacia atrás el error crece a minutos, pero la hora del día sigue siendo la misma.`,
+      `✅ In the <b>${recent.length}</b> most recent passes, prediction and real image differ by less than <b>${worst} seconds</b>. Further back the error grows to minutes, but the time of day stays the same.`);
   }
   checkReal();
 
