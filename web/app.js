@@ -149,11 +149,11 @@ function render() {
         extra.burns = [BURNS.img_date, "Quemas de caña · fotos Sentinel-2 (ESA)", `Color = fecha de la quema: <span style="color:#ffdc3c">■</span> noviembre → <span style="color:#d7140a">■</span> mayo. Los círculos son parcelas quemadas el mismo día; tócalos para ver la fecha y la distancia al manglar.`];
         extra.burntype = [BURNS.img_type, "¿Quemada o cortada en verde? · Sentinel-2 (ESA)", `<span style="color:#e63946">■</span> quemada (${fmtInt(BURNS.burned_ha)} ha) · <span style="color:#2ecc71">■</span> cortada sin quemar (${fmtInt(BURNS.green_ha)} ha). El <b>${BURNS.burned_share_pct} %</b> de la cosecha vista fue con quema.`];
       }
-      if (fireLayer) { map.removeLayer(fireLayer); fireLayer = null; }
-      if ((state.ref === "burns" || state.ref === "gmw") && BURNS?.events?.length)
-        fireLayer = L.layerGroup(BURNS.events.map((e) => L.circleMarker([e.lat, e.lon], { radius: Math.min(14, 3 + Math.sqrt(e.ha) * 1.5), color: e.km_to_mangrove < 1 ? "#ff3b30" : "#fff", weight: 2, fillColor: "#ff7a00", fillOpacity: 0.55, pane: "paneB" })
-          .bindTooltip(`🔥 Quemada entre el ${fmtDate(e.from)} y el ${fmtDate(e.to)} · ${e.ha} ha · ${e.km_to_mangrove < 0.05 ? "pegada al" : e.km_to_mangrove + " km del"} manglar`))).addTo(map);
-      else if (state.ref === "cane" && FIRES?.points?.length)
+      if (zafra && state.ref !== "burns") stopZafra(false);          // cambió de capa: se detiene la reproducción
+      if (fireLayer && !zafra) { map.removeLayer(fireLayer); fireLayer = null; }
+      if ((state.ref === "burns" || state.ref === "gmw") && BURNS?.events?.length) {
+        if (!zafra) fireLayer = L.layerGroup(BURNS.events.map((e) => flameMarker(e, false))).addTo(map);   // llamas animadas
+      } else if (state.ref === "cane" && FIRES?.points?.length)
         fireLayer = L.layerGroup(FIRES.points.map((p) => L.circleMarker([p.lat, p.lon], { radius: 4, color: "#fff", weight: 1, fillColor: "#ff7a00", fillOpacity: 0.9, pane: "paneB" })
           .bindTooltip(`Quema ${fmtDate(p.date)} · ${p.km_to_mangrove} km del manglar`))).addTo(map);
       if (extra[state.ref]) {
@@ -452,7 +452,58 @@ function buildCaneCard() {
   } else $("caneTemp").innerHTML = "🌡️ Temperatura manglar vs cañal (NASA ECOSTRESS): en proceso.";
   $("caneCard").hidden = false;
 }
+// ---------- quemas dramáticas: llamas animadas y "ver la zafra quemarse" ----------
+let zafra = null;
+function flameMarker(e, flash) {
+  const near = e.km_to_mangrove < 1;
+  const s = Math.round(Math.min(48, 16 + Math.sqrt(e.ha) * 5));
+  const html = `<div class="flame ${near ? "near" : ""} ${flash ? "flash" : ""}" style="width:${s}px;height:${s}px">` +
+    `<span class="glow" style="width:${s * 1.7}px;height:${s * 1.7}px"></span>` +
+    (near ? `<span class="ring" style="width:${s * 1.2}px;height:${s * 1.2}px"></span>` : "") +
+    `<span class="fire" style="font-size:${Math.round(s * 0.85)}px">🔥</span></div>`;
+  return L.marker([e.lat, e.lon], { icon: L.divIcon({ className: "", html, iconSize: [s, s], iconAnchor: [s / 2, s * 0.75] }), zIndexOffset: near ? 500 : 0 })
+    .bindTooltip(`🔥 Quemada entre el ${fmtDate(e.from)} y el ${fmtDate(e.to)} · ${e.ha} ha · ${e.km_to_mangrove < 0.05 ? "pegada al" : e.km_to_mangrove + " km del"} manglar`);
+}
+function stopZafra(keep) {
+  if (!zafra) return;
+  clearInterval(zafra.timer);
+  zafra = null;
+  $("zafraPlay").textContent = "▶ Ver la zafra quemarse";
+  if (!keep) $("zafraClock").hidden = true;
+}
+function playZafra() {
+  if (zafra) return stopZafra(true);
+  if (!BURNS?.events?.length) return;
+  setMode("truth");
+  state.ref = "burns";
+  document.querySelectorAll("#truthSeg button").forEach((b) => b.classList.toggle("on", b.dataset.ref === "burns"));
+  render();
+  if (fireLayer) map.removeLayer(fireLayer);
+  fireLayer = L.layerGroup().addTo(map);
+  map.flyToBounds(bounds, { padding: [10, 10], duration: 1 });
+  const evs = BURNS.events.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const t0 = new Date(BURNS.from + "T12:00:00"), t1 = new Date(BURNS.to + "T12:00:00");
+  let day = 0, i = 0, ha = 0, nearHa = 0;
+  const total = Math.round((t1 - t0) / 864e5);
+  zafra = { timer: null };
+  $("zafraPlay").textContent = "❚❚ Pausa";
+  $("zafraClock").hidden = false;
+  zafra.timer = setInterval(() => {
+    const now = new Date(t0.getTime() + day * 864e5), iso = now.toISOString().slice(0, 10);
+    while (i < evs.length && evs[i].date <= iso) {
+      fireLayer.addLayer(flameMarker(evs[i], true));
+      ha += evs[i].ha;
+      if (evs[i].km_to_mangrove < 1) nearHa += evs[i].ha;
+      i++;
+    }
+    $("zafraClock").innerHTML = `🔥 ${now.toLocaleDateString("es-SV", { day: "numeric", month: "long", year: "numeric" })}` +
+      `<small>${Math.round(ha)} ha quemadas · ${Math.round(nearHa)} ha a menos de 1 km del manglar</small>`;
+    day++;
+    if (day > total) stopZafra(true);
+  }, 110);
+}
 function buildBurns() {
+  $("zafraPlay").onclick = playZafra;
   const B = BURNS;
   $("burnKpis").innerHTML =
     kpi(`${fmtInt(B.burned_ha)} ha`, "de caña quemada en la zafra 2025–2026") +
@@ -592,6 +643,8 @@ function setMode(m) {
   state.mode = m;
   document.querySelectorAll(".modes button").forEach((b) => b.classList.toggle("on", b.dataset.mode === m));
   stopPlay();
+  if (typeof stopZafra === "function") stopZafra(false);
+  if (m !== "truth" && fireLayer) { map.removeLayer(fireLayer); fireLayer = null; }   // las llamas solo en "Radar vs foto"
   render();
 }
 document.querySelectorAll(".modes button").forEach((b) => (b.onclick = () => setMode(b.dataset.mode)));

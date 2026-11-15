@@ -46,6 +46,10 @@ details p{margin:6px 0 0;color:var(--muted);font-size:12px}
 #load div{text-align:center;color:var(--muted)}
 #load b{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
 .warn{color:var(--accent2);font-size:12px}
+.btn.big2{padding:9px 12px;font-size:13px;font-weight:600}
+.btn.fire{background:linear-gradient(135deg,#7a1a05,#c43c08);border-color:#ff6a2a}
+.btn.fire.on{box-shadow:0 0 0 2px #ffb347,0 0 18px #ff5a1f;animation:fireBtn 1.2s ease-in-out infinite}
+@keyframes fireBtn{50%{box-shadow:0 0 0 2px #ffd27a,0 0 28px #ff3b1f}}
 @media (max-width:900px){.right{display:none}.left{width:calc(100% - 36px);max-height:46%;top:auto;bottom:12px}.title{max-width:calc(100% - 36px)}}
 </style>
 </head>
@@ -84,12 +88,22 @@ details p{margin:6px 0 0;color:var(--muted);font-size:12px}
       <button class="btn" id="followBtn">Seguir al satélite</button>
     </div>
   </div>
+  <div class="card">
+    <h3>Ver más</h3>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn big2" id="closeBtn">🛰 Ver el satélite de cerca</button>
+      <button class="btn big2 fire" id="fireBtn">🔥 Quemas de la zafra</button>
+    </div>
+    <div class="sub" id="fireNote" style="margin-top:6px"></div>
+  </div>
 </div>
 
 <div class="hud right">
   <div class="card legend">
     <h3>Qué ves</h3>
-    <div><i class="dotsw" style="background:#fff;box-shadow:0 0 8px #fff"></i>NISAR, a 747 km de altura</div>
+    <div><i class="dotsw" style="background:#d9a531;box-shadow:0 0 8px #d9a531"></i>NISAR en 3D, a 747 km (tamaño muy exagerado: mide ~12 m)</div>
+    <div><i class="sw" style="background:#ff8a00;height:8px;opacity:.5"></i>Haz del radar: lo que está mirando ahora</div>
+    <div><i class="dotsw" style="background:#ff3b1f;box-shadow:0 0 10px #ff3b1f"></i>Quemas de caña junto al manglar (zafra 2025–2026)</div>
     <div><i class="sw" style="background:#2fd6a3"></i>Por dónde va a pasar (próximos 50 min)</div>
     <div><i class="sw" style="background:#5f7a80"></i>Por dónde pasó (últimos 50 min)</div>
     <div><i class="sw" style="background:#ff8a00;height:8px;opacity:.6"></i>Franja de 240 km que ve el radar (a su izquierda)</div>
@@ -105,6 +119,7 @@ details p{margin:6px 0 0;color:var(--muted);font-size:12px}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.32.0/dist/globe.gl.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
 <script src="orbita.js"></script>

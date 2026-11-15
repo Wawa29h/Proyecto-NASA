@@ -87,10 +87,80 @@
     .bumpImageUrl("https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png")
     .showAtmosphere(true).atmosphereColor("#7fd8ff").atmosphereAltitude(0.18)
     .pointsData(SITES).pointLat("lat").pointLng("lon").pointColor((d) => (d.kind === "sat" ? "#ffffff" : "#ff5a1f")).pointAltitude((d) => (d.kind === "sat" ? d.alt : 0.004)).pointRadius((d) => (d.kind === "sat" ? 0.12 : 0.35)).pointsTransitionDuration(0)
-    .labelsData(SITES).labelLat("lat").labelLng("lon").labelText("name").labelSize(0.55).labelDotRadius(0).labelColor(() => "#ffd9c7").labelResolution(2).labelAltitude(0.006)
+    // la letra 3D del globo no tiene tildes: se quitan solo en estas etiquetas
+    .labelsData(SITES).labelLat("lat").labelLng("lon").labelText((d) => d.name.normalize("NFD").replace(/[̀-ͯ]/g, "")).labelSize(0.55).labelDotRadius(0).labelColor(() => "#ffd9c7").labelResolution(2).labelAltitude(0.006)
     .pathsData([]).pathPoints("pts").pathPointLat((p) => p[0]).pathPointLng((p) => p[1]).pathPointAlt((p) => p[2]).pathColor((d) => d.color).pathStroke((d) => d.stroke).pathDashLength(1).pathDashGap(0).pathTransitionDuration(0)
     ;
   globe.controls().autoRotate = false; globe.controls().enableDamping = true;
+
+  // ---------- modelo 3D de NISAR (tamaño muy exagerado para que se vea) + haz del radar ----------
+  // Partes reales: cuerpo con paneles solares, brazo de ~9 m y antena reflectora dorada de 12 m que apunta
+  // de lado (a la izquierda) hacia la franja que escanea.
+  const T3 = window.THREE;
+  let sat3d = null, beam = null, scanGlow = null;
+  if (T3) {
+    const scene = globe.scene();
+    const gold = new T3.MeshStandardMaterial({ color: 0xd9a531, metalness: 0.85, roughness: 0.28, side: T3.DoubleSide, emissive: 0x3a2500 });
+    const white = new T3.MeshStandardMaterial({ color: 0xe8eef0, metalness: 0.3, roughness: 0.5 });
+    const panelM = new T3.MeshStandardMaterial({ color: 0x1b3d8f, metalness: 0.5, roughness: 0.35, emissive: 0x06163a });
+    const grey = new T3.MeshStandardMaterial({ color: 0x9aa5ad, metalness: 0.7, roughness: 0.4 });
+    sat3d = new T3.Group();
+    const body = new T3.Mesh(new T3.BoxGeometry(1.0, 1.0, 1.4), white); sat3d.add(body);
+    [-1, 1].forEach((s) => {                                   // dos alas de paneles solares
+      const wing = new T3.Mesh(new T3.BoxGeometry(0.06, 0.9, 3.2), panelM);
+      wing.position.set(0, 0, s * 2.4); sat3d.add(wing);
+      const grid = new T3.Mesh(new T3.BoxGeometry(0.065, 0.9, 3.2), new T3.MeshBasicMaterial({ color: 0x7fa8ff, wireframe: true, transparent: true, opacity: 0.35 }));
+      grid.position.copy(wing.position); sat3d.add(grid);
+    });
+    const boomPivot = new T3.Group();                          // brazo y antena apuntan abajo-izquierda
+    boomPivot.rotation.x = -0.75;
+    const boom = new T3.Mesh(new T3.CylinderGeometry(0.06, 0.06, 3.2, 8), grey); boom.position.y = -1.9; boomPivot.add(boom);
+    const dish = new T3.Mesh(new T3.SphereGeometry(2.6, 40, 12, 0, Math.PI * 2, 0, 0.55), gold);
+    dish.position.y = -3.6; dish.rotation.x = Math.PI; boomPivot.add(dish);
+    const mesh = new T3.Mesh(new T3.SphereGeometry(2.61, 24, 6, 0, Math.PI * 2, 0, 0.55), new T3.MeshBasicMaterial({ color: 0xffe08a, wireframe: true, transparent: true, opacity: 0.25 }));
+    mesh.position.copy(dish.position); mesh.rotation.copy(dish.rotation); boomPivot.add(mesh);
+    sat3d.add(boomPivot);
+    const light = new T3.PointLight(0xffffff, 1.2, 40); light.position.set(3, 3, 0); sat3d.add(light);
+    sat3d.scale.setScalar(1.0);
+    scene.add(sat3d);
+    // haz: cono naranja translúcido del satélite al centro de la franja
+    beam = new T3.Mesh(new T3.ConeGeometry(1, 1, 32, 1, true), new T3.MeshBasicMaterial({ color: 0xff8a00, transparent: true, opacity: 0.18, side: T3.DoubleSide, depthWrite: false }));
+    scene.add(beam);
+    scanGlow = new T3.Mesh(new T3.CircleGeometry(1, 40), new T3.MeshBasicMaterial({ color: 0xffb347, transparent: true, opacity: 0.45, side: T3.DoubleSide, depthWrite: false }));
+    scene.add(scanGlow);
+  }
+  const V = (o) => (T3 ? new T3.Vector3(o.x, o.y, o.z) : null);
+  function groundLeft(fr, km) {                                 // punto en el suelo a 'km' a la izquierda de la vertical
+    const brg = ((fr.heading - 90) * Math.PI) / 180, lat1 = (fr.lat * Math.PI) / 180, lon1 = (fr.lon * Math.PI) / 180, d = km / R;
+    const lat2 = Math.asin(Math.sin(lat1) * Math.cos(d) + Math.cos(lat1) * Math.sin(d) * Math.cos(brg));
+    const lon2 = lon1 + Math.atan2(Math.sin(brg) * Math.sin(d) * Math.cos(lat1), Math.cos(d) - Math.sin(lat1) * Math.sin(lat2));
+    return [(lat2 * 180) / Math.PI, ((((lon2 * 180) / Math.PI) + 540) % 360) - 180];
+  }
+  function place3d(date, fr) {
+    if (!sat3d) return;
+    const nx = frame(new Date(date.getTime() + 2000));
+    const S = V(globe.getCoords(fr.lat, fr.lon, fr.h / R)), N2 = V(globe.getCoords(nx.lat, nx.lon, nx.h / R));
+    const up = S.clone().normalize();
+    const fwd = N2.clone().sub(S); fwd.sub(up.clone().multiplyScalar(fwd.dot(up))).normalize();
+    const left = new T3.Vector3().crossVectors(up, fwd).normalize();
+    // ejes del modelo: x = hacia adelante, y = hacia arriba (lejos de la Tierra), z = izquierda
+    const m = new T3.Matrix4().makeBasis(fwd, up, left);
+    sat3d.position.copy(S); sat3d.quaternion.setFromRotationMatrix(m);
+    // el brazo se inclina hacia la izquierda (z+) y hacia abajo
+    sat3d.children.forEach((c) => { if (c.isGroup) { c.rotation.set(-0.75, 0, 0); } });  // -x: el brazo baja hacia z+ (izquierda)
+    const mid = (SWATH[0] + SWATH[1]) / 2, [glat, glon] = groundLeft(fr, mid);
+    const G = V(globe.getCoords(glat, glon, 0.002));
+    const dir = S.clone().sub(G), len = dir.length();
+    beam.position.copy(G.clone().add(dir.clone().multiplyScalar(0.5)));
+    beam.quaternion.setFromUnitVectors(new T3.Vector3(0, 1, 0), dir.clone().normalize());
+    const halfW = ((SWATH[1] - SWATH[0]) / 2 / R) * 100;          // radio del haz en el suelo (unidades del globo)
+    beam.scale.set(halfW, len, halfW * 0.35);
+    const gN = G.clone().normalize();
+    scanGlow.position.copy(G); scanGlow.lookAt(G.clone().add(gN));
+    const pulse = 0.75 + 0.25 * Math.sin(performance.now() / 180);
+    scanGlow.scale.set(halfW * pulse, halfW * 0.4 * pulse, 1);
+    scanGlow.material.opacity = 0.25 + 0.25 * pulse;
+  }
   globe.pointOfView({ lat: 12, lng: -85, altitude: 2.2 }, 0);
   addEventListener("resize", () => globe.width(innerWidth).height(innerHeight));
 
@@ -101,6 +171,50 @@
   $("followBtn").onclick = (e) => { follow = !follow; e.target.classList.toggle("on", follow); if (follow) globe.controls().autoRotate = false; };
   let nextAll = [];
   $("nextBtn").onclick = () => { const n = nextAll.find((p) => p.t.getTime() > simT); if (n) { simT = n.t.getTime() - 4 * 60e3; speed = 60; [...$("speedSeg").children].forEach((x) => x.classList.toggle("on", x.dataset.s === "60")); follow = false; globe.pointOfView({ lat: 13.6, lng: -89.3, altitude: 1.2 }, 1200); } };
+
+  $("closeBtn").onclick = () => {
+    const fr = frame(new Date(simT)); if (!fr) return;
+    follow = true; $("followBtn").classList.add("on");
+    globe.pointOfView({ lat: fr.lat, lng: fr.lon, altitude: 0.45 }, 1500);
+  };
+
+  // ---------- quemas de la zafra junto al manglar: columnas de fuego que laten ----------
+  let burns = null, fireOn = false;
+  async function loadBurns() {
+    if (burns) return burns;
+    try { burns = await fetch("data/ref/burns.json").then((r) => r.json()); } catch { burns = { events: [] }; }
+    return burns;
+  }
+  function pointVisibility() {   // quemas visibles solo en modo quemas; marcadores de sitios solo fuera de él
+    globe.scene().traverse((o) => { if (o.__globeObjType === "point" && o.__data) o.visible = o.__data.kind === "fire" ? fireOn : !fireOn; });
+  }
+  const fireColor = (km) => (km < 0.5 ? "#ff2a1a" : km < 1 ? "#ff5a1f" : "#ff9a2a");
+  $("fireBtn").onclick = async () => {
+    fireOn = !fireOn; $("fireBtn").classList.toggle("on", fireOn);
+    const b = await loadBurns();
+    const ev = fireOn ? b.events : [];
+    globe.ringsData(ev).ringLat("lat").ringLng("lon")
+      .ringColor((e) => (t) => `rgba(255,${Math.round(60 + 120 * t)},20,${(1 - t) * 0.95})`)
+      .ringMaxRadius((e) => 0.025 + Math.sqrt(e.ha) * 0.012).ringPropagationSpeed(0.05).ringRepeatPeriod((e) => 450 + (e.ha % 7) * 110)
+      .ringAltitude(0.0004);
+    // columnas: más altas = quema más grande; más rojas = más cerca del manglar.
+    // En modo quemas se esconden los marcadores grandes de los sitios para que no tapen el fuego.
+    // La librería no borra ni redimensiona bien los marcadores ya creados, así que los sitios y las quemas
+    // se quedan siempre en los datos y se esconden/muestran directamente en la escena (ver pointVisibility).
+    globe.labelsData(fireOn ? [] : SITES);
+    if (!globe.pointsData().some((d) => d.kind === "fire"))
+      globe.pointsData([...SITES, ...b.events.map((e) => ({ kind: "fire", lat: e.lat, lon: e.lon, alt: 0.0015 + Math.sqrt(e.ha) * 0.0022, color: fireColor(e.km_to_mangrove) }))])
+        .pointColor((d) => (d.kind === "fire" ? d.color : "#ff5a1f"))
+        .pointAltitude((d) => (d.kind === "fire" ? d.alt : 0.004))
+        .pointRadius((d) => (d.kind === "fire" ? 0.011 : 0.35));
+    pointVisibility();
+    if (fireOn) {
+      follow = false; $("followBtn").classList.remove("on");
+      globe.pointOfView({ lat: 13.58, lng: -90.03, altitude: 0.06 }, 2200);
+      const near = b.events.filter((e) => e.km_to_mangrove < 1).length;
+      $("fireNote").innerHTML = `<b>${b.events.length}</b> quemas de caña en la zafra 2025–2026 junto al manglar de Barra de Santiago (detectadas con fotos Sentinel-2). <b style="color:#ff6b5b">${near}</b> a menos de 1 km del manglar. Más alta = más grande; más roja = más cerca del manglar.`;
+    } else $("fireNote").textContent = "";
+  };
 
   // ---------- pasadas ----------
   function renderPasses() {
@@ -156,7 +270,8 @@
     const date = new Date(simT);
     const fr = frame(date);
     if (fr) {
-      globe.pointsData([...SITES, { kind: "sat", lat: fr.lat, lon: fr.lon, alt: fr.h / R }]);   // columna blanca: del suelo al satélite
+      if (sat3d) { place3d(date, fr); if (burns) pointVisibility(); }
+      else globe.pointsData([...SITES, { kind: "sat", lat: fr.lat, lon: fr.lon, alt: fr.h / R }]);   // sin 3D: columna blanca
       const ns = fr.lat >= 0 ? "N" : "S", ew = fr.lon >= 0 ? "E" : "O";
       $("nowPos").textContent = `${Math.abs(fr.lat).toFixed(1)}° ${ns}, ${Math.abs(fr.lon).toFixed(1)}° ${ew}`;
       $("nowSub").textContent = `${Math.round(fr.h)} km de altura · 7.5 km/s · ${fr.ascending ? "subiendo hacia el norte" : "bajando hacia el sur"} · mira a su izquierda (${fr.ascending ? "oeste" : "este"})`;
@@ -169,5 +284,5 @@
   }
   $("load").classList.add("off");
   requestAnimationFrame(tick);
-  window.ORBITA = { frame, nextPasses, SITES, satrec, setTime: (iso) => { simT = new Date(iso).getTime(); } };
+  window.ORBITA = { frame, nextPasses, SITES, satrec, place3d, globe, setTime: (iso) => { simT = new Date(iso).getTime(); } };
 })();

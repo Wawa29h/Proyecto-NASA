@@ -29,7 +29,7 @@
   <div class="hdr-actions">
     <button id="tourBtn" class="btn primary">▶ Recorrido</button>
     <a id="btn3d" class="btn" href="respira.html" title="Ver el terreno en 3D: sube y baja con el radar">⛰ Ver en 3D</a>
-    <a class="btn" href="orbita.html" title="Dónde está el satélite ahora y cuándo vuelve a pasar">🛰 Órbita</a>
+    <a class="btn" href="orbita.html" title="El planeta en 3D con el satélite NISAR moviéndose en su órbita real, su radar y las quemas">🌍 Ver el planeta</a>
     <label class="switch" title="Muestra los datos técnicos (dB, F1, índices)">
       <input type="checkbox" id="expertSw"><span class="track"><span class="knob"></span></span><span class="sw-label">Modo experto</span>
     </label>
@@ -69,6 +69,7 @@
     <div id="divider" hidden><span></span></div>
     <div class="maptag left" id="tagA" hidden></div>
     <div class="maptag right" id="tagB" hidden></div>
+    <div class="zafra-clock" id="zafraClock" hidden></div>
     <div id="story" class="story" hidden>
       <div class="story-top"><span id="storyStep"></span><button id="storyClose" aria-label="Cerrar recorrido">✕</button></div>
       <h2 id="storyTitle"></h2>
@@ -226,6 +227,7 @@
         <canvas id="burnWeekChart" height="140"></canvas>
         <p class="hint" id="burnWeekHint">Hectáreas quemadas por semana de la zafra. Cada quema se ubica entre dos fotos despejadas seguidas: la última donde la parcela estaba verde y la primera donde ya estaba quemada.</p>
         <div class="row" style="gap:6px;flex-wrap:wrap;margin:8px 0">
+          <button class="btn firebtn" id="zafraPlay">▶ Ver la zafra quemarse</button>
           <button class="btn" data-goref="burns">Ver quemas en el mapa →</button>
           <button class="btn" data-goref="burntype">Quemada vs cortada en verde →</button>
         </div>
