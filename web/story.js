@@ -393,8 +393,7 @@
       burns: "Quemas detectadas cerca del manglar",
       burntype: "Parcelas quemadas y cortadas en verde",
       gmw: "Evolución histórica del manglar",
-      ponds: "Estanques cercanos al manglar",
-      ai: "Mapa hecho por IA solo con radar (MangroveNet)"
+      ponds: "Estanques cercanos al manglar"
     };
     notice.textContent = "Capa activada · " + (labels[reference] || "Referencia satelital");
     clearTimeout(mapNoticeTimer);
