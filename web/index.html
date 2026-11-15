@@ -189,6 +189,7 @@
       </div>
       <div class="explain" id="pairExplain" hidden></div>
       <button class="btn explain-go" id="goChange" hidden>¿Qué cambió de verdad? Verlo pintado →</button>
+      <div id="comparabilityWarning" class="alert-box warning-box" hidden aria-live="polite"></div>
       <div id="changeOpts" hidden>
         <label class="inline">Umbral <input type="range" id="thr" min="1" max="8" step="0.5" value="3"> <b id="thrVal">3 dB</b></label>
         <div class="legend">
@@ -197,6 +198,11 @@
         </div>
         <div class="kpis" id="changeKpis"></div>
       </div>
+    </div>
+
+    <div class="card" id="interpCard" hidden>
+      <h3 data-simple="¿Por qué pudo ocurrir este cambio?" data-sci="Evaluación de hipótesis de cambio">¿Por qué pudo ocurrir este cambio?</h3>
+      <div id="interpContent" class="interp-box probe"></div>
     </div>
 
     <div class="card" id="ctlLayer">
@@ -238,7 +244,11 @@
     <div class="card more-card" id="rhythmCard">
       <h3 data-simple="El pulso del estero" data-sci="Indicadores del área de estudio">El pulso del estero</h3>
       <div class="kpis" id="kpis"></div>
-      <canvas id="chart" height="190"></canvas>
+      <canvas id="chart" height="190" aria-label="Gráfica de series temporales de agua y vegetación observadas por NISAR"></canvas>
+      <details class="sr-data-details">
+        <summary class="sr-toggle-btn">Ver datos en tabla accesible</summary>
+        <div class="sr-table-container" id="chartAccessibleTable"></div>
+      </details>
       <p class="hint">Barras: lluvia de 12 días antes de cada pasada (Open-Meteo). Líneas: áreas medidas por NISAR.</p>
     </div>
 
