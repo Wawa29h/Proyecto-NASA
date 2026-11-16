@@ -5,7 +5,8 @@
   window.PAGE_LANG = {
     mount: ".hud.title .row",
     pairs: [
-      ["Cargando…", "Loading…"], ["radar NISAR", "NISAR radar"],
+      ["Cargando…", "Loading…"],
+      ["Sin pasadas publicadas en este periodo", "No passes published in this period"], ["radar NISAR", "NISAR radar"],
       ["El manglar respira", "The mangrove breathes"], ["El embalse sube y baja", "The reservoir rises and falls"],
       ["Bahía de Jiquilisco", "Jiquilisco Bay"], ["Embalse Cerrón Grande", "Cerrón Grande Reservoir"],
       ["← Volver al mapa", "← Back to the map"], ["Cambiar de sitio", "Change site"],

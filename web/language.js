@@ -123,11 +123,28 @@
     ["Clasificación IA","AI classification"],["El embalse respira","The reservoir breathes"],["¿Naturaleza o ser humano?","Nature or human influence?"],["Una alerta por zonas","An alert by zone"],["Y funciona en otros lugares","And it works in other places"],["La computadora aprendió de las fotos","The model learned from photos"],["El lirio crece cuando más llueve… justo cuando las nubes no dejan verlo.","Water hyacinth grows during heavy rains… just when clouds obscure it."],
     ["Mapa de cobertura · ESA WorldCover 2021","Land cover · ESA WorldCover 2021"],["Más verde claro = árboles más altos. Altura media","Lighter green = taller trees. Mean height"],
     ["El radar aprende de la foto","Radar learns from optical imagery"],["Tabla comparativa de manglares","Mangrove comparison table"],["de los cultivos está a menos de 1 km del manglar","of cropland lies within 1 km of mangroves"],
-    ["Tabla accesible de observaciones temporales","Accessible table of temporal observations"],["Calidad de la observación","Observation quality"],["Resultados y documentación del sitio","Site results and documentation"]
+    ["Tabla accesible de observaciones temporales","Accessible table of temporal observations"],["Calidad de la observación","Observation quality"],["Resultados y documentación del sitio","Site results and documentation"],
+    ["NASA Space Apps 2026 · Reto NISAR · El Salvador","NASA Space Apps 2026 · NISAR Challenge · El Salvador"],
+    ["MANGLO · NASA Space Apps 2026 · Reto NISAR","MANGLO · NASA Space Apps 2026 · NISAR Challenge"],
+    ["Izquierda: radar NISAR. Derecha: referencia independiente. Arrastra la barra blanca.","Left: NISAR radar. Right: independent reference. Drag the white bar."],
+    ["Una sola capa sobre el mapa satelital: el manglar de 1996 a 2020 y, encima, la presión de hoy. Aquí no hay barra para comparar.","A single layer over the satellite map: the 1996–2020 mangrove and, on top, today's pressure. There is no comparison bar here."],
+    ["Presentación del modo científico","Scientific mode overview"],
+    ["Estero de Barra de Santiago el 18 de enero de 2026: a la izquierda la foto del satélite Sentinel-2, a la derecha el radar NISAR del mismo día","Barra de Santiago estuary on 18 January 2026: Sentinel-2 satellite photo on the left, NISAR radar from the same day on the right"],
+    ["Cómo leer los colores del radar","How to read the radar colors"],
+    ["Radar NISAR con el lirio marcado en amarillo","NISAR radar with water hyacinth marked in yellow"],
+    ["Foto satelital del mismo día, tapada por nubes","Satellite photo from the same day, covered by clouds"],
+    ["Exportaciones del análisis científico","Scientific analysis exports"],
+    ["Descargar las mediciones NISAR del sitio seleccionado","Download the NISAR measurements for the selected site"],
+    ["La banda L (24 cm) atraviesa las copas y llega a los troncos y al agua.","The L band (24 cm) passes through the canopy and reaches the trunks and the water."],
+    ["Lo que regresa depende de la rugosidad y de la humedad (constante dieléctrica).","What comes back depends on roughness and moisture (dielectric constant)."],
   ];
   const exact = new Map(pairs), reverse = new Map(pairs.filter(([a,b]) => a !== b).map(([a,b]) => [b,a]));
   const phrasePatterns = pairs.filter(([a,b]) => a.length >= 7 && a !== b).sort((a,b) => b[0].length-a[0].length).map(([a,b]) => [new RegExp('(?<![\\p{L}\\p{N}_])'+a.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?![\\p{L}\\p{N}_])','gu'),b]);
   const fragments = [
+    ["quemadas a menos de 1 km del manglar","burned within 1 km of the mangroves"],
+    ["quemas por parcela detectadas","burn events detected by plot"],
+    ["ha a menos de 500 m","ha within 500 m"],
+    ["casi la mitad","almost half"],
     ["máx. plantas","max. plants"],["mín. plantas","min. plants"],["máx.","max."],["mín.","min."],
     ["Manglar y estero","Mangroves and estuary"],["El manglar más grande de El Salvador","El Salvador's largest mangrove area"],["radar NISAR banda L","NISAR L-band radar"],["Embalse Cerrón Grande","Cerrón Grande Reservoir"],
     ["observaciones admitidas","accepted observations"],["Abre un resultado para conocer su evidencia.","Open a result to review its evidence."],["cobertura no registrada","coverage not recorded"],["aproximado con otra fecha","approximated using another date"],
