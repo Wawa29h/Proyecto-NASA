@@ -293,8 +293,9 @@
   ];
 
   const trackedText = new WeakMap(), trackedAttrs = new WeakMap();
-  let language = "es", scheduled = false;
-  try { language = localStorage.getItem("manglo-language") === "en" ? "en" : "es"; } catch {}
+  let language = "en", scheduled = false;
+  // idioma inicial: el que la persona eligió; si nunca eligió, el de su navegador (español si está en español, si no inglés)
+  language = (() => { try { const s = localStorage.getItem("manglo-language"); if (s === "es" || s === "en") return s; } catch {} const l = ((navigator.languages && navigator.languages[0]) || navigator.language || "en").toLowerCase(); return l.startsWith("es") ? "es" : "en"; })();
   const canonical = (s) => reverse.get(s) || s;
   function translate(input) {
     const source = canonical(String(input));

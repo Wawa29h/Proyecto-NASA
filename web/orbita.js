@@ -2,7 +2,8 @@
 (async () => {
   const $ = (id) => document.getElementById(id);
   // idioma: el mismo que se eligió en la app (botones Español / English, guardado como "manglo-language")
-  const EN = (() => { try { return localStorage.getItem("manglo-language") === "en"; } catch { return false; } })();
+  // idioma: el elegido en MANGLO; si nunca se eligió, el del navegador (español o inglés)
+  const EN = (() => { try { const s = localStorage.getItem("manglo-language"); if (s === "es" || s === "en") return s; } catch {} const l = ((navigator.languages && navigator.languages[0]) || navigator.language || "en").toLowerCase(); return l.startsWith("es") ? "es" : "en"; })() === "en";
   const tr = (es, en) => (EN ? en : es);
   const R = 6371;                                   // km
   const SWATH = [430, 680];                         // km a la IZQUIERDA de la vertical (incidencia ~33°–47°, aprox.)

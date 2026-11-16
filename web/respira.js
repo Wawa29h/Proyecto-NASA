@@ -12,6 +12,9 @@ const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "o
 const fmt = (iso) => { const [y, m, d] = iso.split("-"); return `${+d} ${MESES[+m - 1]} ${y}`; };
 const $ = (id) => document.getElementById(id);
 const lerp = (a, b, t) => a + (b - a) * t;
+// textos que cambian solos: se escriben ya traducidos (page-lang.js) y solo si cambiaron
+const T = (x) => (window.PageLang ? window.PageLang.tr(x) : x);
+const setT = (id, x) => { const e = $(id), v = T(x); if (e && e.textContent !== v) e.textContent = v; };
 
 // ---------- sitios: cada uno con su capa propia ----------
 const SITES = {
@@ -313,7 +316,7 @@ uniforms.tFill.value = cover;   // provisional hasta que esté el promedio
   }
 })();
 (async () => {
-  for (let i = 2; i < dates.length; i++) { await loadDate(i); loaded++; loadTxt.textContent = `${loaded}/${dates.length} pasadas`; }
+  for (let i = 2; i < dates.length; i++) { await loadDate(i); loaded++; loadTxt.textContent = T(`${loaded}/${dates.length} pasadas`); }
 })();
 
 // ---------- línea de tiempo ----------
@@ -338,7 +341,7 @@ D.forEach((d, i) => {
   const last = i === D.length - 1;
   if ((i === 0 || last || afterGap) && (x - lastLabelX >= 9 || last)) {
     if (last && x - lastLabelX < 9) ticks.querySelector("span:last-of-type")?.remove();   // gana la última fecha
-    const s = document.createElement("span"); s.style.left = x + "%"; s.style.top = "6px"; s.textContent = fmt(dates[i].date).slice(0, -5); ticks.appendChild(s);
+    const s = document.createElement("span"); s.style.left = x + "%"; s.style.top = "6px"; s.dataset.es = fmt(dates[i].date).slice(0, -5); s.textContent = T(s.dataset.es); ticks.appendChild(s);
     lastLabelX = x;
   }
 });
@@ -354,6 +357,12 @@ function segAt(d) {
 }
 const ease = (t) => { t = Math.min(1, Math.max(0, (t - 0.3) / 0.65)); return t * t * (3 - 2 * t); }; // se queda quieto un poco y luego cambia
 
+// al cambiar de idioma (botones ES / EN): marcas de la línea de tiempo y textos del momento, aunque esté en pausa
+window.addEventListener("manglo:language", () => {
+  document.querySelectorAll("#ticks span[data-es]").forEach((x) => { x.textContent = T(x.dataset.es); });
+  $("soundBtn").textContent = T(soundOn ? "🔊 Sonido" : "🔇 Sonido");
+  apply();
+});
 function apply() {
   const s = segAt(day);
   const f = (day - s.from) / s.gap;
@@ -364,32 +373,32 @@ function apply() {
   uniforms.uDay.value = day;
   // texto
   const iso = isoOf(Math.round(day));
-  $("dateTxt").textContent = fmt(iso);
+  setT("dateTxt", fmt(iso));
   const near = f < 0.5 ? dates[s.i] : dates[s.i + 1];
   const dd = Math.abs(day - (f < 0.5 ? s.from : s.to));
-  $("passTxt").textContent = dd < 1 ? `pasada NISAR del ${fmt(near.date)}` : s.gap > 30 ? "sin pasadas publicadas (feb–jun)" : `entre dos pasadas (cada 12 días)`;
+  setT("passTxt", dd < 1 ? `pasada NISAR del ${fmt(near.date)}` : s.gap > 30 ? "sin pasadas publicadas (feb–jun)" : `entre dos pasadas (cada 12 días)`);
   const m = +iso.slice(5, 7);
   const dry = m >= 11 || m <= 4;
-  const se = $("season"); se.textContent = dry ? SITE.dryLabel : "Lluvias"; se.className = "chip" + (dry ? " dry" : "");
+  const se = $("season"); { const v = T(dry ? SITE.dryLabel : "Lluvias"); if (se.textContent !== v) se.textContent = v; } se.className = "chip" + (dry ? " dry" : "");
   const hv = lerp(dates[s.i].hv_mean_db, dates[s.i + 1].hv_mean_db, ease(f));
-  $("hvTxt").textContent = hv.toFixed(1) + " dB";
-  $("hvSub").textContent = SITE.layer === 3 ? "eco del radar en la zona (HV)" : "eco del manglar (HV)";
+  setT("hvTxt", hv.toFixed(1) + " dB");
+  setT("hvSub", SITE.layer === 3 ? "eco del radar en la zona (HV)" : "eco del manglar (HV)");
   $("breath").style.width = (((hv - HV_LO) / (HV_HI - HV_LO)) * 100).toFixed(0) + "%";
   if (SITE.layer === 1) {
     let ha = 0, near1 = 0;
     for (const e of events) { if (e.day > day) break; ha += e.ha; if (e.km_to_mangrove <= 1) near1 += e.ha; }
-    $("stat2Val").textContent = Math.round(ha) + " ha";
-    $("stat2Sub").textContent = `caña quemada · ${Math.round(near1)} ha a < 1 km del manglar`;
+    setT("stat2Val", Math.round(ha) + " ha");
+    setT("stat2Sub", `caña quemada · ${Math.round(near1)} ha a < 1 km del manglar`);
   } else if (SITE.layer === 2) {
-    $("stat2Val").textContent = `${extra.count} estanques · ${Math.round(extra.area_ha)} ha`;
-    $("stat2Sub").textContent = `${Math.round(extra.near_mangrove_ha)} ha a < 1 km del manglar · perdido ${Math.round(extra2.loss_km2 * 100)} ha, nuevo ${Math.round(extra2.gain_km2 * 100)} ha (1996→2020)`;
+    setT("stat2Val", `${extra.count} estanques · ${Math.round(extra.area_ha)} ha`);
+    setT("stat2Sub", `${Math.round(extra.near_mangrove_ha)} ha a < 1 km del manglar · perdido ${Math.round(extra2.loss_km2 * 100)} ha, nuevo ${Math.round(extra2.gain_km2 * 100)} ha (1996→2020)`);
   } else {
     const lvl = levelAt(day);
     uniforms.uLevel.value = 0.06 + ((lvl - LEVEL_MIN) / (LEVEL_MAX - LEVEL_MIN)) * 0.33;
     const lily = lerp(dates[s.i].floatveg_km2 || 0, dates[s.i + 1].floatveg_km2 || 0, ease(f));
     const wat = lerp(dates[s.i].water_km2 || 0, dates[s.i + 1].water_km2 || 0, ease(f));
-    $("stat2Val").textContent = `nivel ${lvl.toFixed(1)} m`;
-    $("stat2Sub").textContent = `${(lvl - LEVEL_MAX).toFixed(1)} m bajo el máximo (SWOT) · lirio ${lily.toFixed(1)} km² · agua ${Math.round(wat)} km²`;
+    setT("stat2Val", `nivel ${lvl.toFixed(1)} m`);
+    setT("stat2Sub", `${(lvl - LEVEL_MAX).toFixed(1)} m bajo el máximo (SWOT) · lirio ${lily.toFixed(1)} km² · agua ${Math.round(wat)} km²`);
   }
   $("time").value = Math.round(((day - DAY0) / totalDays) * 1000);
 }
@@ -429,11 +438,11 @@ function setPlaying(p) {
 }
 playBtn.onclick = () => setPlaying(!playing);
 $("time").oninput = (e) => { setPlaying(false); day = DAY0 + (e.target.value / 1000) * totalDays; eventIdx = events.findIndex((ev) => ev.day > day); if (eventIdx < 0) eventIdx = events.length; apply(); };
-$("zRange").oninput = (e) => { uniforms.uZ.value = 0.55 * +e.target.value; $("zVal").textContent = "×" + (+e.target.value).toFixed(1); };
+$("zRange").oninput = (e) => { uniforms.uZ.value = 0.55 * +e.target.value; setT("zVal", "×" + (+e.target.value).toFixed(1)); };
 $("modeSeg").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; uniforms.uMode.value = +b.dataset.m; [...e.currentTarget.children].forEach((x) => x.classList.toggle("on", x === b)); $("legend").style.display = b.dataset.m === "0" ? "" : "none"; };
 $("orbitBtn").onclick = (e) => { controls.autoRotate = !controls.autoRotate; e.target.classList.toggle("on", controls.autoRotate); };
 $("layerBtn").onclick = (e) => { uniforms.uLayerOn.value = uniforms.uLayerOn.value ? 0 : 1; e.target.classList.toggle("on", !!uniforms.uLayerOn.value); markers.forEach((m) => { m.visible = !!uniforms.uLayerOn.value; }); };
-$("soundBtn").onclick = (e) => { if (!actx) soundInit(); if (actx.state === "suspended") actx.resume(); soundOn = !soundOn; e.target.textContent = soundOn ? "🔊 Sonido" : "🔇 Sonido"; e.target.classList.toggle("on", soundOn); if (!soundOn && oscGain) oscGain.gain.setTargetAtTime(0, actx.currentTime, 0.1); };
+$("soundBtn").onclick = (e) => { if (!actx) soundInit(); if (actx.state === "suspended") actx.resume(); soundOn = !soundOn; e.target.textContent = T(soundOn ? "🔊 Sonido" : "🔇 Sonido"); e.target.classList.toggle("on", soundOn); if (!soundOn && oscGain) oscGain.gain.setTargetAtTime(0, actx.currentTime, 0.1); };
 canvas.addEventListener("pointerdown", () => { controls.autoRotate = false; $("orbitBtn").classList.remove("on"); }, { once: true });
 addEventListener("keydown", (e) => { if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); } });
 let userMoved = false;
@@ -458,7 +467,7 @@ function loop(now) {
   controls.update();
   renderer.render(scene, camera);
   frames++;
-  if (now - fpsT > 1000) { $("perf").textContent = `${frames} fps · ${(geo.attributes.position.count / 1000).toFixed(0)} mil vértices · ${loaded}/${dates.length} pasadas en memoria`; frames = 0; fpsT = now; }
+  if (now - fpsT > 1000) { setT("perf", `${frames} fps · ${(geo.attributes.position.count / 1000).toFixed(0)} mil vértices · ${loaded}/${dates.length} pasadas en memoria`); frames = 0; fpsT = now; }
 }
 window.MANGLO = { renderer, scene, camera, uniforms, controls, site: siteId, setDay: (d) => { day = d; apply(); } }; // para depurar desde la consola
 apply();
