@@ -1,0 +1,64 @@
+/* El sistema operativo no decide el tema. Las superficies cambian, los datos no. */
+:root{color-scheme:only light;--theme-page:#fbf9f3;--theme-card:#fffefa;--theme-soft:#edf3f7;--theme-ink:#102c59;--theme-muted:#475a73;--theme-line:#ced9e6;--theme-active:#a5edf3;--theme-action:#063b83}
+:root[data-theme=dark]{color-scheme:only dark;--theme-page:#07182c;--theme-card:#0d2744;--theme-soft:#143351;--theme-ink:#edf4fb;--theme-muted:#bfd0e1;--theme-line:#45617e;--theme-action:#a5edf3}
+.theme-toggle{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 38px;width:38px;height:38px;min-height:38px;padding:0!important;background:#fffaf0!important;color:#06366e!important;border:1px solid #a4bad1!important;border-radius:8px!important;cursor:pointer;font:700 22px/1 Inter,Arial,sans-serif;box-shadow:none!important;opacity:1!important}
+.theme-toggle:hover{background:#d9f2f7!important}.theme-toggle[aria-pressed=true]{background:#a5edf3!important;color:#082b58!important;border-color:#a5edf3!important}.theme-toggle:focus-visible{outline:3px solid #58bddd;outline-offset:3px}
+html[data-theme=dark],html[data-theme=dark] body{background:var(--theme-page);color:var(--theme-ink)}
+/* Landing: conservar fotografías, azules de portada y composición editorial. */
+html[data-theme=dark] body#inicio{--cream:#07182c;--ink:#edf4fb;--blue:#a5ddff;--line:#45617e}
+html[data-theme=dark] .cream{background:var(--theme-page)}
+html[data-theme=dark] .site-card,html[data-theme=dark] .resource-card{background:var(--theme-card);border-color:var(--theme-line);color:var(--theme-ink)}
+html[data-theme=dark] .site-card .note,html[data-theme=dark] .asset-note,html[data-theme=dark] .references{color:var(--theme-muted)}
+html[data-theme=dark] .landing a,html[data-theme=dark] .references a{color:#a5ddff}
+html[data-theme=dark] .button{background:#fffaf0;color:#06366e;border-color:#c7d7e6}html[data-theme=dark] .button:hover{background:#d9f2f7}
+html[data-theme=dark] .hero-subtitle{color:#052d85}html[data-theme=dark] .hero-subtitle span{background:#fffdf7}
+html[data-theme=dark] .round-icon{background:#fffaf0;color:#06366e}
+html[data-theme=dark] .challenge-dots{opacity:.6}
+/* Explorador: todas las islas usan el mismo conjunto de superficies. */
+html[data-theme=dark] body.wireframe{--bg:var(--theme-page);--panel:var(--theme-card);--card:var(--theme-card);--text:var(--theme-ink);--muted:var(--theme-muted);--line:var(--theme-line);--accent:#a5edf3;--cyan:#a5edf3;background:var(--theme-page);color:var(--theme-ink)}
+html[data-theme=dark] .wireframe :is(.panel,.card,.wf-block,.wf-result-item,.wf-dialog,.wf-dialog-header){background:var(--theme-card);color:var(--theme-ink);border-color:var(--theme-line)}
+html[data-theme=dark] .wireframe :is(.wf-intro h2,.card h3,.wf-layer-label,.wf-block summary strong,.wf-result-item>summary,.wf-dialog h2,.wf-dialog h3,.interp-box b,.probe b,.kpi b,.light b,.light .val){color:var(--theme-ink)}
+html[data-theme=dark] .wireframe :is(.wf-intro p,.wf-block summary span,.hint,.probe,.legend,.ticks,.wf-detail-meta,.wf-dialog p,.wf-detail-picker,.wf-dialog label,.wf-detail-grid small,.science-tool-picker,.science-tool-status,.light span,.kpi span,.wf-results-head p){color:var(--theme-muted)}
+html[data-theme=dark] .wireframe :is(.light,.kpi,.wf-empty,.wf-interpretation,.interp-hypo,.alertmsg,#wfQualityFallback,.modes,.seg,.wf-result-item>summary:hover,.wf-block>summary:hover,.wf-block[open]>summary){background:var(--theme-soft);color:var(--theme-ink);border-color:var(--theme-line)}
+html[data-theme=dark] .wireframe :is(select,.btn,.chip,.science-tool-btn,.wf-dialog-tabs button){background:#102e4e;color:var(--theme-ink);border-color:#6b89a6}
+html[data-theme=dark] .wireframe :is(.btn.primary,#play,.modes button.on,.seg button.on,.wf-dialog-tabs button[aria-pressed=true],.wf-segment button[aria-pressed=true],.wf-languages button[aria-pressed=true]){background:#a5edf3;color:#082b58;border-color:#a5edf3}
+html[data-theme=dark] .wireframe :is(.modes button,.seg button){color:#dce9f6}
+html[data-theme=dark] .wireframe :is(.modes button.on,.seg button.on){color:#082b58}
+html[data-theme=dark] .wireframe .btn:hover:not(:disabled),html[data-theme=dark] .wireframe .science-tool-btn:hover:not(:disabled){background:#244c70;color:white;border-color:#a5edf3}
+html[data-theme=dark] .wireframe :is(.wf-map-legend,.story,.wf-tour-evidence){background:#0d2744f5;color:var(--theme-ink);border-color:#6b89a6}
+html[data-theme=dark] .wireframe :is(.wf-tour-evidence .card,.science-banner){background:var(--theme-card);color:var(--theme-ink)}
+html[data-theme=dark] .wireframe :is(.story p,.wf-tour-evidence .hint,.about p,.about li,.science-banner p){color:var(--theme-muted)}
+html[data-theme=dark] .wireframe :is(.science-banner h2,.wf-close){color:var(--theme-ink)}
+html[data-theme=dark] .wireframe .az{background:var(--theme-soft);color:var(--theme-ink);border-color:var(--theme-line)}html[data-theme=dark] .wireframe .az small{color:var(--theme-muted)}html[data-theme=dark] .wireframe .az .up{color:#ffb79d}html[data-theme=dark] .wireframe .az .down{color:#9be4f0}html[data-theme=dark] .wireframe .az .eq{color:#bfd0e1}
+html[data-theme=dark] .wireframe :is(.sr-table th,.wf-data-table th){background:#183b5c;color:var(--theme-ink)}html[data-theme=dark] .wireframe :is(.sr-table td,.wf-data-table td){color:var(--theme-ink);border-color:var(--theme-line)}
+html[data-theme=dark] .wireframe .wf-data-table{border-color:var(--theme-line)}html[data-theme=dark] .wireframe .wf-dialog-footer{border-color:var(--theme-line)}
+html[data-theme=dark] .wireframe a:not(.btn){color:#a5ddff}
+/* No se tematizan las teselas, overlays, leyendas de categorías ni texturas WebGL. */
+html[data-theme=dark] .wireframe .leaflet-control-zoom a{background:#fffdf7;color:#06366e}
+/* Vistas inmersivas: tema claro de los HUD, escena original intacta. */
+html[data-theme=light] .immersive{--panel:#fffefa;--card:#f0f5fa;--line:#b8cadd;--text:#102c59;--muted:#475a73;--accent:#063b83}
+html[data-theme=light] .immersive :is(.bar,.bar-top,.now,.card,.sec,.note,.title,.bottom .bar){background:#fffefaf5;color:#102c59;border-color:#b8cadd;box-shadow:none}
+html[data-theme=light] .orbit-view .bar-top{background:#fffefa url('img/landing/decoracion/halftone_azul_circulo.svg') right -110px top -110px/210px no-repeat}
+html[data-theme=light] .immersive :is(.brand b small,.title h1 small,.title p,.now span,.now #nowClock,.card h3,.sec h3,.legend div,label,.stat span,.date span,.hint,.sub,.pass .how,.real-step,.real-tbl th){color:#385473}
+html[data-theme=light] .immersive :is(.now b,.stat b,.date b,.real-step b,.hint b,.pass .when){color:#102c59}
+html[data-theme=light] .immersive :is(.btn,.ib,.seg,.lang-sw,.pl-sw,.lang-sw button,.pl-sw button){background:#edf3f8;color:#102c59;border-color:#8aa4be}
+html[data-theme=light] .immersive :is(.btn.on,.ib.on,.seg button.on,.lang-sw button[aria-pressed=true],.pl-sw button[aria-pressed=true]){background:#a5edf3;color:#082b58;border-color:#6fbcca}
+html[data-theme=light] .immersive .seg button{color:#385473}html[data-theme=light] .immersive .seg button.on{color:#082b58}
+html[data-theme=light] .immersive :is(.tip,.hint,#perf){background:#eef4faf2;color:#385473!important;border-color:#b8cadd}
+html[data-theme=light] .orbit-view .ib.fire{color:#814410;border-color:#b58350;background:#fff4e8}html[data-theme=light] .orbit-view .ib.fire.on{color:#64310c;background:#ffe2bd;border-color:#a66425}
+html[data-theme=light] .immersive .real-verdict{color:#164f45;background:#e5f4ef;border-color:#7cae9e}
+html[data-theme=light] .immersive :is(.real-tbl .ok){color:#17664f}html[data-theme=light] .immersive .real-tbl .mid{color:#815900}
+html[data-theme=light] .immersive .real-step i{background:#063b83;color:white}
+html[data-theme=light] .immersive .date .chip{background:#e0f2f5;color:#0c5266;border-color:#7faebd}html[data-theme=light] .immersive .date .chip.dry{background:#fff0d9;color:#75440f;border-color:#bc9460}
+html[data-theme=light] .immersive #zVal{background:#e2edf7;color:#102c59}
+html[data-theme=light] .immersive .pass,html[data-theme=light] .immersive .date,html[data-theme=light] .immersive .stats,html[data-theme=light] .immersive #nowClock{border-color:#b8cadd}
+.nav-inner>.theme-toggle{margin-left:0}.wireframe .hdr-actions>.theme-toggle{flex:none}.immersive .theme-toggle{align-self:center}
+@media(max-width:1200px) and (min-width:651px){body#inicio .nav-inner{flex-wrap:wrap;gap:14px}body#inicio .site-header nav{gap:16px;flex-wrap:wrap}}
+@media(max-width:650px){.nav-inner>.theme-toggle{width:34px;height:34px;flex-basis:34px;min-height:34px}.terrain-view .theme-toggle{width:34px;height:34px;flex-basis:34px;min-height:34px}.orbit-view .brand .theme-toggle{margin-left:auto}}
+
+.site-header .pl-sw{border-color:#90b3d6;opacity:1}.site-header .pl-sw button{color:#fff;min-height:34px}.site-header .pl-sw button[aria-pressed=true]{background:#a5edf3;color:#082b58}
+html[data-theme=dark] .wireframe :is(.wf-export-status,.wf-export-buttons small,.wf-dialog-footer small,.wf-dialog-footer strong,.wf-no-chart){color:var(--theme-muted)}
+html[data-theme=dark] .wireframe .wf-detail-picker select{background:#102e4e;color:var(--theme-ink)}
+
+html[data-theme=light] .immersive .brand a,html[data-theme=light] .immersive .title a.btn{background:#e8f2fb;border-color:#8aa4be;color:#06366e}
+@media(max-width:760px){.orbit-view .brand{display:grid;grid-template-columns:7px minmax(0,1fr) auto auto auto;gap:6px}.orbit-view .brand b{font-size:14px;min-width:0}.orbit-view .brand b small{font-size:10px}.orbit-view .brand a{font-size:10px;padding:7px 6px}.orbit-view .brand .lang-sw{margin:0}.orbit-view .lang-sw button{padding:6px 8px}.orbit-view .brand .theme-toggle{width:34px;height:34px;min-height:34px;margin:0}}

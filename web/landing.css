@@ -21,3 +21,13 @@ h2{font-family:Inter,Arial,sans-serif;font-weight:900;letter-spacing:-2px;font-s
 .hero-shade{background:linear-gradient(90deg,#06376f 0%,#084b8c 36%,#084b8c 45%,#084b8c00 74%),linear-gradient(0deg,#021e44a8,transparent 28%)}
 @media(max-width:650px){.hero-shade{background:linear-gradient(90deg,#06376feF,#06376f99 65%,#06376f33),linear-gradient(0deg,#021e44b0,transparent 30%)}}
 .open-heading h2{font-family:"Barlow Condensed",Inter,Arial,sans-serif;font-weight:800;letter-spacing:-.5px}
+
+/* Fotografías aportadas por el equipo; conservar su proporción original. */
+.hero-picture{inset:0}.hero-picture img{height:100%;width:100%;object-fit:cover;object-position:center 55%}
+.hero-shade{background:linear-gradient(90deg,#06376ff2 0%,#06376fbb 34%,#06376f35 65%,#06376f08),linear-gradient(0deg,#021e4490,transparent 40%)}
+.site-photo img{width:100%;height:100%;object-fit:cover;object-position:center}
+.closing-picture img{width:100%;height:100%;object-fit:cover;object-position:center 60%}
+.closing-shade{background:linear-gradient(90deg,#061e32cf,#061e3250 65%),linear-gradient(0deg,#071e2990,transparent)}
+.nisar-support{float:right;width:clamp(130px,20vw,230px);height:auto;object-fit:contain;margin:0 0 16px 22px;border-radius:8px;background:#fff}
+.challenge-copy:after{content:'';display:block;clear:both}
+@media(max-width:650px){.hero-shade{background:linear-gradient(90deg,#06376fed,#06376f99 75%),linear-gradient(0deg,#021e4490,transparent)}.hero-picture img{object-position:62% center}.nisar-support{width:135px;margin-left:14px}.closing-picture img{object-position:55% center}}
