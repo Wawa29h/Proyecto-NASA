@@ -100,3 +100,8 @@ body.wireframe .layout,body.wireframe.expert .layout{margin:0 28px;grid-template
 .wireframe #wfScience>summary strong:before{content:"";display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:8px;background:currentColor;mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M9%202h6m-5%200v7L4%2020q0%202%203%202h10q3%200%203-2L14%209V2M7%2015h10%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat}
 body.wireframe:not(.expert) .modes button.on{background:#a5edf3;color:#082b58;box-shadow:inset 0 0 0 1px #79cedb}   /* el activo de "Explorar en el tiempo" se lee en tema claro y oscuro */
 .wf-intro .wf-mode-note{margin-top:8px;font-size:13px;max-width:900px}.wf-intro .wf-mode-note b{font-weight:700}
+/* "Volver al tutorial": mientras el recorrido está abierto debe saltar a la vista (color de marca, más grande y con un pulso suave) */
+body .btn.tour-return{background:#00bed5!important;color:#04233f!important;border:2px solid #fff!important;font-size:16px;font-weight:800;padding:14px 24px;border-radius:999px;box-shadow:0 6px 24px #0007,0 0 0 0 #00bed5aa!important;animation:tourReturnPulse 1.8s ease-out infinite}
+body .btn.tour-return:hover,body .btn.tour-return:focus-visible{background:#3fe0f0!important;transform:translateY(-2px)}
+@keyframes tourReturnPulse{0%{box-shadow:0 6px 24px #0007,0 0 0 0 #00bed5aa}70%{box-shadow:0 6px 24px #0007,0 0 0 16px #00bed500}100%{box-shadow:0 6px 24px #0007,0 0 0 0 #00bed500}}
+@media (prefers-reduced-motion:reduce){body .btn.tour-return{animation:none}}
