@@ -231,7 +231,6 @@ function render() {
   highlightChart();
   if (prevA && !ovA) map.removeLayer(prevA);
   window.onRender && window.onRender();
-  window.onZoneRender && window.onZoneRender();
 }
 
 // ---------- decodificar HH ----------
@@ -814,7 +813,7 @@ function interpret(db) {
   return "muy brillante: doble rebote (manglar inundado o edificio)";
 }
 map.on("click", async (e) => {
-  if (!S || !S.dates.length || window.zoneDrawing) return;   // mientras se dibuja "tu zona" no se hace la sonda
+  if (!S || !S.dates.length) return;
   const col = Math.floor((e.latlng.lng - S.bbox[0]) / S.step);
   const row = Math.floor((S.bbox[3] - e.latlng.lat) / S.step);
   const hs = await Promise.all(S.dates.map(loadHH));
