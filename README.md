@@ -1,6 +1,34 @@
 # MANGLO — NASA Space Apps 2026 · Reto NISAR
 
-**Demo:** https://wawa29h.github.io/Proyecto-NASA/  ·  directo a un sitio: `?site=barra`, `?site=jiquilisco`, `?site=cerron`
+**Demo / Live app:** https://manglo-nisar.earth/ (también https://wawa29h.github.io/Proyecto-NASA/)  ·  directo a un sitio: `?site=barra`, `?site=jiquilisco`, `?site=cerron`  ·  interfaz en **español e inglés**.
+
+> ### English summary
+> **MANGLO** is an open-source interactive web app that uses the NASA-ISRO **NISAR** L-band radar (L2 GCOV, HH/HV
+> polarizations) as its backbone to monitor the **mangroves of El Salvador** — Barra de Santiago (a Ramsar site),
+> Bahía de Jiquilisco (the country's largest mangrove) and, as an annex, the Cerrón Grande reservoir — across one
+> year (Dec 2025 → Nov 2026), every 12 days, through clouds, day or night.
+>
+> It separates the **natural rhythm** from **human pressure**. Natural: the mangrove's HV signal rises ~2.5 dB from the
+> dry to the rainy season at both sites (wet leaves and soil, not forest change). Human: sugarcane harvested and
+> burned right next to the mangrove (902 ha burned in the 2025–26 harvest, 92 % of the harvest by burning, 417 ha
+> within 1 km of the mangrove, detected with Sentinel-2 NBR and confirmed by the HV drop in NISAR); rectangular
+> shrimp/salt ponds found by radar (42 ponds, 148 ha in Jiquilisco); and the blue carbon at stake (~375,000 t CO₂ in
+> Barra, ~3 million t in Jiquilisco, trees only, from NASA's mangrove biomass map).
+>
+> **Main message:** the mangrove is **stable** (−0.2 % area since 1996 per Global Mangrove Watch, built from JAXA
+> L-band radar; 0.02 % loss seen by NISAR in 2025–26). The pressure is around it, and NISAR can watch it every 12 days
+> even in the rainy season, when **45 %** of optical images over the site are cloud-covered (longest gap: 15 days).
+>
+> **Method (validated, honest):** remote block reads of ~7 GB GCOV granules; frame and orbit mosaicking with
+> per-pixel provenance shown in the app; a per-date water threshold calibrated against ESA WorldCover; quality control
+> (bad dates discarded); validation (NISAR detects 85–91 % of the estuary water in the ESA map). Three AI models with
+> held-out validation: **MangroveNet** (U-Net, radar-only land cover; mangrove F1 0.82 on a site never used in
+> training), radar → approximate image (pix2pix) for cloudy days, and a Random Forest that detects floating plants
+> from radar. A **simple mode** for the public and a **scientific mode** with HH/HV values, validation and CSV/PNG export.
+>
+> **Data:** NISAR (ASF DAAC), SWOT, ECOSTRESS, GPM IMERG / NASA POWER, NASA mangrove biomass and height (ORNL DAAC),
+> Global Mangrove Watch (JAXA), ESA Sentinel-2 and WorldCover. The whole pipeline is parameterized by a bounding box:
+> the same scripts run on any mangrove or wetland on Earth. See **Future applications of NISAR** below. MIT license.
 
 App web interactiva que usa el radar **NISAR** (NASA-ISRO, banda L) como eje, junto con otras misiones de
 NASA y ESA, para vigilar los **manglares de El Salvador** a lo largo de un año (dic-2025 → nov-2026):
@@ -185,10 +213,41 @@ en lluvias (hasta ~50 % de su agua).
   recupera en septiembre. La superficie "con plantas" (Sentinel-2) es máxima en mayo, cuando el nivel es más
   bajo: incluye lirio **y** fondo expuesto con hierba. Separar ambos requiere validación de campo.
 
+## Aplicaciones futuras de NISAR · Future applications of NISAR
+
+**Español**
+- **Alerta de manglar cada 12 días**: con la cadencia de NISAR, un aviso automático cuando aparece una quema a menos
+  de 500 m del manglar, un estanque nuevo o una caída persistente de la señal HV (tala), con un mensaje listo para
+  compartir con guardarrecursos y cooperativas. El molde ya existe en `scripts/lirio_alert.py`.
+- **Cualquier manglar del mundo**: los scripts solo necesitan un recuadro (`--bbox`); Global Mangrove Watch da la
+  referencia histórica en todos los países con manglar, y WorldCover el "maestro" para calibrar.
+- **Humedad del suelo y agricultura**: la banda L es sensible a la humedad del suelo bajo la caña; sirve para seguir
+  riego, sequía y el momento de cosecha sin depender de fotos.
+- **Deformación de la costa (InSAR)**: con los productos interferométricos de NISAR se podrá medir hundimiento de la
+  planicie costera y de la bocana, y así separar pérdida de manglar por tala de pérdida por cambio del terreno.
+- **Marea y estación**: calcular la marea de cada pasada (modelo de marea) para separar la inundación por marea de la
+  inundación por lluvias en el manglar.
+- **Más años, mejor estadística**: con 3–5 años de NISAR, el cambio "real" se distingue del ruido estacional y los
+  modelos de IA dejan de ser prueba de concepto.
+
+**English**
+- **A 12-day mangrove alert**: an automatic notice when a burn appears within 500 m of the mangrove, a new pond is
+  built, or the HV signal drops persistently (clearing), with a message ready to share with rangers and
+  cooperatives. The template already exists in `scripts/lirio_alert.py`.
+- **Any mangrove on Earth**: the scripts only need a bounding box; Global Mangrove Watch provides the historical
+  reference in every mangrove country and WorldCover the calibration reference.
+- **Soil moisture and agriculture**: L-band is sensitive to soil moisture under the cane; it can follow irrigation,
+  drought and harvest timing without optical images.
+- **Coastal deformation (InSAR)**: NISAR interferometric products will allow measuring subsidence of the coastal plain
+  and the estuary mouth, separating mangrove loss by clearing from loss by ground change.
+- **Tide vs. season**: compute the tide at each pass to separate tidal flooding from rainy-season flooding.
+- **More years, better statistics**: with 3–5 years of NISAR, real change can be told apart from seasonal noise and the
+  AI models move beyond proof of concept.
+
 ## Supuestos y límites
 
 - Los índices de Sentinel-2 (NDCI, NDTI) son relativos, no concentraciones en mg/L.
 - WorldCover es de 2021: si el estero o el embalse cambiaron de forma desde entonces, la calibración se afecta.
 - Las causas (aguas residuales, fertilizantes, manejo de la represa) son hipótesis, no las demuestra el satélite.
 
-Datos: NASA/JPL-Caltech, ISRO, CNES, ASF DAAC, PO.DAAC, LP DAAC, GES DISC, ESA/Copernicus. Código abierto (MIT).
+Datos: NASA/JPL-Caltech, ISRO, CNES, ASF DAAC, PO.DAAC, LP DAAC, GES DISC, ESA/Copernicus. Código abierto bajo licencia MIT (ver `LICENSE`).

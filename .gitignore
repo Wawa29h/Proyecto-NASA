@@ -4,3 +4,6 @@ __pycache__/
 _netrc
 *.zip
 .env
+
+# Video de 30 s (MP4 de ~100 MB: GitHub lo rechaza; va a YouTube/Drive)
+video/
