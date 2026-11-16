@@ -764,7 +764,7 @@ function buildMangroveExtras() {
   }
   if (PONDS && PONDS.count > 0) {
     $("pondsKpis").innerHTML =
-      kpi(PONDS.count, "estanques rectangulares detectados") +
+      kpi(PONDS.count, PONDS.count === 1 ? "estanque rectangular detectado" : "estanques rectangulares detectados") +
       kpi(`${fmtInt(PONDS.area_ha)} ha`, "de estanques en total") +
       kpi(`${fmtInt(PONDS.near_mangrove_ha)} ha`, "a menos de 1 km del manglar") +
       (PONDS.gmw_loss_near_ponds_ha != null ? kpi(`${fmtInt(PONDS.gmw_loss_near_ponds_ha)} ha`, "del manglar perdido desde 1996 está a menos de 300 m de un estanque") : "");
@@ -917,9 +917,22 @@ $("play").onclick = () => {
   if (!S || !S.dates || !S.dates.length) { $("empty").hidden = false; return; }
   const [W, Sth, E, N] = S.bbox;
   bounds = L.latLngBounds([Sth, W], [N, E]);
-  map.invalidateSize();
-  map.fitBounds(bounds, { padding: [10, 10] });
-  setTimeout(() => { map.invalidateSize(); map.fitBounds(bounds, { padding: [10, 10], animate: false }); }, 400);
+  // Encuadre inicial. Si el mapa todavía no tiene tamaño (en celular la página se reacomoda después de cargar),
+  // Leaflet calcula el zoom máximo y se ven solo píxeles: se vuelve a encuadrar cuando el mapa ya mide algo.
+  let framed = false;
+  const frameSite = () => {
+    map.invalidateSize();
+    const s = map.getSize();
+    if (s.x < 80 || s.y < 80) return;            // con menos que el relleno, el zoom sale al máximo
+    map.fitBounds(bounds, { padding: [10, 10], animate: false });
+    framed = true;
+  };
+  frameSite();
+  setTimeout(() => { if (!framed || map.getZoom() > map.getBoundsZoom(bounds) + 2) frameSite(); }, 400);
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => { if (!framed) frameSite(); else map.invalidateSize(); });
+    ro.observe(map.getContainer());
+  }
   L.rectangle(bounds, { color: "#149BA5", weight: 1, fill: false, dashArray: "4 4", interactive: false }).addTo(map);
 
   const n = S.dates.length;
@@ -927,8 +940,12 @@ $("play").onclick = () => {
   $("ticks").innerHTML = `<span>${fmtDate(S.dates[0].date)}</span><span>${fmtDate(S.dates[n - 1].date)}</span>`;
   const opts = S.dates.map((d, i) => `<option value="${i}">${fmtDate(d.date)}</option>`).join("");
   $("selA").innerHTML = $("selB").innerHTML = opts;
-  state.idx = n - 1; state.a = 0; state.b = n - 1;
-  $("selA").value = 0; $("selB").value = n - 1;
+  // Par por defecto para Antes/después y Cambios: la primera y la última fecha que SÍ permiten cuantificar el cambio
+  // (sin rellenos y con cobertura verificada). Si el sitio no tiene ninguna, se usan la primera y la última.
+  const okIdx = S.dates.map((d, i) => (changeQuantificationIssue(d, d) ? -1 : i)).filter((i) => i >= 0);
+  const [a0, b0] = okIdx.length >= 2 ? [okIdx[0], okIdx[okIdx.length - 1]] : [0, n - 1];
+  state.idx = n - 1; state.a = a0; state.b = b0;
+  $("selA").value = a0; $("selB").value = b0;
   $("dateSlider").setAttribute("aria-label", "Línea temporal de observaciones radar NISAR");
   $("siteSel").setAttribute("aria-label", "Seleccionar región de estudio");
   $("selA").setAttribute("aria-label", "Fecha inicial para comparación");
