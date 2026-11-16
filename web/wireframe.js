@@ -30,10 +30,15 @@
   header.querySelector(".hdr-actions").appendChild(back);
   // accesos directos arriba: la zona en 3D y la órbita de NISAR (app.js les pone el sitio y la fecha abiertos)
   const b3d = el("btn3d"), bOrb = el("btnOrbit") || header.querySelector('a[href^="orbita.html"]');
-  if (b3d) { b3d.textContent = "⛰ Ver la zona en 3D"; b3d.classList.add("wf-top-link"); el("tourBtn").after(b3d); }
-  if (bOrb) { bOrb.textContent = "🛰 Ver la órbita de NISAR"; bOrb.title = "El planeta en 3D con NISAR moviéndose en su órbita real, en el momento de la imagen que estás viendo"; bOrb.classList.add("wf-top-link"); (b3d || el("tourBtn")).after(bOrb); }
-  const intro = make("section", "wf-intro", '<h2>Explora los cambios del agua y del manglar</h2><p>Mapa interactivo con datos del sitio seleccionado, comparaciones en el tiempo y evidencia del monitoreo.</p><p class="wf-mode-note" id="wfModeNote"></p>');
+  if (b3d) { b3d.textContent = "⛰ Ver la zona en 3D"; b3d.classList.add("wf-top-link"); }
+  if (bOrb) { bOrb.textContent = "🛰 Ver la órbita de NISAR"; bOrb.title = "El planeta en 3D con NISAR moviéndose en su órbita real, en el momento de la imagen que estás viendo"; bOrb.classList.add("wf-top-link"); }
+  const siteKey = (new URLSearchParams(location.search).get("site") || "barra").toLowerCase();
+  const THESIS = { barra: "El manglar de Barra de Santiago está estable desde 1996 (−0,2 %). La presión está al lado: esta zafra se quemaron 902 ha de caña junto a él. NISAR lo vigila cada 12 días, aunque esté nublado.", jiquilisco: "El manglar de la Bahía de Jiquilisco, el más grande del país, tiene casi la misma área que en 1996 (−0,6 %). La presión está al lado: 42 estanques de camarón y sal (148 ha) junto a él. NISAR lo vigila cada 12 días, aunque esté nublado.", cerron: "Anexo: en el embalse Cerrón Grande, NISAR separa el agua abierta del lirio acuático cada 12 días, aunque esté nublado, y SWOT mide cómo el nivel baja 6,5 m en la época seca." };
+  const intro = make("section", "wf-intro", `<h2>Explora los cambios del agua y del manglar</h2><p class="wf-thesis">${THESIS[siteKey] || THESIS.barra}</p><p class="wf-mode-note" id="wfModeNote"></p>`);
   header.after(intro);
+  // accesos a la zona en 3D y a la órbita: a la derecha del título, en el espacio libre bajo el encabezado
+  const introActions = make("div", "wf-intro-actions"); [b3d, bOrb].forEach((node) => node && introActions.appendChild(node));
+  intro.appendChild(introActions);
 
   const blocks = make("section", "wf-blocks"); blocks.setAttribute("aria-label", "Resultados y documentación del sitio");
   function block(id, title, description) {
@@ -80,6 +85,9 @@
     card.before(item); item.append(summary, card);
     return { item, card, summary };
   });
+  el("wfResults").open = true;
+  const openByDefault = siteKey === "cerron" ? ["lakeCard"] : ["caneCard", "histCard"];
+  resultItems.forEach(({ item, card }) => { if (openByDefault.includes(card.id)) item.open = true; });
   notices.appendChild(make("p", "wf-empty", '<span id="wfNoticeSummary">Cargando disponibilidad de avisos…</span>'));
   move("alertCard", notices); move("wowCard", notices);
   notices.appendChild(make("div", "wf-empty", '<strong>Calidad de la observación</strong><p id="wfNoticeQuality">Selecciona una fecha para consultar su cobertura.</p>'));

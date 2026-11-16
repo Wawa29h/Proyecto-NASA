@@ -66,7 +66,7 @@ body.wireframe{--bg:#fbf9f3;--panel:#fffefa;--card:#fff;--text:#102c59;--muted:#
 .wireframe .brand{min-width:230px;gap:13px}.wireframe .brand h1{color:white;font-weight:800}.wireframe .brand p{color:#e2ecfa;max-width:270px;font-size:11px}.wireframe .brand-mark{background:#fffdf6;border-radius:9px}
 .wireframe .region-picker{color:white;border-color:#8ca7c7;min-width:190px;padding-left:18px}.wireframe .wf-mode{font-size:12px;font-weight:600}.wireframe .wf-segment,.wireframe .wf-languages{border-color:#91b7dd}
 .wireframe .wf-segment button,.wireframe .wf-languages button{background:#06366e;color:#fff;border-color:#91b7dd;min-height:38px}.wireframe .wf-segment button[aria-pressed=true],.wireframe .wf-languages button[aria-pressed=true]{background:#a5edf3;color:#082b58}
-.wireframe .top .btn{background:#fffdf6;color:#002d78;border-color:#fffdf6;min-height:38px}.wireframe .top #tourBtn{background:transparent;color:white;border-color:#91cce5}.wireframe .hdr-actions{gap:10px}
+.wireframe .top .btn{background:transparent;color:#fff;border-color:#91cce5;min-height:38px}.wireframe .top #tourBtn{background:#fffdf6;color:#002d78;border-color:#fffdf6;font-weight:700}.wireframe .hdr-actions{gap:10px}
 .wf-intro{position:relative;isolation:isolate;margin:26px 28px 20px;padding:2px 24px;background:transparent;border-radius:0;border-left:4px solid #00bed5}.wf-intro h2{color:#06366e;font-weight:800;letter-spacing:-1px;font-size:clamp(24px,2.5vw,36px)}.wf-intro p{font-size:13px;color:#385473;max-width:1000px}.wf-intro:after{content:'';position:absolute;z-index:-1;right:0;top:-26px;width:210px;height:95px;opacity:.22;background:url('img/landing/decoracion/halftone_azul_circulo.svg') center/cover no-repeat;pointer-events:none}
 body.wireframe .layout,body.wireframe.expert .layout{margin:0 28px;grid-template-columns:minmax(0,1fr) 370px;gap:18px}
 .wireframe .mapwrap{border-color:#c6d5e4;border-radius:16px}.wireframe .panel{border-color:#d5deea;border-radius:16px;padding:15px;background:#fffefa;gap:15px;scrollbar-color:#9eafc2 #f3f5f8;scrollbar-width:thin}
@@ -114,3 +114,10 @@ body .btn.tour-return{left:50%;right:auto;bottom:22px;transform:translateX(-50%)
   animation:tourAnts .9s linear infinite}
 @keyframes tourAnts{to{background-position:18px 0,-18px 100%,0 -18px,100% 18px}}
 @media (prefers-reduced-motion:reduce){.wireframe .tour-located::after{animation:none}}
+/* botones "Ver la zona en 3D" y "Ver la órbita de NISAR" a la derecha del título del mapa */
+.wf-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:28px;align-items:center}
+.wf-intro>:not(.wf-intro-actions){grid-column:1}
+.wf-intro-actions{grid-column:2;grid-row:1/span 3;display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.wireframe .wf-intro-actions .btn.wf-top-link{background:#0b3d7a;color:#fff;border:1.5px solid #00bed5;font-size:15px;font-weight:700;padding:12px 20px;min-height:48px;border-radius:12px;text-decoration:none;box-shadow:0 4px 14px #0003;display:inline-flex;align-items:center;gap:6px}
+.wireframe .wf-intro-actions .btn.wf-top-link:hover,.wireframe .wf-intro-actions .btn.wf-top-link:focus-visible{background:#00bed5;color:#04233f}
+@media(max-width:900px){.wf-intro{grid-template-columns:1fr}.wf-intro-actions{grid-column:1;grid-row:auto;justify-content:flex-start;margin-top:12px}}
