@@ -109,10 +109,12 @@ function tex(url, { mips = true, nearest = false } = {}) {
 
 // Clases por fecha (cls.png): agua (30,136,229) · veg. inundada (216,27,196) · lirio (60,220,90) · mar (20,50,90, alfa baja)
 const GLSL_COMMON = /* glsl */`
-uniform sampler2D tA, tB, tClsA, tClsB, tCoverV, tLayer;
-uniform float uMix, uZ, uLod, uLevel, uBase; uniform int uLayer, uWaterMode;
+uniform sampler2D tA, tB, tClsA, tClsB, tCoverV, tLayer, tFill;
+uniform float uMix, uZ, uLod, uLevel, uBase, uFillOn; uniform int uLayer, uWaterMode;
 float hv(sampler2D t, vec2 uv){ vec4 c = textureLod(t, uv, uLod); return c.a < 0.03 ? -40.0 : -32.0 + (c.g / c.a) * 24.0; }
-float hvMix(vec2 uv){ float a = hv(tA, uv), b = hv(tB, uv); if (a < -39.0) return b; if (b < -39.0) return a; return mix(a, b, uMix); }
+// sin pasada ese día (borde de la órbita): promedio del año en ese punto, marcado como aproximado
+bool noData(vec2 uv){ return hv(tA, uv) < -39.0 && hv(tB, uv) < -39.0; }
+float hvMix(vec2 uv){ float a = hv(tA, uv), b = hv(tB, uv); if (a < -39.0 && b < -39.0) return uFillOn > 0.5 ? hv(tFill, uv) : -40.0; if (a < -39.0) return b; if (b < -39.0) return a; return mix(a, b, uMix); }
 float height(float h){ float n = clamp((h + 30.0) / 18.0, 0.0, 1.0); return pow(n, 1.6) * smoothstep(-27.0, -22.5, h); }
 vec3 clsOf(vec4 c){
   if (c.a < 0.15) return vec3(0.0);
@@ -144,9 +146,10 @@ float hAt(vec2 uv){
 
 const VERT = GLSL_COMMON + /* glsl */`
 uniform vec2 uEps, uPlane;
-out vec2 vUv; out vec3 vN; out float vHv; out float vW; out vec3 vCls; out float vLake;
+out vec2 vUv; out vec3 vN; out float vHv; out float vW; out vec3 vCls; out float vLake; out float vFill;
 void main(){
   vUv = uv;
+  vFill = (uFillOn > 0.5 && noData(uv)) ? 1.0 : 0.0;
   float h = hvMix(uv); vHv = h; vW = h < -39.0 ? 0.0 : 1.0;
   vCls = (uLayer == 3 || uWaterMode == 1) ? clsMix(uv) : vec3(0.0);
   vLake = (uLayer == 3) ? coverWater(uv) : 0.0;
@@ -160,7 +163,7 @@ void main(){
 
 const FRAG = /* glsl */`
 uniform sampler2D tCover, tPhoto, tLayerF, tLayer2; uniform int uMode, uLayerF; uniform float uDay, uLayerOn; uniform vec3 uSun;
-in vec2 vUv; in vec3 vN; in float vHv; in float vW; in vec3 vCls; in float vLake;
+in vec2 vUv; in vec3 vN; in float vHv; in float vW; in vec3 vCls; in float vLake; in float vFill;
 out vec4 fragColor;
 vec3 ramp(float h){
   vec3 water = vec3(0.043, 0.239, 0.42), soil = vec3(0.788, 0.659, 0.416), crop = vec3(0.482, 0.749, 0.353), mang = vec3(0.059, 0.42, 0.227);
@@ -221,6 +224,7 @@ void main(){
   float diff = max(dot(normalize(vN), normalize(uSun)), 0.0);
   float hemi = 0.55 + 0.45 * normalize(vN).z;
   vec3 col = (uMode == 1) ? base * (0.65 + 0.6 * diff) : base * (0.3 * hemi + 0.95 * diff);
+  col = mix(col, vec3(dot(col, vec3(0.3, 0.59, 0.11))), 0.6 * vFill) * (1.0 - 0.15 * vFill);   // aproximado: más gris
   fragColor = vec4(col, 1.0);
 }`;
 
@@ -230,6 +234,7 @@ const uniforms = {
   uLayer: { value: SITE.layer }, uLayerF: { value: SITE.layer }, uWaterMode: { value: SITE.layer === 3 ? 1 : 0 },
   tCover: { value: null }, tCoverV: { value: null }, tPhoto: { value: null }, tLayer: { value: null }, tLayerF: { value: null }, tLayer2: { value: null },
   uMode: { value: 0 }, uDay: { value: 0 }, uLayerOn: { value: 1 }, uSun: { value: new THREE.Vector3(-0.5, 0.6, 0.8).normalize() },
+  tFill: { value: null }, uFillOn: { value: 0 },
   uEps: { value: new THREE.Vector2(1.5 / W, 1.5 / H) }, uPlane: { value: new THREE.Vector2(PLANE_W, PLANE_H) },
 };
 const SX = 440, SY = Math.max(60, Math.round((SX * PLANE_H) / PLANE_W));
@@ -276,6 +281,37 @@ uniforms.tCover.value = cover; uniforms.tCoverV.value = cover; uniforms.tPhoto.v
 uniforms.tLayer.value = layerT || cover; uniforms.tLayerF.value = layerT || cover; uniforms.tLayer2.value = layer2T || cover;
 $("load").classList.add("off");
 let loaded = 2;
+uniforms.tFill.value = cover;   // provisional hasta que esté el promedio
+(async () => {
+  const img = (u) => new Promise((ok) => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = u; });
+  const ims = (await Promise.all(dates.map((d) => img(rel(d.rgb))))).filter(Boolean);
+  if (!ims.length) return;
+  const w = ims[0].naturalWidth, h = ims[0].naturalHeight, c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  const ctx = c.getContext("2d", { willReadFrequently: true });
+  const sum = new Float32Array(w * h), n = new Uint16Array(w * h);
+  for (const im of ims) {
+    ctx.clearRect(0, 0, w, h); ctx.drawImage(im, 0, 0, w, h);
+    const px = ctx.getImageData(0, 0, w, h).data;
+    for (let i = 0; i < n.length; i++) if (px[i * 4 + 3] > 8) { sum[i] += (px[i * 4 + 1] * 255) / px[i * 4 + 3]; n[i]++; }
+  }
+  const out = ctx.createImageData(w, h);
+  let any = 0;
+  for (let i = 0; i < n.length; i++) if (n[i]) { out.data[i * 4 + 1] = Math.round(sum[i] / n[i]); out.data[i * 4 + 3] = 255; any++; }
+  if (!any) return;
+  ctx.putImageData(out, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; t.magFilter = THREE.LinearFilter;
+  t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.anisotropy = 4; t.premultiplyAlpha = false;
+  uniforms.tFill.value = t; uniforms.uFillOn.value = 1;
+  const partial = dates.some((d) => (d.coverage_real_pct ?? d.coverage_pct ?? 100) + (d.time_filled_pct || 0) < 98);
+  if (partial) {
+    const note = document.createElement("div");
+    note.className = "fill-note";
+    note.innerHTML = '<i class="sw" style="background:#8a8f8c"></i>Gris: el radar no pasó ahí ese día; se muestra el promedio del año en ese punto (aproximado).';
+    $("legend").appendChild(note);
+  }
+})();
 (async () => {
   for (let i = 2; i < dates.length; i++) { await loadDate(i); loaded++; loadTxt.textContent = `${loaded}/${dates.length} pasadas`; }
 })();
