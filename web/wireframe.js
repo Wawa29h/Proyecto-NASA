@@ -32,7 +32,7 @@
   const b3d = el("btn3d"), bOrb = el("btnOrbit") || header.querySelector('a[href^="orbita.html"]');
   if (b3d) { b3d.textContent = "⛰ Ver la zona en 3D"; b3d.classList.add("wf-top-link"); el("tourBtn").after(b3d); }
   if (bOrb) { bOrb.textContent = "🛰 Ver la órbita de NISAR"; bOrb.title = "El planeta en 3D con NISAR moviéndose en su órbita real, en el momento de la imagen que estás viendo"; bOrb.classList.add("wf-top-link"); (b3d || el("tourBtn")).after(bOrb); }
-  const intro = make("section", "wf-intro", '<h2>Explora los cambios del agua y del manglar</h2><p>Mapa interactivo con datos del sitio seleccionado, comparaciones en el tiempo y evidencia del monitoreo.</p>');
+  const intro = make("section", "wf-intro", '<h2>Explora los cambios del agua y del manglar</h2><p>Mapa interactivo con datos del sitio seleccionado, comparaciones en el tiempo y evidencia del monitoreo.</p><p class="wf-mode-note" id="wfModeNote"></p>');
   header.after(intro);
 
   const blocks = make("section", "wf-blocks"); blocks.setAttribute("aria-label", "Resultados y documentación del sitio");
@@ -271,6 +271,9 @@
   });
 
   function sync() {
+    // qué diferencia hay entre los dos modos (cambia con el selector Vista general / Modo científico)
+    { const sci = el("expertSw").checked, note = el("wfModeNote");
+      if (note && note.dataset.sci !== String(sci)) { note.dataset.sci = String(sci); note.innerHTML = sci ? "<b>Modo científico:</b> todo lo de la vista general más los valores del radar (HH y HV), la validación con mapas oficiales, los índices de calidad del agua, los detalles de la IA y el control de transparencia del mapa." : "<b>Vista general:</b> resultados explicados en lenguaje sencillo, para cualquier persona. El modo científico agrega los valores del radar (HH y HV), la validación con mapas oficiales, los índices de calidad del agua y los detalles de la IA."; } }
     resultItems.forEach(({ item, card, summary }) => {
       item.hidden = card.hidden;
       summary.textContent = card.querySelector("h3")?.textContent || "Resultado";
