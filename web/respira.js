@@ -48,6 +48,9 @@ const SITE = SITES[siteId] || SITES.barra;
 const BASE = SITE.base;
 $("siteSel").value = SITE.name === SITES[siteId]?.name ? siteId : "barra";
 $("siteSel").onchange = (e) => { location.search = "?site=" + e.target.value; };
+// "Volver al mapa": regresa a la página anterior (el mapa, con su sitio y fecha); si se entró directo, abre el mapa de este sitio
+$("backMap").href = "index.html?site=" + siteId;
+$("backMap").onclick = (e) => { try { const r = new URL(document.referrer); if (r.origin === location.origin && /\/index\.html$|\/web\/?$/.test(r.pathname) && history.length > 1) { e.preventDefault(); history.back(); } } catch {} };
 $("titleTxt").textContent = SITE.title; $("subTxt").textContent = SITE.sub; $("hintTxt").innerHTML = SITE.hint;
 $("layerBtn").textContent = SITE.layerBtn;
 $("legend").innerHTML = SITE.legend.map(([c, t]) => `<div><i class="sw" style="background:${c}"></i>${t}</div>`).join("");
