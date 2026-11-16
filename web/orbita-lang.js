@@ -2,7 +2,7 @@
 // Aquí van los textos fijos de orbita.html; los que cambian solos (hora, pasadas, pin) los traduce orbita.js.
 (function () {
   let lang = "en";
-  lang = (() => { try { const s = localStorage.getItem("manglo-language"); if (s === "es" || s === "en") return s; } catch {} const l = ((navigator.languages && navigator.languages[0]) || navigator.language || "en").toLowerCase(); return l.startsWith("es") ? "es" : "en"; })();
+  lang = (() => { try { const s = localStorage.getItem("manglo-language"); if (s === "es" || s === "en") return s; } catch {} return "en"; /* siempre empieza en inglés; Español queda guardado si se elige */ })();
   const $ = (q) => document.querySelector(q);
 
   // botones Español / English en la barra (cambian el idioma de todo MANGLO)

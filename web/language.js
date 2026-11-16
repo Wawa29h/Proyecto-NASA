@@ -46,7 +46,7 @@
     ["Toca un punto del mapa","Select a point on the map"],["Análisis por punto","Point analysis"],["Ver datos en tabla accesible","View data in an accessible table"],["Análisis científico detallado","Detailed scientific analysis"],
     ["Explora indicadores, series temporales, clasificación, validación y resultados del monitoreo satelital.","Explore indicators, time series, classification, validation and satellite monitoring results."],
     ["Para elegir una gráfica aquí, abre también Resultados. Puedes descargar cada gráfica directamente desde Ver más detalle.","To choose a chart here, also expand Results. You can download individual charts directly from View more detail."],
-    ["↓ Serie NISAR del sitio (CSV)","↓ Site NISAR series (CSV)"],["↓ Descargar datos CSV","↓ Download CSV data"],["↓ Descargar PNG","↓ Download PNG"],["⛰ Ver en 3D","⛰ View in 3D"],["🌍 Ver el planeta","🌍 View the planet"],
+    ["↓ Serie NISAR del sitio (CSV)","↓ Site NISAR series (CSV)"],["↓ Descargar datos CSV","↓ Download CSV data"],["↓ Descargar PNG","↓ Download PNG"],["⛰ Ver en 3D","⛰ View in 3D"],["⛰ Ver la zona en 3D","⛰ View the area in 3D"],["Ver el terreno en 3D: sube y baja con el radar","View the terrain in 3D: it rises and falls with the radar"],["🛰 Ver la órbita de NISAR","🛰 View NISAR's orbit"],["El planeta en 3D con NISAR moviéndose en su órbita real, en el momento de la imagen que estás viendo","The planet in 3D with NISAR moving along its real orbit, at the moment of the image you are viewing"],["🌍 Ver el planeta","🌍 View the planet"],
     ["¿Qué estoy viendo?","What am I looking at?"],["Metodología y fundamentos científicos","Methodology and scientific background"],["Leyenda · capa activa","Legend · active layer"],["Foto Sentinel-2","Sentinel-2 photo"],["Mapa ESA WorldCover","ESA WorldCover map"],
     ["Plantas (Sentinel-2)","Plants (Sentinel-2)"],["☁ Día nublado","☁ Cloudy day"],["Manglar 1996 → 2020 + presión de hoy","Mangroves 1996 → 2020 + present-day pressure"],["Altura del manglar","Mangrove height"],["Estanques","Ponds"],
     ["🤖 IA: mapa del radar","🤖 AI: radar-derived map"],["Caña: mes de cosecha","Sugarcane: harvest month"],["Caña: cosecha vista por radar","Sugarcane: radar-detected harvest"],["🔥 Quemas: cuándo","🔥 Burns: when"],["Quemada vs cortada en verde","Burned vs green-cut"],
@@ -295,7 +295,7 @@
   const trackedText = new WeakMap(), trackedAttrs = new WeakMap();
   let language = "en", scheduled = false;
   // idioma inicial: el que la persona eligió; si nunca eligió, el de su navegador (español si está en español, si no inglés)
-  language = (() => { try { const s = localStorage.getItem("manglo-language"); if (s === "es" || s === "en") return s; } catch {} const l = ((navigator.languages && navigator.languages[0]) || navigator.language || "en").toLowerCase(); return l.startsWith("es") ? "es" : "en"; })();
+  language = (() => { try { const s = localStorage.getItem("manglo-language"); if (s === "es" || s === "en") return s; } catch {} return "en"; /* siempre empieza en inglés; Español queda guardado si se elige */ })();
   const canonical = (s) => reverse.get(s) || s;
   function translate(input) {
     const source = canonical(String(input));

@@ -91,10 +91,9 @@
       el.classList.add("going");
       globe.controls().autoRotate = false;
       globe.pointOfView({ ...ES, altitude: 1.1 }, 1300);                         // gira hacia El Salvador
-      setTimeout(() => {                                                          // zoom rápido, ahora sí con fotos satelitales
-        globe.globeTileEngineUrl((x, y, l) => `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${l}/${y}/${x}`);
-        globe.pointOfView({ lat: 13.6, lng: -89.6, altitude: 0.12 }, 1000);
-      }, 1350);
+      // zoom rápido con la misma imagen de la Tierra ya cargada: cambiar a mosaicos satelitales aquí dejaba el planeta
+      // negro (~80 mosaicos pedidos de golpe) y trababa la página mientras llegaban
+      setTimeout(() => globe.pointOfView({ lat: 13.6, lng: -89.6, altitude: 0.3 }, 1000), 1350);
       setTimeout(finish, 2300);                                                   // fundido al mapa
     };
   })();

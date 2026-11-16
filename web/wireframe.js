@@ -28,6 +28,10 @@
   el("tourBtn").textContent = "▶ Tutorial";
   const back = make("button", "btn", "← Inicio"); back.type = "button"; back.addEventListener("click", () => { stopPlay(); location.href = "landing.html"; });
   header.querySelector(".hdr-actions").appendChild(back);
+  // accesos directos arriba: la zona en 3D y la órbita de NISAR (app.js les pone el sitio y la fecha abiertos)
+  const b3d = el("btn3d"), bOrb = el("btnOrbit") || header.querySelector('a[href^="orbita.html"]');
+  if (b3d) { b3d.textContent = "⛰ Ver la zona en 3D"; b3d.classList.add("wf-top-link"); el("tourBtn").after(b3d); }
+  if (bOrb) { bOrb.textContent = "🛰 Ver la órbita de NISAR"; bOrb.title = "El planeta en 3D con NISAR moviéndose en su órbita real, en el momento de la imagen que estás viendo"; bOrb.classList.add("wf-top-link"); (b3d || el("tourBtn")).after(bOrb); }
   const intro = make("section", "wf-intro", '<h2>Explora los cambios del agua y del manglar</h2><p>Mapa interactivo con datos del sitio seleccionado, comparaciones en el tiempo y evidencia del monitoreo.</p>');
   header.after(intro);
 
@@ -84,9 +88,6 @@
   const about = document.querySelector("details.about"); if (about) science.appendChild(about);
   const scienceSection = el("scienceSection"); scienceSection.classList.remove("tech"); science.appendChild(scienceSection);
   const banner = document.querySelector(".science-banner"); if (banner) science.appendChild(banner);
-  const extraLinks = make("div", "wf-export-buttons");
-  [el("btn3d"), (el("btnOrbit") || header.querySelector('a[href^="orbita.html"]'))].forEach((node) => { if (node) extraLinks.appendChild(node); });
-  science.prepend(extraLinks);
   el("exportCsv").textContent = "↓ Serie NISAR del sitio (CSV)";
   scienceSection.appendChild(make("p", "hint", "Para elegir una gráfica aquí, abre también Resultados. Puedes descargar cada gráfica directamente desde Ver más detalle."));
 

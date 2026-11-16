@@ -1,13 +1,12 @@
 // Traductor ligero para páginas sueltas de MANGLO (inicio, vista 3D). Comparte el idioma con la app y el globo:
-// se guarda en localStorage "manglo-language"; si la persona nunca eligió, se usa el idioma de su navegador
+// se guarda en localStorage "manglo-language"; si la persona nunca eligió, empieza en inglés
 // (español si está en español, inglés en cualquier otro caso). Cada página define window.PAGE_LANG antes de cargar esto:
 //   { pairs: [[es, en], ...], patterns: [[regex, en], ...], mount: "selector donde van los botones", title: [es, en] }
 (function () {
   const cfg = window.PAGE_LANG || {};
   const pick = () => {
     try { const s = localStorage.getItem("manglo-language"); if (s === "es" || s === "en") return s; } catch {}
-    const l = ((navigator.languages && navigator.languages[0]) || navigator.language || "en").toLowerCase();
-    return l.startsWith("es") ? "es" : "en";
+    return "en";   // siempre empieza en inglés (público de NASA); Español queda guardado si se elige
   };
   let lang = pick();
   const pairs = cfg.pairs || [];
