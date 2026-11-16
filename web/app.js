@@ -12,7 +12,7 @@ const fmtInt = (n) => Math.round(n).toLocaleString("es-SV");
 const mlFor = (d) => ML?.dates.find((m) => m.id === d.id);
 const fmtDate = (s) => new Date(s + "T12:00:00").toLocaleDateString("es-SV", { day: "numeric", month: "short", year: "numeric" });
 
-const state = { mode: "single", layer: "cls", idx: 0, a: 0, b: 0, opacity: 0.85, split: 0.5, playing: null, ref: "s2" };
+const state = { mode: "single", layer: "rgb", idx: 0, a: 0, b: 0, opacity: 0.85, split: 0.5, playing: null, ref: "s2" };
 let S = null;          // series.json
 let REF = null;        // ref/reference.json (Sentinel-2 + WorldCover)
 let VAL = null;        // ref/validation.json
